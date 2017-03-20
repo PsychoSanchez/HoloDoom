@@ -5,7 +5,6 @@ public class GestureManager : MonoBehaviour
 {
     public static RaycastHit HitInfo;
     public static Vector3 deltaVector;
-
     public static GestureManager Instance { get; private set; }
 
     public GameObject FocusedObject { get; private set; }
@@ -28,10 +27,34 @@ public class GestureManager : MonoBehaviour
 
         recognizer.ManipulationStartedEvent += (s, v, r) =>
         {
-            deltaVector = v;
             if (FocusedObject != null)
             {
+                deltaVector = v;
                 FocusedObject.SendMessageUpwards("StartManipulation");
+            }
+        };
+
+        recognizer.ManipulationUpdatedEvent += (s, v, r) =>
+        {
+            if (FocusedObject != null)
+            {
+                deltaVector = v;
+            }
+        };
+
+        recognizer.ManipulationCanceledEvent += (s, v, r) =>
+        {
+            if (FocusedObject != null)
+            {
+                FocusedObject.SendMessageUpwards("StopManipulation");
+            }
+        };
+
+        recognizer.ManipulationCompletedEvent += (s, v, r) =>
+        {
+            if (FocusedObject != null)
+            {
+                FocusedObject.SendMessageUpwards("StopManipulation");
             }
         };
         recognizer.StartCapturingGestures();

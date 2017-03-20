@@ -13,12 +13,16 @@ public class CubeCommands : MonoBehaviour
         manipulationEvent = true;
     }
 
+    void StopManipulation()
+    {
+        manipulationEvent = false;
+    }
+
     void Update()
     {
         if (manipulationEvent)
         {
-            var vector = GestureManager.deltaVector;
-            this.transform.position += new Vector3(vector.x*speed,0,0);
+            this.transform.position += GestureManager.deltaVector;
         }
     }
 }
