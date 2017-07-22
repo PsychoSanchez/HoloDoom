@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Weapon : MonoBehaviour {
+[Serializable]
+public class Weapon : MonoBehaviour {
 
-    public Animation WeaponSprite;
+    [SerializeField]
+    public Animator WeaponSprite;
     public AudioSource GunAudio;
     public float ShootDelay = 0.15f;
     public float Range = 100f;
@@ -19,7 +22,7 @@ public abstract class Weapon : MonoBehaviour {
 
     // Use this for initialization
     protected void Start () {
-        WeaponSprite.enabled = false;
+        // WeaponSprite.enabled = false;
         shootableMask = LayerMask.GetMask("Shootable");
     }
 	
@@ -32,21 +35,22 @@ public abstract class Weapon : MonoBehaviour {
         }
 	}
 
-    public virtual void Shoot()
+    public virtual void Shoot(Ray headRay)
     {
         if (!canShoot)
         {
             return;
         }
         lastShoot = 0f;
+        canShoot = false;
 
         GunAudio.Play();
-        WeaponSprite.Play();
+        WeaponSprite.Play("Shoot");
 
-        shootRay.origin = transform.position;
-        shootRay.direction = transform.forward;
+        //shootRay.origin = transform.position;
+        //shootRay.direction = transform.forward;
         
-        if (Physics.Raycast(shootRay, out shootHit, Range, shootableMask))
+        if (Physics.Raycast(headRay, out shootHit, Range, shootableMask))
         {
            // Shoot enemies
         }
