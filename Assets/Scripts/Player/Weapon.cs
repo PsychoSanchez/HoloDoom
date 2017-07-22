@@ -5,12 +5,12 @@ using UnityEngine;
 public abstract class Weapon : MonoBehaviour {
 
     public Animation WeaponSprite;
-    public Animation GunLight;
     public AudioSource GunAudio;
     public float ShootDelay = 0.15f;
     public float Range = 100f;
     public int Damage = 20;
 
+    //mb protected???
     int shootableMask;
     bool canShoot = true;
     float lastShoot;
@@ -18,14 +18,13 @@ public abstract class Weapon : MonoBehaviour {
     RaycastHit shootHit;
 
     // Use this for initialization
-    void Start () {
+    protected void Start () {
         WeaponSprite.enabled = false;
         shootableMask = LayerMask.GetMask("Shootable");
-        GunLight.enabled = true;
     }
 	
 	// Update is called once per frame
-	void Update () {
+	protected void Update () {
         lastShoot += Time.deltaTime;
         if (lastShoot >= ShootDelay)
         {
@@ -33,7 +32,7 @@ public abstract class Weapon : MonoBehaviour {
         }
 	}
 
-    public void Shoot()
+    public virtual void Shoot()
     {
         if (!canShoot)
         {
@@ -42,7 +41,7 @@ public abstract class Weapon : MonoBehaviour {
         lastShoot = 0f;
 
         GunAudio.Play();
-        GunLight.Play();
+        WeaponSprite.Play();
 
         shootRay.origin = transform.position;
         shootRay.direction = transform.forward;
@@ -51,5 +50,18 @@ public abstract class Weapon : MonoBehaviour {
         {
            // Shoot enemies
         }
+    }
+}
+
+public class Shotgun : Weapon
+{
+    protected void Start()
+    {
+        base.Start();
+    }
+
+    protected void Update()
+    {
+        base.Update();
     }
 }
