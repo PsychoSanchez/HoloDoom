@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Monsters;
 using UnityEngine;
 
 [Serializable]
@@ -46,6 +47,10 @@ public class Weapon : MonoBehaviour {
 
         GunAudio.Play();
         WeaponSprite.Play("Shoot");
+
+        var tempObject = GameObject.FindGameObjectWithTag("Enemy");
+        var enemy = tempObject.GetComponent<Cacodemon>();
+        enemy.GetHit(100);
 
         //shootRay.origin = transform.position;
         //shootRay.direction = transform.forward;
