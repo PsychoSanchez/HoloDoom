@@ -12,6 +12,16 @@ namespace Assets.Scripts.Monsters
         protected bool _dead = false;
         protected Animator _animator;
 
+        public virtual void Spawn()
+        {
+
+        }
+
+        public virtual bool IsAlive()
+        {
+            return !_dead;
+        }
+
         public virtual void GetHit(int amount)
         {
             _health -= amount;
