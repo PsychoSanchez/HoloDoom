@@ -268,12 +268,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SensitivityScale: 3
   UseUnscaledTime: 1
-  axisType: 0
+  axisType: 11
   buttonType: 21
-  InputManagerHorizontalAxisName: Horizontal
-  InputManagerVerticalAxisName: Vertical
+  InputManagerHorizontalAxisName: 
+  InputManagerVerticalAxisName: 
   Axis0Destination: 0
-  Axis1Destination: 4
+  Axis1Destination: 2
   Axis2Destination: 6
 --- !u!1 &201840010
 GameObject:
@@ -541,14 +541,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1b627838df61e64baecc87fee2dec17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SensitivityScale: 1
+  SensitivityScale: 3
   UseUnscaledTime: 1
-  axisType: 6
+  axisType: 11
   buttonType: 21
   InputManagerHorizontalAxisName: 
   InputManagerVerticalAxisName: 
-  Axis0Destination: 2
-  Axis1Destination: 1
+  Axis0Destination: 0
+  Axis1Destination: 2
   Axis2Destination: 6
 --- !u!1 &483520570
 GameObject:
@@ -657,18 +657,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MouseSupported: 1
-  MouseXYRotationAxisControl: {fileID: 1695266141}
-  MouseXYTranslationAxisControl: {fileID: 1032884844}
-  MouseXZTranslationAxisControl: {fileID: 597390880}
+  MouseXYRotationAxisControl: {fileID: 0}
+  MouseXYTranslationAxisControl: {fileID: 0}
+  MouseXZTranslationAxisControl: {fileID: 0}
   KeyboardSupported: 1
-  KeyboardXYRotationAxisControl: {fileID: 468603243}
-  KeyboardXZRotationAxisControl: {fileID: 995910626}
-  KeyboardXYTranslationAxisControl: {fileID: 1295672820}
-  KeyboardXZTranslationAxisControl: {fileID: 197554533}
+  KeyboardXYRotationAxisControl: {fileID: 0}
+  KeyboardXZRotationAxisControl: {fileID: 0}
+  KeyboardXYTranslationAxisControl: {fileID: 0}
+  KeyboardXZTranslationAxisControl: {fileID: 0}
   JoystickSupported: 0
-  JoystickXYRotationAxisControl: {fileID: 1692962631}
-  JoystickXYTranslationAxisControl: {fileID: 1013538620}
-  JoystickXZTranslationAxisControl: {fileID: 1724129223}
+  JoystickXYRotationAxisControl: {fileID: 0}
+  JoystickXYTranslationAxisControl: {fileID: 0}
+  JoystickXZTranslationAxisControl: {fileID: 0}
 --- !u!81 &551154442
 AudioListener:
   m_ObjectHideFlags: 0
@@ -764,7 +764,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   StartHealth: 100
   MaxHealth: 100
-  HealthText: {fileID: 1155837177}
+  HealthText: {fileID: 0}
   DamageImage: {fileID: 0}
   DamageAudio: {fileID: 0}
 --- !u!114 &551154448
@@ -791,7 +791,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e8aeef6f2e0efb4e8c4acb119a1a447, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monster: {fileID: 114799357068099304, guid: cf96593086a725446b7d893a57066bcb, type: 2}
+  monster: {fileID: 627568794}
 --- !u!1 &597390878
 GameObject:
   m_ObjectHideFlags: 0
@@ -837,13 +837,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SensitivityScale: 3
   UseUnscaledTime: 1
-  axisType: 12
-  buttonType: 3
+  axisType: 11
+  buttonType: 21
   InputManagerHorizontalAxisName: 
   InputManagerVerticalAxisName: 
-  Axis0Destination: 4
-  Axis1Destination: 6
+  Axis0Destination: 0
+  Axis1Destination: 2
   Axis2Destination: 6
+--- !u!114 &627568794 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114799357068099304, guid: cf96593086a725446b7d893a57066bcb,
+    type: 2}
+  m_PrefabInternal: {fileID: 1299097248}
+  m_Script: {fileID: 11500000, guid: da35b9afb78d7304ca6fbe0f1aeb500b, type: 3}
 --- !u!1 &995910624
 GameObject:
   m_ObjectHideFlags: 0
@@ -887,14 +893,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1b627838df61e64baecc87fee2dec17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SensitivityScale: 1
+  SensitivityScale: 3
   UseUnscaledTime: 1
-  axisType: 7
+  axisType: 11
   buttonType: 21
   InputManagerHorizontalAxisName: 
   InputManagerVerticalAxisName: 
-  Axis0Destination: 5
-  Axis1Destination: 4
+  Axis0Destination: 0
+  Axis1Destination: 2
   Axis2Destination: 6
 --- !u!1 &1013538618
 GameObject:
@@ -941,12 +947,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SensitivityScale: 3
   UseUnscaledTime: 1
-  axisType: 0
+  axisType: 11
   buttonType: 21
-  InputManagerHorizontalAxisName: LeftTrigger
-  InputManagerVerticalAxisName: RightTrigger
-  Axis0Destination: 2
-  Axis1Destination: 3
+  InputManagerHorizontalAxisName: 
+  InputManagerVerticalAxisName: 
+  Axis0Destination: 0
+  Axis1Destination: 2
   Axis2Destination: 6
 --- !u!1 &1032884842
 GameObject:
@@ -991,9 +997,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1b627838df61e64baecc87fee2dec17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SensitivityScale: 1
+  SensitivityScale: 3
   UseUnscaledTime: 1
-  axisType: 13
+  axisType: 11
   buttonType: 21
   InputManagerHorizontalAxisName: 
   InputManagerVerticalAxisName: 
@@ -1304,14 +1310,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1b627838df61e64baecc87fee2dec17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SensitivityScale: 1
+  SensitivityScale: 3
   UseUnscaledTime: 1
-  axisType: 3
+  axisType: 11
   buttonType: 21
   InputManagerHorizontalAxisName: 
   InputManagerVerticalAxisName: 
-  Axis0Destination: 2
-  Axis1Destination: 6
+  Axis0Destination: 0
+  Axis1Destination: 2
   Axis2Destination: 6
 --- !u!1001 &1299097248
 Prefab:
@@ -1797,9 +1803,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WeaponSprite: {fileID: 1423037637}
   GunAudio: {fileID: 340393670}
-  ShootDelay: 1
+  ShootDelay: 0.95
   Range: 100
-  Damage: 20
+  Damage: 100
 --- !u!1 &1643156733
 GameObject:
   m_ObjectHideFlags: 0
@@ -1981,12 +1987,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SensitivityScale: 3
   UseUnscaledTime: 1
-  axisType: 0
+  axisType: 11
   buttonType: 21
-  InputManagerHorizontalAxisName: LeftStickHorizontal
-  InputManagerVerticalAxisName: LeftStickVertical
-  Axis0Destination: 2
-  Axis1Destination: 0
+  InputManagerHorizontalAxisName: 
+  InputManagerVerticalAxisName: 
+  Axis0Destination: 0
+  Axis1Destination: 2
   Axis2Destination: 6
 --- !u!1 &1695266139
 GameObject:
@@ -2031,10 +2037,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1b627838df61e64baecc87fee2dec17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SensitivityScale: 4.5
+  SensitivityScale: 3
   UseUnscaledTime: 1
   axisType: 11
-  buttonType: 1
+  buttonType: 21
   InputManagerHorizontalAxisName: 
   InputManagerVerticalAxisName: 
   Axis0Destination: 0
@@ -2071,12 +2077,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SensitivityScale: 3
   UseUnscaledTime: 1
-  axisType: 0
+  axisType: 11
   buttonType: 21
-  InputManagerHorizontalAxisName: RightStickHorizontal
-  InputManagerVerticalAxisName: RightStickVertical
+  InputManagerHorizontalAxisName: 
+  InputManagerVerticalAxisName: 
   Axis0Destination: 0
-  Axis1Destination: 4
+  Axis1Destination: 2
   Axis2Destination: 6
 --- !u!4 &1724129224
 Transform:

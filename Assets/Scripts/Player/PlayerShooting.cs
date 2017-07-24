@@ -31,7 +31,7 @@ public class PlayerShooting : MonoBehaviour {
     void Update () {
         if (Input.GetMouseButtonDown(0))
         {
-            CurrentWeapon.Shoot(new Ray());
+            CurrentWeapon.Shoot(new Ray(Camera.main.transform.position, Camera.main.transform.forward));
         }
     }
 }

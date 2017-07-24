@@ -29,6 +29,7 @@ namespace Assets.Scripts.Monsters
 
         protected virtual void Die()
         {
+          
             _dead = true;
         }
 
@@ -47,10 +48,11 @@ namespace Assets.Scripts.Monsters
         // Update is called once per frame
         protected virtual void Update()
         {
-            if (_health <= 0)
-            {
-                Die();
-            }
+            // This method will be called all the time, while _health <= 0
+            //if (_health <= 0)
+            //{
+            //    Die();
+            //}
         }
     }
 }

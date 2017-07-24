@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using Assets.Scripts.Monsters;
 using UnityEngine;
 
-[Serializable]
-public class Weapon : MonoBehaviour {
-
-    [SerializeField]
+public class Weapon : MonoBehaviour
+{
     public Animator WeaponSprite;
     public AudioSource GunAudio;
     public float ShootDelay = 0.15f;
@@ -15,26 +11,27 @@ public class Weapon : MonoBehaviour {
     public int Damage = 20;
 
     //mb protected???
+    // MAYBE
     int shootableMask;
     bool canShoot = true;
-    float lastShoot;
-    Ray shootRay;
-    RaycastHit shootHit;
+    float lastShot;
+    RaycastHit shotHit;
 
     // Use this for initialization
-    protected void Start () {
-        // WeaponSprite.enabled = false;
+    protected void Start()
+    {
         shootableMask = LayerMask.GetMask("Shootable");
     }
-	
-	// Update is called once per frame
-	protected void Update () {
-        lastShoot += Time.deltaTime;
-        if (lastShoot >= ShootDelay)
+
+    // Update is called once per frame
+    protected void Update()
+    {
+        lastShot += Time.deltaTime;
+        if (lastShot >= ShootDelay)
         {
             canShoot = true;
         }
-	}
+    }
 
     public virtual void Shoot(Ray headRay)
     {
@@ -42,35 +39,27 @@ public class Weapon : MonoBehaviour {
         {
             return;
         }
-        lastShoot = 0f;
+        lastShot = 0f;
         canShoot = false;
 
         GunAudio.Play();
         WeaponSprite.Play("Shoot");
 
-        var tempObject = GameObject.FindGameObjectWithTag("Enemy");
-        var enemy = tempObject.GetComponent<Cacodemon>();
-        enemy.GetHit(100);
-
-        //shootRay.origin = transform.position;
-        //shootRay.direction = transform.forward;
-        
-        if (Physics.Raycast(headRay, out shootHit, Range, shootableMask))
+        // Debug.DrawRay(headRay.origin, headRay.direction, Color.white,  20.0f, false);
+        if (Physics.Raycast(headRay, out shotHit, Range*10))
         {
-           // Shoot enemies
+            // Shoot enemies
+            if (shotHit.collider.tag != "Enemy")
+            {
+                return;
+            }
+
+            var monster = shotHit.collider.GetComponent<BaseMonster>();
+            if (monster == null)
+            {
+                return;
+            }
+            monster.GetHit(Damage);
         }
-    }
-}
-
-public class Shotgun : Weapon
-{
-    protected void Start()
-    {
-        base.Start();
-    }
-
-    protected void Update()
-    {
-        base.Update();
     }
 }
