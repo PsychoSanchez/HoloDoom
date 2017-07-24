@@ -27,10 +27,10 @@ namespace Assets.Scripts.Monsters
         protected override void Die()
         {
             base.Die();
-            foreach (Collider c in GetComponents<Collider>())
-            {
-                c.enabled = false;
-            }
+            //foreach (Collider c in GetComponents<Collider>())
+            //{
+            //    c.enabled = false;
+            //}
             this._animator.SetBool("Dead", true);
         }
     }
