@@ -48,6 +48,7 @@ namespace Assets.Scripts.Monsters
         // Update is called once per frame
         protected virtual void Update()
         {
+            transform.forward = Camera.main.transform.forward;
             // This method will be called all the time, while _health <= 0
             //if (_health <= 0)
             //{
