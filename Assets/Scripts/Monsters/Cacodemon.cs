@@ -24,6 +24,12 @@ namespace Assets.Scripts.Monsters
             this._animator.SetBool("Attack", true);
         }
 
+        public override void FindPlayer(Vector3 playerPosition)
+        {
+            base.FindPlayer(playerPosition);
+            this._animator.SetBool("PlayerFound", true);
+        }
+
         protected override void Die()
         {
             base.Die();

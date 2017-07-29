@@ -24,7 +24,7 @@ public class GameStart : MonoBehaviour {
         {
             lastSpawn = 0f;
             Vector3 center = Camera.main.transform.position;
-            Vector3 pos = RandomCircle(center, 2.0f);
+            Vector3 pos = RandomCircle(center, 5.0f);
             Instantiate(monster, pos,  Quaternion.FromToRotation(Vector3.forward, center - pos));
         }
        

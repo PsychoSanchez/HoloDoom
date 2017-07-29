@@ -11,6 +11,8 @@ namespace Assets.Scripts.Monsters
         protected Weapon _weapon;
         protected bool _dead = false;
         protected Animator _animator;
+        protected bool _playerFound;
+        protected Vector3 _playerPosition;
 
         public virtual void Spawn()
         {
@@ -54,6 +56,13 @@ namespace Assets.Scripts.Monsters
             //{
             //    Die();
             //}
+        }
+
+        public virtual void FindPlayer(Vector3 playerPosition)
+        {
+            _playerFound = true;
+            _playerPosition = playerPosition;
+
         }
     }
 }
