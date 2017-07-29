@@ -9,6 +9,7 @@ public class Weapon : MonoBehaviour
     public float ShootDelay = 0.15f;
     public float Range = 100f;
     public int Damage = 20;
+    public int Ammo = 10;
 
     //mb protected???
     // MAYBE
@@ -33,14 +34,27 @@ public class Weapon : MonoBehaviour
         }
     }
 
+    public void AddAmmo(int amount)
+    {
+        this.Ammo += amount;
+    }
+
     public virtual void Shoot(Ray headRay)
     {
         if (!canShoot)
         {
             return;
         }
+
+        if (Ammo <= 0)
+        {
+            // Play no ammo sound
+            return;
+        }
+
         lastShot = 0f;
         canShoot = false;
+        Ammo =Ammo--; 
 
         GunAudio.Play();
         WeaponSprite.Play("Shoot");
