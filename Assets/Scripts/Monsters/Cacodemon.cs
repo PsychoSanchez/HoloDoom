@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 namespace Assets.Scripts.Monsters
 {
@@ -11,6 +12,7 @@ namespace Assets.Scripts.Monsters
         bool canShoot = true;
         float lastShot;
         RaycastHit shotHit;
+        private bool isDead;
 
         protected override void Start()
         {
@@ -43,7 +45,19 @@ namespace Assets.Scripts.Monsters
             //{
             //    c.enabled = false;
             //}
+            StartCoroutine(MyCoroutine());
+           
             this._animator.SetBool("Dead", true);
+        }
+        IEnumerator MyCoroutine()
+        {
+            yield return new WaitForSeconds(1);
+
+            var rigidBody = this.GetComponent<Rigidbody>();
+            if (rigidBody != null)
+            {
+                rigidBody.useGravity = true;
+            }
         }
 
         protected override void Update()
@@ -57,7 +71,7 @@ namespace Assets.Scripts.Monsters
             {
                 Shoot();
             }
-            
+
             base.Update();
         }
 
@@ -68,11 +82,12 @@ namespace Assets.Scripts.Monsters
             {
                 this._animator.SetBool("Shoot", true);
                 base.Shoot();
-            } else
+            }
+            else
             {
                 if (!Physics.Raycast(this.transform.position, _playerPosition, out hit, Range))
                 {
-                    if(hit.collider.tag == "Player")
+                    if (hit.collider.tag == "Player")
                     {
                         var player = hit.collider.GetComponent<PlayerHealth>();
                         if (player != null)
