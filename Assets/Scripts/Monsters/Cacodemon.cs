@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Assets.Scripts.Monsters
 {
@@ -76,7 +74,11 @@ namespace Assets.Scripts.Monsters
                 {
                     if(hit.collider.tag == "Player")
                     {
-                        hit.collider.GetComponent<PlayerHealth>()?.TakeDamage(Damage);
+                        var player = hit.collider.GetComponent<PlayerHealth>();
+                        if (player != null)
+                        {
+                            player.TakeDamage(Damage);
+                        }
                     }
                 }
             }

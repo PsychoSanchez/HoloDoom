@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour {
@@ -10,6 +8,7 @@ public class PlayerHealth : MonoBehaviour {
     public Text HealthText;
     public Image DamageImage;
     public AudioSource DamageAudio;
+    public GameObject DeathScreen;
 
     bool isDead = false;
     int currentHealth;
@@ -26,6 +25,10 @@ public class PlayerHealth : MonoBehaviour {
 
     public void TakeDamage(int damage)
     {
+        if (isDead)
+        {
+            return;
+        }
         currentHealth -= damage;
         if(currentHealth < 1)
         {
@@ -58,7 +61,11 @@ public class PlayerHealth : MonoBehaviour {
     public void Die()
     {
         isDead = true;
-
+        if(DeathScreen == null)
+        {
+            return;
+        }
+        DeathScreen.SetActive(true);
         // Toggle death screeen
     }
 }
