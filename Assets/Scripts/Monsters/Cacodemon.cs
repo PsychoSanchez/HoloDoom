@@ -6,6 +6,14 @@ namespace Assets.Scripts.Monsters
 {
     public class Cacodemon : BaseMonster
     {
+        public float ShootDelay = 0.15f;
+        public float Range = 2f;
+        public int Damage = 5;
+        int shootableMask;
+        bool canShoot = true;
+        float lastShot;
+        RaycastHit shotHit;
+
         protected override void Start()
         {
             _animator = this.GetComponent<Animator>();
@@ -38,6 +46,40 @@ namespace Assets.Scripts.Monsters
             //    c.enabled = false;
             //}
             this._animator.SetBool("Dead", true);
+        }
+
+        protected override void Update()
+        {
+            lastShot += Time.deltaTime;
+            if (lastShot >= ShootDelay)
+            {
+                canShoot = true;
+            }
+            if (_playerFound)
+            {
+                Shoot();
+            }
+            
+            base.Update();
+        }
+
+        public override void Shoot()
+        {
+            RaycastHit hit;
+            if (canShoot && _playerFound)
+            {
+                this._animator.SetBool("Shoot", true);
+                base.Shoot();
+            } else
+            {
+                if (!Physics.Raycast(this.transform.position, _playerPosition, out hit, Range))
+                {
+                    if(hit.collider.tag == "Player")
+                    {
+                        hit.collider.GetComponent<PlayerHealth>()?.TakeDamage(Damage);
+                    }
+                }
+            }
         }
     }
 }
