@@ -54,7 +54,7 @@ public class Weapon : MonoBehaviour
 
         lastShot = 0f;
         canShoot = false;
-        Ammo =Ammo--; 
+        this.Ammo -= 1;
 
         GunAudio.Play();
         WeaponSprite.Play("Shoot");

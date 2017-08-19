@@ -35,6 +35,7 @@ public class PlayerShooting : MonoBehaviour {
         if (Input.GetMouseButtonDown(0))
         {
             CurrentWeapon.Shoot(new Ray(Camera.main.transform.position, Camera.main.transform.forward));
+            AmmoUI.text = CurrentWeapon.Ammo.ToString();
         }
     }
 

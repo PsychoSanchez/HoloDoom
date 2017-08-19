@@ -18,6 +18,7 @@ public class FindEnemies : MonoBehaviour {
         Collider[] intersectingColliders = Physics.OverlapSphere(playerPosition, radius);
         for(int i = 0; i < intersectingColliders.Length; i++)
         {
+            Debug.Log(intersectingColliders);
             BaseMonster monster = intersectingColliders[i].gameObject.GetComponent<BaseMonster>();
             if(monster!= null)
             {
