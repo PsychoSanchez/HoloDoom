@@ -38,27 +38,9 @@ public class PlayerShooting : MonoBehaviour {
             AmmoUI.text = CurrentWeapon.Ammo.ToString();
         }
     }
-
-    private void OnTriggerEnter(Collider other)
+    public void AddAmmo(int amt)
     {
-        if (other.tag == "Ammo")
-        {
-            var ammo = other.GetComponent<Ammo>();
-
-            if (ammo == null)
-            {
-                return;
-            }
-
-            this.CurrentWeapon.AddAmmo(ammo.GetAmmo());
-            AmmoUI.text = CurrentWeapon.Ammo.ToString();
-
-            if (other.gameObject == null)
-            {
-                return;
-            }
-
-            Destroy(other.gameObject, .5f);
-        }
+        this.CurrentWeapon.AddAmmo(amt);
+        AmmoUI.text = CurrentWeapon.Ammo.ToString();
     }
 }
