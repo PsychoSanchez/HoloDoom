@@ -5,8 +5,8 @@ namespace Assets.Scripts.Monsters
 {
     public class Cacodemon : BaseMonster
     {
-        public float ShootDelay = 0.15f;
-        public float Range = 2f;
+        public float ShootDelay = 1f;
+        public float Range = 20f;
         public int Damage = 5;
         int shootableMask;
         bool canShoot = true;
@@ -46,7 +46,7 @@ namespace Assets.Scripts.Monsters
             //    c.enabled = false;
             //}
             StartCoroutine(MyCoroutine());
-           
+
             this._animator.SetBool("Dead", true);
         }
         IEnumerator MyCoroutine()
@@ -65,6 +65,7 @@ namespace Assets.Scripts.Monsters
             lastShot += Time.deltaTime;
             if (lastShot >= ShootDelay)
             {
+                lastShot = 0;
                 canShoot = true;
             }
             if (_playerFound)
@@ -73,30 +74,27 @@ namespace Assets.Scripts.Monsters
             }
 
             base.Update();
+            canShoot = false;
         }
 
         public override void Shoot()
         {
+            if (!canShoot || !_playerFound) return;
+            this._animator.SetBool("Shoot", true);
+            DoShootPlayer();
+            base.Shoot();
+        }
+
+        private void DoShootPlayer()
+        {
             RaycastHit hit;
-            if (canShoot && _playerFound)
-            {
-                this._animator.SetBool("Shoot", true);
-                base.Shoot();
-            }
-            else
-            {
-                if (!Physics.Raycast(this.transform.position, _playerPosition, out hit, Range))
-                {
-                    if (hit.collider.tag == "Player")
-                    {
-                        var player = hit.collider.GetComponent<PlayerHealth>();
-                        if (player != null)
-                        {
-                            player.TakeDamage(Damage);
-                        }
-                    }
-                }
-            }
+            Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
+            if (!Physics.Raycast(this.transform.position, forward, out hit, Range)) return;
+            if(hit.collider == null) return;
+            if (hit.collider.tag != "Player") return;
+            var player = hit.collider.GetComponent<PlayerHealth>();
+            if (player == null) return;
+            player.TakeDamage(Damage);
         }
     }
 }

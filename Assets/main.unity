@@ -805,7 +805,7 @@ CapsuleCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 551154440}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 5
   m_Height: 20
@@ -818,7 +818,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 551154440}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 15
@@ -835,6 +835,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   radius: 10
+  deltaTime: 0.3
 --- !u!1 &597390878
 GameObject:
   m_ObjectHideFlags: 0
@@ -1394,6 +1395,11 @@ Prefab:
     - target: {fileID: 4811243243483790, guid: cf96593086a725446b7d893a57066bcb, type: 2}
       propertyPath: m_RootOrder
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 114799357068099304, guid: cf96593086a725446b7d893a57066bcb,
+        type: 2}
+      propertyPath: ShootDelay
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: cf96593086a725446b7d893a57066bcb, type: 2}

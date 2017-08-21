@@ -3,27 +3,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FindEnemies : MonoBehaviour {
-    public float radius = 10;
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
+public class FindEnemies : MonoBehaviour
+{
+    public float radius = 3;
+    private float time = 0.0f;
+    public float deltaTime = 0.3f;
+    // Use this for initialization
+    void Start()
+    {
 
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        time += Time.deltaTime;
+
+        if (!(time >= deltaTime)) return;
+        time = time - deltaTime;
+
+        FindEnemie();
+    }
+
+    private void FindEnemie()
+    {
         Vector3 playerPosition = this.gameObject.transform.position;
 
         Collider[] intersectingColliders = Physics.OverlapSphere(playerPosition, radius);
-        for(int i = 0; i < intersectingColliders.Length; i++)
+        foreach (Collider t in intersectingColliders)
         {
-            Debug.Log(intersectingColliders);
-            BaseMonster monster = intersectingColliders[i].gameObject.GetComponent<BaseMonster>();
-            if(monster!= null)
-            {
-                monster.FindPlayer(playerPosition);
-            }
+            BaseMonster monster = t.gameObject.GetComponent<BaseMonster>();
+            if (monster == null) continue;
+
+            monster.FindPlayer(playerPosition);
         }
     }
 }
