@@ -28,6 +28,7 @@ public class PlayerShooting : MonoBehaviour {
         }
 
         CurrentWeapon.Shoot(headRay);
+        AmmoUI.text = CurrentWeapon.Ammo.ToString();
     }
 
     // Update is called once per frame

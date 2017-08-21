@@ -17,6 +17,7 @@ public class GameStart : MonoBehaviour {
     float lastAmmoSpawn;
     float lastArmorSpawn;
     float lastMedkitSpawn;
+    RaycastHit hit;
 
     // Use this for initialization
     void Start()
@@ -55,37 +56,33 @@ public class GameStart : MonoBehaviour {
     public void SpawnAmmo()
     {
         lastAmmoSpawn = 0f;
-        Vector3 center = Camera.main.transform.position;
-        Vector3 pos = RandomCircle(center, 2.0f);
+        var sp = GetSpawnPosition(2.0f);
         var ammo = this.Ammo[Random.Range(0, this.Ammo.Length - 1)];
-        Instantiate(ammo, pos, Quaternion.FromToRotation(Vector3.forward, center - pos));
+        Instantiate(ammo, sp.position, sp.rotation);
     }
 
     public void SpawnMedkit()
     {
         lastMedkitSpawn = 0f;
-        Vector3 center = Camera.main.transform.position;
-        Vector3 pos = RandomCircle(center, 2.0f);
+        var sp = GetSpawnPosition(2.0f);
         var medkit = this.Medkits[Random.Range(0, this.Medkits.Length - 1)];
-        Instantiate(medkit, pos, Quaternion.FromToRotation(Vector3.forward, center - pos));
+        Instantiate(medkit, sp.position, sp.rotation);
 
     }
 
     public void SpawnArmor()
     {
         lastArmorSpawn = 0f;
-        Vector3 center = Camera.main.transform.position;
-        Vector3 pos = RandomCircle(center, 2.0f);
+        var sp = GetSpawnPosition(2.0f);
         var armor = this.Armor[Random.Range(0, this.Armor.Length - 1)];
-        Instantiate(armor, pos, Quaternion.FromToRotation(Vector3.forward, center - pos));
+        Instantiate(armor, sp.position, sp.rotation);
     }
 
     public void SpawmEnemy()
     {
         lastEnemySpawn = 0f;
-        Vector3 center = Camera.main.transform.position;
-        Vector3 pos = RandomCircle(center, 5.0f);
-        Instantiate(monster, pos, Quaternion.FromToRotation(Vector3.forward, center - pos));
+        var sp = GetSpawnPosition(5.0f);
+        Instantiate(monster, sp.position, sp.rotation);
     }
 
 
@@ -98,4 +95,28 @@ public class GameStart : MonoBehaviour {
         pos.y = center.y;
         return pos;
     }
+
+    SpawnPoint GetSpawnPosition(float radius)
+    {
+        SpawnPoint temp = new SpawnPoint();
+        Vector3 center = Camera.main.transform.position;
+        var position = RandomCircle(center, radius);
+        Debug.DrawRay(center, position, Color.green, 10);
+
+        if (Physics.Raycast(center, position, out hit, radius))
+        {
+            print("Found an object - distance: " + hit.point);
+            position = hit.point;
+        }
+
+        temp.position = position;
+        temp.rotation = Quaternion.FromToRotation(Vector3.forward, center - position);
+        return temp;
+    }
+}
+
+struct SpawnPoint
+{
+    public Vector3 position;
+    public Quaternion rotation;
 }
