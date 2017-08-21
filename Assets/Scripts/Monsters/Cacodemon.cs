@@ -34,8 +34,8 @@ namespace Assets.Scripts.Monsters
 
         public override void FindPlayer(Vector3 playerPosition)
         {
-            base.FindPlayer(playerPosition);
-            this._animator.SetBool("PlayerFound", true);
+            // base.FindPlayer(playerPosition);
+            // this._animator.SetBool("PlayerFound", true);
         }
 
         protected override void Die()
@@ -51,7 +51,7 @@ namespace Assets.Scripts.Monsters
         }
         IEnumerator MyCoroutine()
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(0.3f);
 
             var rigidBody = this.GetComponent<Rigidbody>();
             if (rigidBody != null)
@@ -80,7 +80,7 @@ namespace Assets.Scripts.Monsters
         public override void Shoot()
         {
             if (!canShoot || !_playerFound) return;
-            this._animator.SetBool("Shoot", true);
+            //this._animator.SetBool("Shoot", true);
             DoShootPlayer();
             base.Shoot();
         }
@@ -90,7 +90,7 @@ namespace Assets.Scripts.Monsters
             RaycastHit hit;
             Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
             if (!Physics.Raycast(this.transform.position, forward, out hit, Range)) return;
-            if(hit.collider == null) return;
+            if (hit.collider == null) return;
             if (hit.collider.tag != "Player") return;
             var player = hit.collider.GetComponent<PlayerHealth>();
             if (player == null) return;

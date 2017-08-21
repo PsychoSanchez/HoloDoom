@@ -6,6 +6,11 @@ namespace Assets.Scripts.Monsters
 {
     public class BaseMonster : MonoBehaviour
     {
+        public AudioClip SpawnSound;
+        public AudioClip TakeDamageSound;
+        public AudioClip AttackSound;
+        public AudioClip DeathSound;
+
         protected int _health;
         protected int _armor;
         protected Weapon _weapon;
@@ -13,6 +18,8 @@ namespace Assets.Scripts.Monsters
         protected Animator _animator;
         protected bool _playerFound;
         protected Vector3 _playerPosition;
+
+        AudioSource audioSource;
 
         public virtual void Spawn()
         {
@@ -31,7 +38,7 @@ namespace Assets.Scripts.Monsters
 
         protected virtual void Die()
         {
-          
+            audioSource.PlayOneShot(DeathSound, 0.7F);
             _dead = true;
         }
 
@@ -43,6 +50,7 @@ namespace Assets.Scripts.Monsters
         // Use this for initialization
         protected virtual void Start()
         {
+            audioSource = GetComponent<AudioSource>();
             _health = 100;
             _armor = 0;
         }

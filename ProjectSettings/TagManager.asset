@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Ammo
+  - Pickup
   layers:
   - Default
   - TransparentFX
