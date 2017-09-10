@@ -23,6 +23,7 @@ public class FindEnemies : MonoBehaviour
         FindEnemie();
     }
 
+
     private void FindEnemie()
     {
         Vector3 playerPosition = this.gameObject.transform.position;
@@ -33,7 +34,7 @@ public class FindEnemies : MonoBehaviour
             BaseMonster monster = t.gameObject.GetComponent<BaseMonster>();
             if (monster == null) continue;
 
-            monster.FindPlayer(playerPosition);
+            monster.FindPlayer(this.gameObject.transform);
         }
     }
 }

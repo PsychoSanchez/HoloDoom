@@ -46,7 +46,7 @@ public class PlayerHealth : MonoBehaviour
         currentHealth -= (int)Math.Round(damage * 0.25);
         if (diff < 0)
         {
-            currentHealth -= diff;
+            currentHealth += diff;
             diff = 0;
         }
         currentArmor = diff;

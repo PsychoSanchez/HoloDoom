@@ -11,6 +11,21 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1568043351007864}
   m_IsPrefabParent: 1
+--- !u!1 &1090524798880462
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4855749751916432}
+  m_Layer: 0
+  m_Name: prefabShootPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1568043351007864
 GameObject:
   m_ObjectHideFlags: 0
@@ -42,8 +57,22 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 2}
   m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
-  m_Children: []
+  m_Children:
+  - {fileID: 4855749751916432}
   m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4855749751916432
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1090524798880462}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.061, z: -0.057}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4144889974227254}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &54357924702685046
@@ -96,7 +125,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: be803ca0e3c9c884080371faf7157109, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.677
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -197,9 +226,11 @@ MonoBehaviour:
   TakeDamageSound: {fileID: 8300000, guid: 33cd9bcde59f690478bd69fc6d1f4129, type: 3}
   AttackSound: {fileID: 8300000, guid: 68a8c119c9bf5fe4ca5bffde110de491, type: 3}
   DeathSound: {fileID: 8300000, guid: b022faec06b21d343974694b2f8048d9, type: 3}
-  ShootDelay: 0.15
+  ShootDelay: 3
   Range: 2
   Damage: 5
+  shootPrefab: {fileID: 1321679504308178, guid: c7010f3d3fd946f4089012862c883970,
+    type: 2}
 --- !u!212 &212795490950899134
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -101,7 +101,7 @@ public class GameStart : MonoBehaviour {
         SpawnPoint temp = new SpawnPoint();
         Vector3 center = Camera.main.transform.position;
         var position = RandomCircle(center, radius);
-        Debug.DrawRay(center, position, Color.green, 10);
+        //Debug.DrawRay(center, position, Color.green, 10);
 
         if (Physics.Raycast(center, position, out hit, radius))
         {
