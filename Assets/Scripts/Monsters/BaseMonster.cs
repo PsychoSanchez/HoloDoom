@@ -17,7 +17,7 @@ namespace Assets.Scripts.Monsters
         protected bool _dead = false;
         protected Animator _animator;
         protected bool _playerFound;
-        protected Vector3 _playerPosition;
+        protected Transform _playerTransform;
 
         AudioSource audioSource;
 
@@ -58,7 +58,7 @@ namespace Assets.Scripts.Monsters
         // Update is called once per frame
         protected virtual void Update()
         {
-            this.GetComponent<SpriteRenderer>().transform.forward = Camera.main.transform.forward;
+            this.GetComponent<SpriteRenderer>().transform.forward = -Camera.main.transform.forward;
             // This method will be called all the time, while _health <= 0
             //if (_health <= 0)
             //{
@@ -66,10 +66,10 @@ namespace Assets.Scripts.Monsters
             //}
         }
 
-        public virtual void FindPlayer(Vector3 playerPosition)
+        public virtual void FindPlayer(Transform playerTransform)
         {
             _playerFound = true;
-            _playerPosition = playerPosition;
+            _playerTransform = playerTransform;
 
         }
     }

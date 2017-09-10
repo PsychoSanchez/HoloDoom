@@ -32,18 +32,10 @@ public class FindEnemies : MonoBehaviour
         Collider[] intersectingColliders = Physics.OverlapSphere(playerPosition, radius);
         foreach (Collider t in intersectingColliders)
         {
-<<<<<<< HEAD
             BaseMonster monster = t.gameObject.GetComponent<BaseMonster>();
             if (monster == null) continue;
 
-            monster.FindPlayer(playerPosition);
-=======
-            BaseMonster monster = intersectingColliders[i].gameObject.GetComponent<BaseMonster>();
-            if(monster!= null)
-            {
-                monster.FindPlayer(playerPosition);
-            }
->>>>>>> 3c6c5f89755e230efa39856da2e0d8bc34ce1ffc
+            monster.FindPlayer(this.gameObject.transform);
         }
     }
 }

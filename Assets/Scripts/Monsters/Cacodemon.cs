@@ -8,11 +8,17 @@ namespace Assets.Scripts.Monsters
         public float ShootDelay = 1f;
         public float Range = 20f;
         public int Damage = 5;
+        private float rotatingSpeed = 0.1f;
         int shootableMask;
         bool canShoot = true;
         float lastShot;
         RaycastHit shotHit;
         private bool isDead;
+        public GameObject shootPrefab;
+        ///TODD: Remove it from here and create new object
+        int projectileSpeed = 2;
+        float projectileLifeTime = 5.0f;
+
 
         protected override void Start()
         {
@@ -32,10 +38,10 @@ namespace Assets.Scripts.Monsters
             this._animator.SetBool("Attack", true);
         }
 
-        public override void FindPlayer(Vector3 playerPosition)
+        public override void FindPlayer(Transform playerTransfome)
         {
-            // base.FindPlayer(playerPosition);
-            // this._animator.SetBool("PlayerFound", true);
+            base.FindPlayer(playerTransfome);
+            this._animator.SetBool("PlayerFound", true);
         }
 
         protected override void Die()
@@ -68,7 +74,7 @@ namespace Assets.Scripts.Monsters
                 lastShot = 0;
                 canShoot = true;
             }
-            if (_playerFound)
+            if (_playerFound && canShoot)
             {
                 Shoot();
             }
@@ -79,7 +85,6 @@ namespace Assets.Scripts.Monsters
 
         public override void Shoot()
         {
-            if (!canShoot || !_playerFound) return;
             //this._animator.SetBool("Shoot", true);
             DoShootPlayer();
             base.Shoot();
@@ -87,14 +92,38 @@ namespace Assets.Scripts.Monsters
 
         private void DoShootPlayer()
         {
+            //Rotate prefab to player
+            //var rotationAngle = Quaternion.LookRotation(_playerTransform.position - transform.position);
+            //transform.rotation = Quaternion.Lerp(transform.rotation, rotationAngle, Time.deltaTime * rotatingSpeed);
+
+            //if (!CheckIfPlayeReachable()) return;
+            ThrowProjectile();
+            //player.TakeDamage(Damage);
+        }
+
+        private bool CheckIfPlayeReachable()
+        {
             RaycastHit hit;
             Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
-            if (!Physics.Raycast(this.transform.position, forward, out hit, Range)) return;
-            if (hit.collider == null) return;
-            if (hit.collider.tag != "Player") return;
+            if (!Physics.Raycast(this.transform.position, forward, out hit, Range)) return false;
+            if (hit.collider == null) return false;
+            if (hit.collider.tag != "Player") return false;
             var player = hit.collider.GetComponent<PlayerHealth>();
-            if (player == null) return;
-            player.TakeDamage(Damage);
+            if (player == null) return false;
+            return true;
+        }
+
+        private void ThrowProjectile()
+        {
+            if (shootPrefab == null) return;
+            GameObject projectile = Instantiate(shootPrefab, this.transform.position, Quaternion.LookRotation(this.transform.position - _playerTransform.position)) as GameObject;
+            if (projectile == null) return;
+            //projectile.transform.forward =  projectile.transform.position - _playerTransform.position;
+            //projectile.transform.forward = this.transform.forward;
+            //Rigidbody projectileRigidbody = projectile.GetComponent<Rigidbody>();
+            //if (projectileRigidbody == null) return;
+            //projectileRigidbody.velocity = (_playerTransform.position - transform.position).normalized * projectileSpeed; //transform.TransformDirection(Vector3.forward) * projectileSpeed;
+            Destroy(projectile, projectileLifeTime);
         }
     }
 }
