@@ -1,6 +1,4 @@
 ﻿using Assets.Scripts.Monsters;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FindEnemies : MonoBehaviour
@@ -24,6 +22,7 @@ public class FindEnemies : MonoBehaviour
 
         FindEnemie();
     }
+
 
     private void FindEnemie()
     {
