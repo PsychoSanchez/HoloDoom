@@ -74,7 +74,7 @@ namespace Assets.Scripts.Monsters
                 lastShot = 0;
                 canShoot = true;
             }
-            if (_playerFound && canShoot)
+            if (_playerFound && canShoot && !_dead)
             {
                 Shoot();
             }
