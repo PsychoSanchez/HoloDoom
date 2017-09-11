@@ -7,7 +7,7 @@ public class Trigger : MonoBehaviour {
 
     void OnTriggerEnter(Collider collider)
     {
-        if (collider.gameObject.name == "HoloLensCamera") return;
+        if (collider.gameObject.name == "Player") return;
 
         if (!(collider is BoxCollider)) return;
         PlayerHealth playerHealth = collider.gameObject.GetComponent<PlayerHealth>();
