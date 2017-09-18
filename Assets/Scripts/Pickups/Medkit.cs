@@ -8,14 +8,10 @@ public class Medkit : BasePickup
     public MedkitType Type;
 
     // Use this for initialization
-    void Start()
+    protected override void Start()
     {
+        base.Start();
         pickUpType = PickupType.Medkit;
-    }
-
-    // Update is called once per frame
-    void Update() {
-
     }
 
     public int GetHealth()

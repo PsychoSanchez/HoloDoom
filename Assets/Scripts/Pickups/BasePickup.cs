@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasePickup : MonoBehaviour
+public class BasePickup : OverridableMonoBehaviour
 {
 
     public float LifeTime = 10.0f;
@@ -10,15 +10,14 @@ public class BasePickup : MonoBehaviour
     public AudioClip SpawnSound;
     private float currentLifeTime;
     protected PickupType pickUpType;
-
     AudioSource audioSource;
 
+
     // Use this for initialization
-    void Start()
+    protected virtual void Start()
     {
 		currentLifeTime = 0.0f;
 		audioSource = GetComponent<AudioSource>();
-		Debug.Log(audioSource);
         if (audioSource != null && SpawnSound != null)
         {
             audioSource.PlayOneShot(SpawnSound, 0.7F);
@@ -26,7 +25,7 @@ public class BasePickup : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    protected virtual void Update()
     {
         currentLifeTime += Time.deltaTime;
         if (currentLifeTime >= this.LifeTime)

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Monsters
 {
-    public class BaseMonster : MonoBehaviour
+    public class BaseMonster : OverridableMonoBehaviour
     {
         public AudioClip SpawnSound;
         public AudioClip TakeDamageSound;
@@ -19,11 +19,13 @@ namespace Assets.Scripts.Monsters
         protected bool _playerFound;
         protected Transform _playerTransform;
 
-        AudioSource audioSource;
+        private SpriteRenderer _sprite;
+        private float _renderUpdate;
+
+        AudioSource _audioSource;
 
         public virtual void Spawn()
         {
-
         }
 
         public virtual bool IsAlive()
@@ -38,7 +40,7 @@ namespace Assets.Scripts.Monsters
 
         protected virtual void Die()
         {
-            audioSource.PlayOneShot(DeathSound, 0.7F);
+            _audioSource.PlayOneShot(DeathSound, 0.7F);
             _dead = true;
         }
 
@@ -50,7 +52,8 @@ namespace Assets.Scripts.Monsters
         // Use this for initialization
         protected virtual void Start()
         {
-            audioSource = GetComponent<AudioSource>();
+            _audioSource = GetComponent<AudioSource>();
+            _sprite = GetComponent<SpriteRenderer>();
             _health = 100;
             _armor = 0;
         }
@@ -58,7 +61,13 @@ namespace Assets.Scripts.Monsters
         // Update is called once per frame
         protected virtual void Update()
         {
-            this.GetComponent<SpriteRenderer>().transform.forward = -Camera.main.transform.forward;
+            if (_sprite == null) return;
+            _renderUpdate += Time.deltaTime;
+            if (_renderUpdate >= 0.32f)
+            {
+                _sprite.transform.forward = -Camera.main.transform.forward;
+                _renderUpdate = 0f;
+            }
             // This method will be called all the time, while _health <= 0
             //if (_health <= 0)
             //{
@@ -70,7 +79,6 @@ namespace Assets.Scripts.Monsters
         {
             _playerFound = true;
             _playerTransform = playerTransform;
-
         }
     }
 }

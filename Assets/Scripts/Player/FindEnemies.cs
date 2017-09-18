@@ -1,7 +1,7 @@
 ﻿using Assets.Scripts.Monsters;
 using UnityEngine;
 
-public class FindEnemies : MonoBehaviour
+public class FindEnemies : OverridableMonoBehaviour
 {
     public float radius = 3;
     private float time = 0.0f;
@@ -20,11 +20,11 @@ public class FindEnemies : MonoBehaviour
         if (!(time >= deltaTime)) return;
         time = time - deltaTime;
 
-        FindEnemie();
+        FindEnemy();
     }
 
 
-    private void FindEnemie()
+    private void FindEnemy()
     {
         Vector3 playerPosition = this.gameObject.transform.position;
 

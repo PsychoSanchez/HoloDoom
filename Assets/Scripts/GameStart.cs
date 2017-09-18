@@ -1,8 +1,10 @@
-﻿using Assets.Scripts.Monsters;
+﻿using System;
+using Assets.Scripts.Monsters;
 using UnityEngine;
 
-public class GameStart : MonoBehaviour {
-    
+public class GameStart : MonoBehaviour
+{
+
     AudioSource audioSource;
     public Cacodemon monster;
     public Ammo[] Ammo;
@@ -12,7 +14,10 @@ public class GameStart : MonoBehaviour {
     public float timeBetweenAmmoSpawn = 12.0f;
     public float timeBetweenMedkitSpawn = 25.0f;
     public float timeBetweenArmorSpawn = 30.0f;
+    public event EventHandler GameStarted;
+    public event EventHandler GameStoped;
 
+    bool bPlaying = false;
     float lastEnemySpawn;
     float lastAmmoSpawn;
     float lastArmorSpawn;
@@ -27,6 +32,11 @@ public class GameStart : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
+        if (!bPlaying)
+        {
+            return;
+        }
+        
         lastEnemySpawn += Time.deltaTime;
         lastAmmoSpawn += Time.deltaTime;
         lastArmorSpawn += Time.deltaTime;
@@ -42,22 +52,41 @@ public class GameStart : MonoBehaviour {
             SpawnAmmo();
         }
 
-        if(lastMedkitSpawn >= timeBetweenMedkitSpawn)
+        if (lastMedkitSpawn >= timeBetweenMedkitSpawn)
         {
             SpawnMedkit();
         }
 
-        if(lastArmorSpawn >= timeBetweenArmorSpawn)
+        if (lastArmorSpawn >= timeBetweenArmorSpawn)
         {
             SpawnArmor();
         }
     }
 
+    public void StartGame()
+    {
+        bPlaying = true;
+        EventHandler connectedEvent = GameStarted;
+        if (connectedEvent != null)
+        {
+            connectedEvent(this, EventArgs.Empty);
+        }
+    }
+
+    public void StopGame()
+    {
+        bPlaying = false;
+        EventHandler connectedEvent = GameStoped;
+        if (connectedEvent != null)
+        {
+            connectedEvent(this, EventArgs.Empty);
+        }
+    }
     public void SpawnAmmo()
     {
         lastAmmoSpawn = 0f;
         var sp = GetSpawnPosition(2.0f);
-        var ammo = this.Ammo[Random.Range(0, this.Ammo.Length - 1)];
+        var ammo = this.Ammo[UnityEngine.Random.Range(0, this.Ammo.Length - 1)];
         Instantiate(ammo, sp.position, sp.rotation);
     }
 
@@ -65,7 +94,7 @@ public class GameStart : MonoBehaviour {
     {
         lastMedkitSpawn = 0f;
         var sp = GetSpawnPosition(2.0f);
-        var medkit = this.Medkits[Random.Range(0, this.Medkits.Length - 1)];
+        var medkit = this.Medkits[UnityEngine.Random.Range(0, this.Medkits.Length - 1)];
         Instantiate(medkit, sp.position, sp.rotation);
 
     }
@@ -74,7 +103,7 @@ public class GameStart : MonoBehaviour {
     {
         lastArmorSpawn = 0f;
         var sp = GetSpawnPosition(2.0f);
-        var armor = this.Armor[Random.Range(0, this.Armor.Length - 1)];
+        var armor = this.Armor[UnityEngine.Random.Range(0, this.Armor.Length - 1)];
         Instantiate(armor, sp.position, sp.rotation);
     }
 
@@ -88,7 +117,7 @@ public class GameStart : MonoBehaviour {
 
     Vector3 RandomCircle(Vector3 center, float radius)
     {
-        float ang = Random.value * 360;
+        float ang = UnityEngine.Random.value * 360;
         Vector3 pos;
         pos.x = center.x + radius * Mathf.Sin(ang * Mathf.Deg2Rad);
         pos.z = center.z + radius * Mathf.Cos(ang * Mathf.Deg2Rad);

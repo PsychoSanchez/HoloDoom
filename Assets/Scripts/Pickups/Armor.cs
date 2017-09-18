@@ -6,15 +6,12 @@ public class Armor : BasePickup {
     public int ArmorAmount = 25;
 
     // Use this for initialization
-    void Start ()
+    protected override void Start ()
     {
+        base.Start();
         pickUpType = PickupType.Armor;
     }
 	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 
     public int GetArmor()
     {

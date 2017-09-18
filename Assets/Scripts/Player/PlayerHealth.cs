@@ -2,7 +2,7 @@
 using UnityEngine.UI;
 using System;
 
-public class PlayerHealth : MonoBehaviour
+public class PlayerHealth : OverridableMonoBehaviour
 {
 
     public int StartHealth = 100;

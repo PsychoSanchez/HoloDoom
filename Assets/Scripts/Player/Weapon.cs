@@ -2,7 +2,7 @@
 using Assets.Scripts.Monsters;
 using UnityEngine;
 
-public class Weapon : MonoBehaviour
+public class Weapon : OverridableMonoBehaviour
 {
     public Animator WeaponSprite;
     public AudioSource GunAudio;
@@ -13,7 +13,7 @@ public class Weapon : MonoBehaviour
 
     //mb protected???
     // MAYBE
-    int shootableMask;
+    // int shootableMask;
     bool canShoot = true;
     float lastShot;
     RaycastHit shotHit;
@@ -21,7 +21,7 @@ public class Weapon : MonoBehaviour
     // Use this for initialization
     protected void Start()
     {
-        shootableMask = LayerMask.GetMask("Shootable");
+        // shootableMask = LayerMask.GetMask("Shootable");
     }
 
     // Update is called once per frame
@@ -60,7 +60,7 @@ public class Weapon : MonoBehaviour
         WeaponSprite.Play("Shoot");
 
         // Debug.DrawRay(headRay.origin, headRay.direction, Color.white,  20.0f, false);
-        if (Physics.Raycast(headRay, out shotHit, Range*10))
+        if (Physics.Raycast(headRay, out shotHit, Range * 10))
         {
             // Shoot enemies
             if (shotHit.collider.tag != "Enemy")
@@ -68,9 +68,12 @@ public class Weapon : MonoBehaviour
                 return;
             }
 
-            var monster = shotHit.collider.GetComponent<BaseMonster>();
+            BaseMonster monster = shotHit.collider.GetComponent<BaseMonster>();
             if (monster == null)
             {
+                var enemyHealth = shotHit.collider.GetComponent<Durability>();
+                enemyHealth.TakeDamage(Damage);
+
                 return;
             }
             monster.GetHit(Damage);
