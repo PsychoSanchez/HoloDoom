@@ -133,7 +133,7 @@ PlayerSettings:
       depthFormat: 0
       useSustainedPerformanceMode: 0
     hololens:
-      depthFormat: 1
+      depthFormat: 0
   protectGraphicsMemory: 0
   useHDRDisplay: 0
   applicationIdentifier: {}
@@ -512,7 +512,7 @@ PlayerSettings:
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
   metroPackageName: ARDoom
-  metroPackageVersion: 
+  metroPackageVersion: 1.0.0.0
   metroCertificatePath: Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
   metroCertificateSubject: DefaultCompany
@@ -669,13 +669,13 @@ PlayerSettings:
     1638432: Assets/TileGenerator/32x32.png
     1638448: Assets/TileGenerator/48x48.png
     1638480: Assets/TileGenerator/
-    1638500: Assets/TileGenerator/
+    1638500: 
     1638525: Assets/TileGenerator/
-    1638540: Assets/TileGenerator/
+    1638540: 
     1638550: Assets/TileGenerator/
     1638580: Assets/TileGenerator/
     1638600: Assets/TileGenerator/
-    1638640: Assets/TileGenerator/
+    1638640: 
     1638656: Assets/TileGenerator/256x256.png
     1638800: Assets/TileGenerator/
     2031632: Assets/TileGenerator/16x16.png
@@ -743,7 +743,7 @@ PlayerSettings:
     2293960: Assets/TileGenerator/620x300.png
     2294000: Assets/TileGenerator/744x360.png
     2294160: Assets/TileGenerator/1240x600.png
-  metroTileShortName: 
+  metroTileShortName: ARDoom
   metroCommandLineArgsFile: 
   metroTileShowName: 0
   metroMediumTileShowName: 0
@@ -757,9 +757,30 @@ PlayerSettings:
   metroSplashScreenUseBackgroundColor: 0
   platformCapabilities:
     WindowsStoreApps:
+      AllJoyn: False
+      BlockedChatMessages: False
+      Bluetooth: False
+      Chat: False
+      CodeGeneration: False
+      EnterpriseAuthentication: False
+      HumanInterfaceDevice: False
+      InputInjectionBrokered: False
       InternetClient: True
+      InternetClientServer: True
+      Location: False
       Microphone: True
+      MusicLibrary: False
+      Objects3D: False
+      PhoneCall: False
+      PicturesLibrary: False
+      PrivateNetworkClientServer: True
+      Proximity: False
+      RemovableStorage: False
+      SharedUserCertificates: False
       SpatialPerception: True
+      UserAccountInformation: False
+      VideosLibrary: False
+      VoipCall: False
       WebCam: False
   metroFTAName: 
   metroFTAFileTypes: []

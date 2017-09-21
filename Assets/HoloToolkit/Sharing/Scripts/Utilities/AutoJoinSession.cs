@@ -43,47 +43,73 @@ namespace HoloToolkit.Sharing.Utilities
             }
 
             // If we are a Primary Client and can join sessions...
+
             if (sessionsTracker != null && sessionsTracker.Sessions.Count > 0)
             {
-                // Check to see if we aren't already in the desired session
-                Session currentSession = sessionsTracker.GetCurrentSession();
+                FindSession();
+            }
+        }
 
-                if (currentSession == null ||                                                    // We aren't in any session
-                    currentSession.GetName().GetString() != SessionName ||                       // We're in the wrong session
-                    currentSession.GetMachineSessionState() == MachineSessionState.DISCONNECTED) // We aren't joined or joining the right session
+        private void FindSession()
+        {
+            // Check to see if we aren't already in the desired session
+            Session currentSession = sessionsTracker.GetCurrentSession();
+            if (currentSession == null ||                                                    // We aren't in any session
+                              currentSession.GetName().GetString() != SessionName ||                       // We're in the wrong session
+                              currentSession.GetMachineSessionState() == MachineSessionState.DISCONNECTED) // We aren't joined or joining the right session
+            {
+                TryJoinSession(currentSession);
+
+            }
+        }
+        private void TryJoinSession(Session currentSession)
+        {
+            Log();
+            bool sessionFound = JoinSession();
+
+            if (sessionsTracker.IsServerConnected && !sessionFound && !sessionCreationRequested)
+            {
+                if (SharingStage.Instance.ShowDetailedLogs)
                 {
-                    if (SharingStage.Instance.ShowDetailedLogs)
-                    {
-                        Debug.LogFormat("AutoJoinSession: Session connected is {0} with {1} Sessions.", sessionsTracker.IsServerConnected.ToString(), sessionsTracker.Sessions.Count.ToString());
-                        Debug.Log("AutoJoinSession: Looking for " + SessionName);
-                    }
-                    bool sessionFound = false;
-
-                    for (int i = 0; i < sessionsTracker.Sessions.Count; ++i)
-                    {
-                        Session session = sessionsTracker.Sessions[i];
-
-                        if (session.GetName().GetString() == SessionName)
-                        {
-                            sessionsTracker.JoinSession(session);
-                            sessionFound = true;
-                            break;
-                        }
-                    }
-
-                    if (sessionsTracker.IsServerConnected && !sessionFound && !sessionCreationRequested)
-                    {
-                        if (SharingStage.Instance.ShowDetailedLogs)
-                        {
-                            Debug.Log("Didn't find session, making a new one");
-                        }
-
-                        if (sessionsTracker.CreateSession(new XString(SessionName)))
-                        {
-                            sessionCreationRequested = true;
-                        }
-                    }
+                    Debug.Log("Didn't find session, making a new one");
                 }
+
+                CreateSession();
+            }
+        }
+
+        private void CreateSession()
+        {
+            if (sessionsTracker.CreateSession(new XString(SessionName)))
+            {
+                sessionCreationRequested = true;
+            }
+        }
+
+        private bool JoinSession()
+        {
+            bool sessionFound = false;
+            for (int i = 0; i < sessionsTracker.Sessions.Count; ++i)
+            {
+                Session session = sessionsTracker.Sessions[i];
+
+                if (session.GetName().GetString() == SessionName)
+                {
+                    sessionsTracker.JoinSession(session);
+                    sessionFound = true;
+                    break;
+                }
+            }
+
+            return sessionFound;
+        }
+
+        private void Log()
+        {
+            if (SharingStage.Instance.ShowDetailedLogs)
+            {
+                Debug.LogFormat("AutoJoinSession: Session connected is {0} with {1} Sessions.", sessionsTracker.IsServerConnected.ToString(), sessionsTracker.Sessions.Count.ToString());
+                Debug.Log("AutoJoinSession: Looking for " + SessionName);
             }
         }
     }

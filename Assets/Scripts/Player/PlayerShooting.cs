@@ -24,13 +24,25 @@ public class PlayerShooting : OverridableMonoBehaviour
 
     private void Recognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
     {
-        if (CurrentWeapon == null)
-        {
-            return;
-        }
+        OnClick(headRay);
+    }
 
-        CurrentWeapon.Shoot(headRay);
-        UpdateUI();
+    private void OnClick(Ray headRay)
+    {
+        switch (AppStateManager.Instance.GetCurrentAppState())
+        {
+            case AppState.Ready:
+                if (CurrentWeapon == null)
+                {
+                    return;
+                }
+                CurrentWeapon.Shoot(headRay);
+                UpdateUI();
+                break;
+            case AppState.WaitingForAnchor:
+                AnchorPlacement.Instance.SendMessage("OnSelect");
+                break;
+        }
     }
 
     // Update is called once per frame
@@ -38,8 +50,7 @@ public class PlayerShooting : OverridableMonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            CurrentWeapon.Shoot(new Ray(Camera.main.transform.position, Camera.main.transform.forward));
-            UpdateUI();
+            OnClick(new Ray(Camera.main.transform.position, Camera.main.transform.forward));
         }
     }
     public void AddAmmo(int amt)

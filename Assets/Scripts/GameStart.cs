@@ -1,8 +1,9 @@
 ﻿using System;
 using Assets.Scripts.Monsters;
+using HoloToolkit.Unity;
 using UnityEngine;
 
-public class GameStart : MonoBehaviour
+public class GameStart : Singleton<GameStart>
 {
 
     AudioSource audioSource;
@@ -36,7 +37,7 @@ public class GameStart : MonoBehaviour
         {
             return;
         }
-        
+
         lastEnemySpawn += Time.deltaTime;
         lastAmmoSpawn += Time.deltaTime;
         lastArmorSpawn += Time.deltaTime;

@@ -266,7 +266,7 @@ namespace HoloToolkit.Sharing
             }
         }
 
-        private void Connect()
+        public void Connect()
         {
             var config = new ClientConfig(ClientRole);
             config.SetIsAudioEndpoint(IsAudioEndpoint);

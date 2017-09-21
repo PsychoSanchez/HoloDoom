@@ -28,12 +28,14 @@ namespace HoloToolkit.Unity.InputModule
         /// </summary>
         public Transform ParentTransform;
 
+        public GameObject overridableCursor;
+
         /// <summary>
         /// On enable look for a sprite renderer on children
         /// </summary>
         protected override void OnEnable()
         {
-            if(ParentTransform == null)
+            if (ParentTransform == null)
             {
                 ParentTransform = transform;
             }
@@ -59,7 +61,7 @@ namespace HoloToolkit.Unity.InputModule
 
                 // First, try to find a cursor for the current state
                 var newActive = new ObjectCursorDatum();
-                for(int cursorIndex = 0; cursorIndex < CursorStateData.Length; cursorIndex++)
+                for (int cursorIndex = 0; cursorIndex < CursorStateData.Length; cursorIndex++)
                 {
                     ObjectCursorDatum cursor = CursorStateData[cursorIndex];
                     if (cursor.CursorState == state)
@@ -78,7 +80,7 @@ namespace HoloToolkit.Unity.InputModule
 
                 // If we come here, there is a cursor for the new state, 
                 // so de-activate a possible earlier active cursor
-                for(int cursorIndex = 0; cursorIndex < CursorStateData.Length; cursorIndex++)
+                for (int cursorIndex = 0; cursorIndex < CursorStateData.Length; cursorIndex++)
                 {
                     ObjectCursorDatum cursor = CursorStateData[cursorIndex];
                     if (cursor.CursorObject.activeSelf)
