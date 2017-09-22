@@ -48,9 +48,6 @@ public class AppStateManager : Singleton<AppStateManager>
     {
         UIManger.Instance.LogMessage("Waiting for connection...");
         SetCurrentAppState(AppState.WaitingForConection);
-
-        // SpatialMappingManager.Instance.StopObserver();
-        // SpatialMappingManager.Instance.gameObject.SetActive(false);
         InitSharingManager();
     }
 
@@ -81,35 +78,36 @@ public class AppStateManager : Singleton<AppStateManager>
                 break;
             case AppState.WaitingForAnchor:
                 UIManger.Instance.LogMessage("Waiting for anchor to place");
-                // SpatialMappingManager.Instance.gameObject.SetActive(true);
-                // SpatialMappingManager.Instance.StartObserver();
                 if (ImportExportAnchorManager.Instance.AnchorEstablished)
                 {
                     UIManger.Instance.LogMessage("AnchorEstablished");
-                    // SetCurrentAppState()
                     UIManger.Instance.ToggleMode(UIMode.None);
-                    SpatialMappingManager.Instance.gameObject.SetActive(true);
-                    SpatialMappingManager.Instance.DrawVisualMeshes = true;
-                    SpatialMappingManager.Instance.StartObserver();
-                    // currentAppState = AppState.WaitingForStageTransform;
-                    // GestureManager.Instance.OverrideFocusedObject = ImportExportAnchorManager.Instance.gameObject;
+                    EnableMapping();
                 }
                 break;
             case AppState.WaitingForStageTransform:
                 UIManger.Instance.LogMessage("Waiting for stage transform...");
-                // Now if we have the stage transform we are ready to go.
-                // if (HologramPlacement.Instance.GotTransform)
-                // {
-                //     CurrentAppState = AppState.Ready;
-                //     GestureManager.Instance.OverrideFocusedObject = null;
-                // }
+                UIManger.Instance.ToggleMode(UIMode.None);
+                EnableMapping();
+
+                // Hide anchor
+                AnchorPlacement.Instance.gameObject.SetActive(false);
                 break;
             case AppState.Ready:
-                UIManger.Instance.LogMessage("AnchorEstablished");
 
+                // Show anchor
+                AnchorPlacement.Instance.gameObject.SetActive(true);
+                UIManger.Instance.LogMessage("Game start");
                 UIManger.Instance.ToggleMode(UIMode.Game);
                 break;
         }
         needUpdate = false;
+    }
+
+    private static void EnableMapping()
+    {
+        SpatialMappingManager.Instance.gameObject.SetActive(true);
+        SpatialMappingManager.Instance.DrawVisualMeshes = true;
+        SpatialMappingManager.Instance.StartObserver();
     }
 }

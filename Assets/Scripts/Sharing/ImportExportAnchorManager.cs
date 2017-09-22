@@ -336,6 +336,10 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
                 // DataReady is set when the anchor download completes.
                 CurrentState = ImportExportState.Importing;
                 WorldAnchorTransferBatch.ImportAsync(rawAnchorData, ImportComplete);
+                AppStateManager.Instance.SetCurrentAppState(AppState.Ready);
+                break;
+            case ImportExportState.DataRequested:
+                AppStateManager.Instance.SetCurrentAppState(AppState.WaitingForStageTransform);
                 break;
             case ImportExportState.InitialAnchorRequired:
                 CurrentState = ImportExportState.CreatingInitialAnchor;

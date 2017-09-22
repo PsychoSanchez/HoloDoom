@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GameStart : Singleton<GameStart>
 {
-
     AudioSource audioSource;
     public Cacodemon monster;
     public Ammo[] Ammo;
@@ -17,6 +16,7 @@ public class GameStart : Singleton<GameStart>
     public float timeBetweenArmorSpawn = 30.0f;
     public event EventHandler GameStarted;
     public event EventHandler GameStoped;
+    public Transform SpawnTransform;
 
     bool bPlaying = false;
     float lastEnemySpawn;
@@ -33,7 +33,7 @@ public class GameStart : Singleton<GameStart>
     // Update is called once per frame
     void Update()
     {
-        if (!bPlaying)
+        if (AppStateManager.Instance.GetCurrentAppState() != AppState.Ready)
         {
             return;
         }
@@ -66,7 +66,6 @@ public class GameStart : Singleton<GameStart>
 
     public void StartGame()
     {
-        bPlaying = true;
         EventHandler connectedEvent = GameStarted;
         if (connectedEvent != null)
         {
@@ -130,6 +129,11 @@ public class GameStart : Singleton<GameStart>
     {
         SpawnPoint temp = new SpawnPoint();
         Vector3 center = Camera.main.transform.position;
+        if (SpawnTransform != null)
+        {
+            center.x = SpawnTransform.position.x;
+            center.z = SpawnTransform.position.z;
+        }
         var position = RandomCircle(center, radius);
         //Debug.DrawRay(center, position, Color.green, 10);
 

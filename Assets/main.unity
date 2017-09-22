@@ -366,6 +366,7 @@ MonoBehaviour:
   timeBetweenAmmoSpawn: 12
   timeBetweenMedkitSpawn: 15
   timeBetweenArmorSpawn: 10
+  SpawnTransform: {fileID: 1049281530}
 --- !u!224 &127634736
 RectTransform:
   m_ObjectHideFlags: 0
@@ -973,7 +974,7 @@ Camera:
     height: 1
   near clip plane: 0.55
   far clip plane: 1000
-  field of view: 45
+  field of view: 17
   orthographic: 0
   orthographic size: 5
   m_Depth: -1

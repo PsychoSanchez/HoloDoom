@@ -52,18 +52,19 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
     // Update is called once per frame
     void Update()
     {
-        if (AppStateManager.Instance.GetCurrentAppState() != AppState.WaitingForAnchor)
+        switch (AppStateManager.Instance.GetCurrentAppState())
         {
-            return;
+            case AppState.WaitingForAnchor:
+                ProposePosition();
+                break;
+            case AppState.Ready:
+                break;
         }
-        if (GotTransform)
-        {
-            if (ImportExportAnchorManager.Instance.AnchorEstablished)
-            {
+    }
 
-            }
-        }
-        else if (cursor != null)
+    private void ProposePosition()
+    {
+        if (!GotTransform && cursor != null)
         {
             transform.position = cursor.Position;
             transform.rotation = cursor.Rotation;
