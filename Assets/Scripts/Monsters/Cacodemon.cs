@@ -35,45 +35,20 @@ namespace Assets.Scripts.Monsters
                 Die();
                 return;
             }
-            this._animator.SetTrigger("Hit");
-            this._animator.SetBool("Attack", true);
+            // this._animator.SetTrigger("Hit");
+            // this._animator.SetBool("Attack", true);
         }
 
         public override void FindPlayer(Transform playerTransform)
         {
             base.FindPlayer(playerTransform);
-            this._animator.SetBool("PlayerFound", true);
+            // this._animator.SetBool("PlayerFound", true);
         }
 
         protected override void Die()
         {
             base.Die();
-
-            StartCoroutine(DieAfterDelay());
-
-            this._animator.SetBool("Dead", true);
         }
-
-        IEnumerator DieAfterDelay()
-        {
-            yield return new WaitForSeconds(0.3f);
-
-            if (_rigidBody != null)
-            {
-                _rigidBody.useGravity = true;
-
-                Debug.Log("rigid body enabled");
-
-                // StartCoroutine(DisablePhysicsCouroutine());
-            }
-        }
-
-        // IEnumerator DisablePhysicsCouroutine()
-        // {
-        //     yield return new WaitForSeconds(1.0f);
-
-        //     ClearResources();
-        // }
 
         /**
         Disables physics and prevents update
@@ -89,15 +64,23 @@ namespace Assets.Scripts.Monsters
 
         protected override void Update()
         {
+            base.Update();
             if (resourcesCleared)
             {
-                base.Update();
+                return;
+            }
+            if (AppStateManager.Instance.GetCurrentAppState() != AppState.Ready)
+            {
                 return;
             }
 
-
             if (_dead)
             {
+                if (_rigidBody != null && _dieAnim.Frame == 2)
+                {
+                    _rigidBody.useGravity = true;
+                    Debug.Log("rigid body enabled");
+                }
                 Fall();
                 return;
             }

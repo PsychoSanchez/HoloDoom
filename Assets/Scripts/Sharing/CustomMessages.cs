@@ -15,7 +15,9 @@ public class CustomMessages : Singleton<CustomMessages>
         HeadTransform = MessageID.UserMessageIDStart,
         UserAvatar,
         UserHit,
+        EnemyHit,
         ShootProjectile,
+        SpawnEnemy,
         StageTransform,
         ResetStage,
         ExplodeTarget,
@@ -136,6 +138,45 @@ public class CustomMessages : Singleton<CustomMessages>
         }
     }
 
+    public void SendSpawnEnemy(Vector3 position, Vector3 direction)
+    {
+        // If we are connected to a session, broadcast our head info
+        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        {
+            // Create an outgoing network message to contain all the info we want to send
+            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.SpawnEnemy);
+
+            AppendVector3(msg, position);
+            AppendVector3(msg, direction);
+
+            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+            this.serverConnection.Broadcast(
+                msg,
+                MessagePriority.Immediate,
+                MessageReliability.Reliable,
+                MessageChannel.Avatar);
+        }
+    }
+
+    public void SendEnemyHit(long HitUserID)
+    {
+        // If we are connected to a session, broadcast our head info
+        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        {
+            // Create an outgoing network message to contain all the info we want to send
+            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.EnemyHit);
+
+            msg.Write(HitUserID);
+
+            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+            this.serverConnection.Broadcast(
+                msg,
+                MessagePriority.Medium,
+                MessageReliability.ReliableOrdered,
+                MessageChannel.Avatar);
+        }
+    }
+
     public void SendUserAvatar(int UserAvatarID)
     {
         // If we are connected to a session, broadcast our head info
@@ -155,24 +196,6 @@ public class CustomMessages : Singleton<CustomMessages>
         }
     }
 
-    public void SendUserHit(long HitUserID)
-    {
-        // If we are connected to a session, broadcast our head info
-        if (this.serverConnection != null && this.serverConnection.IsConnected())
-        {
-            // Create an outgoing network message to contain all the info we want to send
-            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.UserHit);
-
-            msg.Write(HitUserID);
-
-            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
-            this.serverConnection.Broadcast(
-                msg,
-                MessagePriority.Medium,
-                MessageReliability.ReliableOrdered,
-                MessageChannel.Avatar);
-        }
-    }
 
     public void SendStageTransform(Vector3 position, Quaternion rotation)
     {
