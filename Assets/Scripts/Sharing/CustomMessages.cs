@@ -100,157 +100,164 @@ public class CustomMessages : Singleton<CustomMessages>
     public void SendHeadTransform(Vector3 position, Quaternion rotation, byte HasAnchor)
     {
         // If we are connected to a session, broadcast our head info
-        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        if (!IsConnected())
         {
-            // Create an outgoing network message to contain all the info we want to send
-            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.HeadTransform);
-
-            AppendTransform(msg, position, rotation);
-
-            msg.Write(HasAnchor);
-
-            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
-            this.serverConnection.Broadcast(
-                msg,
-                MessagePriority.Immediate,
-                MessageReliability.UnreliableSequenced,
-                MessageChannel.Avatar);
+            return;
         }
+
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.HeadTransform);
+
+        AppendTransform(msg, position, rotation);
+
+        msg.Write(HasAnchor);
+
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Immediate,
+            MessageReliability.UnreliableSequenced,
+            MessageChannel.Avatar);
+    }
+
+    private bool IsConnected()
+    {
+        return this.serverConnection != null && this.serverConnection.IsConnected();
     }
 
     public void SendShootProjectile(Vector3 position, Vector3 direction)
     {
-        // If we are connected to a session, broadcast our head info
-        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        if (!IsConnected())
         {
-            // Create an outgoing network message to contain all the info we want to send
-            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.ShootProjectile);
-
-            AppendVector3(msg, position + (direction * 0.016f));
-            AppendVector3(msg, direction);
-
-            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
-            this.serverConnection.Broadcast(
-                msg,
-                MessagePriority.Immediate,
-                MessageReliability.Reliable,
-                MessageChannel.Avatar);
+            return;
         }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.ShootProjectile);
+
+        AppendVector3(msg, position + (direction * 0.016f));
+        AppendVector3(msg, direction);
+
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Immediate,
+            MessageReliability.Reliable,
+            MessageChannel.Avatar);
     }
 
     public void SendSpawnEnemy(Vector3 position, Vector3 direction)
     {
-        // If we are connected to a session, broadcast our head info
-        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        if (!IsConnected())
         {
-            // Create an outgoing network message to contain all the info we want to send
-            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.SpawnEnemy);
-
-            AppendVector3(msg, position);
-            AppendVector3(msg, direction);
-
-            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
-            this.serverConnection.Broadcast(
-                msg,
-                MessagePriority.Immediate,
-                MessageReliability.Reliable,
-                MessageChannel.Avatar);
+            return;
         }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.SpawnEnemy);
+
+        AppendVector3(msg, position);
+        AppendVector3(msg, direction);
+
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Immediate,
+            MessageReliability.Reliable,
+            MessageChannel.Avatar);
     }
 
     public void SendEnemyHit(long HitUserID)
     {
-        // If we are connected to a session, broadcast our head info
-        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        if (!IsConnected())
         {
-            // Create an outgoing network message to contain all the info we want to send
-            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.EnemyHit);
-
-            msg.Write(HitUserID);
-
-            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
-            this.serverConnection.Broadcast(
-                msg,
-                MessagePriority.Medium,
-                MessageReliability.ReliableOrdered,
-                MessageChannel.Avatar);
+            return;
         }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.EnemyHit);
+
+        msg.Write(HitUserID);
+
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Medium,
+            MessageReliability.ReliableOrdered,
+            MessageChannel.Avatar);
     }
 
     public void SendUserAvatar(int UserAvatarID)
     {
-        // If we are connected to a session, broadcast our head info
-        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        if (!IsConnected())
         {
-            // Create an outgoing network message to contain all the info we want to send
-            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.UserAvatar);
-
-            msg.Write(UserAvatarID);
-
-            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
-            this.serverConnection.Broadcast(
-                msg,
-                MessagePriority.Medium,
-                MessageReliability.Reliable,
-                MessageChannel.Avatar);
+            return;
         }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.UserAvatar);
+
+        msg.Write(UserAvatarID);
+
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Medium,
+            MessageReliability.Reliable,
+            MessageChannel.Avatar);
     }
 
 
     public void SendStageTransform(Vector3 position, Quaternion rotation)
     {
-        // If we are connected to a session, broadcast our head info
-        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        if (!IsConnected())
         {
-            // Create an outgoing network message to contain all the info we want to send
-            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.StageTransform);
-
-            AppendTransform(msg, position, rotation);
-
-            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
-            this.serverConnection.Broadcast(
-                msg,
-                MessagePriority.Immediate,
-                MessageReliability.ReliableOrdered,
-                MessageChannel.Avatar);
+            return;
         }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.StageTransform);
+
+        AppendTransform(msg, position, rotation);
+
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Immediate,
+            MessageReliability.ReliableOrdered,
+            MessageChannel.Avatar);
     }
 
     public void SendResetStage()
     {
-        // If we are connected to a session, broadcast our head info
-        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        if (!IsConnected())
         {
-            // Create an outgoing network message to contain all the info we want to send
-            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.ResetStage);
-
-            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
-            this.serverConnection.Broadcast(
-                msg,
-                MessagePriority.Immediate,
-                MessageReliability.ReliableOrdered,
-                MessageChannel.Avatar);
+            return;
         }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.ResetStage);
+
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Immediate,
+            MessageReliability.ReliableOrdered,
+            MessageChannel.Avatar);
     }
 
     public void SendExplodeTarget()
     {
-        // If we are connected to a session, broadcast that the target exploded.
-        if (this.serverConnection != null && this.serverConnection.IsConnected())
+        if (!IsConnected())
         {
-            // Create an outgoing network message to contain all the info we want to send.
-            NetworkOutMessage msg = CreateMessage((byte)TestMessageID.ExplodeTarget);
-
-            // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
-            this.serverConnection.Broadcast(
-                msg,
-                MessagePriority.Immediate,
-                MessageReliability.ReliableOrdered,
-                MessageChannel.Avatar);
+            return;
         }
+        // Create an outgoing network message to contain all the info we want to send.
+        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.ExplodeTarget);
+
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Immediate,
+            MessageReliability.ReliableOrdered,
+            MessageChannel.Avatar);
     }
 
-    void OnDestroy()
+    protected override void OnDestroy()
     {
         if (this.serverConnection != null)
         {
@@ -260,6 +267,8 @@ public class CustomMessages : Singleton<CustomMessages>
             }
             this.connectionAdapter.MessageReceivedCallback -= OnMessageReceived;
         }
+
+        base.OnDestroy();
     }
 
     void OnMessageReceived(NetworkConnection connection, NetworkInMessage msg)

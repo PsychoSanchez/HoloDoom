@@ -15,6 +15,7 @@ namespace HoloToolkit.Sharing.Tests
     /// </summary>
     public class RemoteHeadManager : Singleton<RemoteHeadManager>
     {
+        public GameObject HeadObject;
         public class RemoteHeadInfo
         {
             public long UserID;
@@ -53,12 +54,13 @@ namespace HoloToolkit.Sharing.Tests
         {
             // Grab the current head transform and broadcast it to all the other users in the session
             // Transform headTransform = CameraCache.Main.transform;
+            Transform headTransform = Camera.main.transform;
 
             // Transform the head position and rotation from world space into local space
-            // Vector3 headPosition = transform.InverseTransformPoint(headTransform.position);
-            // Quaternion headRotation = Quaternion.Inverse(transform.rotation) * headTransform.rotation;
+            Vector3 headPosition = transform.InverseTransformPoint(headTransform.position);
+            Quaternion headRotation = Quaternion.Inverse(transform.rotation) * headTransform.rotation;
 
-            // CustomMessages.Instance.SendHeadTransform(headPosition, headRotation);
+            CustomMessages.Instance.SendHeadTransform(headPosition, headRotation, );
         }
 
         protected override void OnDestroy()
@@ -147,7 +149,7 @@ namespace HoloToolkit.Sharing.Tests
         /// <returns></returns>
         private GameObject CreateRemoteHead()
         {
-            GameObject newHeadObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            GameObject newHeadObj = GameObject.Instantiate(HeadObject);
             newHeadObj.transform.parent = gameObject.transform;
             newHeadObj.transform.localScale = Vector3.one * 0.2f;
             return newHeadObj;

@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileSpeed: 1
-  damage: 15
+  damage: 5
 --- !u!114 &114949114225066308
 MonoBehaviour:
   m_ObjectHideFlags: 1
