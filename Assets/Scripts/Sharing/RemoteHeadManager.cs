@@ -60,7 +60,8 @@ namespace HoloToolkit.Sharing.Tests
             Vector3 headPosition = transform.InverseTransformPoint(headTransform.position);
             Quaternion headRotation = Quaternion.Inverse(transform.rotation) * headTransform.rotation;
 
-            CustomMessages.Instance.SendHeadTransform(headPosition, headRotation, );
+            var hasAnchor = ImportExportAnchorManager.Instance.AnchorEstablished ? (byte)1 : (byte)0;
+            CustomMessages.Instance.SendHeadTransform(headPosition, headRotation, hasAnchor);
         }
 
         protected override void OnDestroy()
