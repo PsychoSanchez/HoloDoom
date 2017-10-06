@@ -10,7 +10,7 @@ public class CustomMessages : Singleton<CustomMessages>
     /// The first message type has to start with UserMessageIDStart
     /// so as not to conflict with HoloToolkit internal messages.
     /// </summary>
-    public enum TestMessageID : byte
+    public enum GameMessageID : byte
     {
         HeadTransform = MessageID.UserMessageIDStart,
         UserAvatar,
@@ -18,6 +18,8 @@ public class CustomMessages : Singleton<CustomMessages>
         EnemyHit,
         ShootProjectile,
         SpawnEnemy,
+        EnemyTransform,
+        EnemyDeath,
         StageTransform,
         ResetStage,
         ExplodeTarget,
@@ -38,8 +40,8 @@ public class CustomMessages : Singleton<CustomMessages>
     }
 
     public delegate void MessageCallback(NetworkInMessage msg);
-    private Dictionary<TestMessageID, MessageCallback> _MessageHandlers = new Dictionary<TestMessageID, MessageCallback>();
-    public Dictionary<TestMessageID, MessageCallback> MessageHandlers
+    private Dictionary<GameMessageID, MessageCallback> _MessageHandlers = new Dictionary<GameMessageID, MessageCallback>();
+    public Dictionary<GameMessageID, MessageCallback> MessageHandlers
     {
         get
         {
@@ -77,11 +79,11 @@ public class CustomMessages : Singleton<CustomMessages>
         // Cache the local user ID
         this.localUserID = SharingStage.Instance.Manager.GetLocalUser().GetID();
 
-        for (byte index = (byte)TestMessageID.HeadTransform; index < (byte)TestMessageID.Max; index++)
+        for (byte index = (byte)GameMessageID.HeadTransform; index < (byte)GameMessageID.Max; index++)
         {
-            if (MessageHandlers.ContainsKey((TestMessageID)index) == false)
+            if (MessageHandlers.ContainsKey((GameMessageID)index) == false)
             {
-                MessageHandlers.Add((TestMessageID)index, null);
+                MessageHandlers.Add((GameMessageID)index, null);
             }
 
             serverConnection.AddListener(index, connectionAdapter);
@@ -106,7 +108,7 @@ public class CustomMessages : Singleton<CustomMessages>
         }
 
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.HeadTransform);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.HeadTransform);
 
         AppendTransform(msg, position, rotation);
 
@@ -132,7 +134,7 @@ public class CustomMessages : Singleton<CustomMessages>
             return;
         }
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.ShootProjectile);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.ShootProjectile);
 
         AppendVector3(msg, position + (direction * 0.016f));
         AppendVector3(msg, direction);
@@ -145,17 +147,18 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageChannel.Avatar);
     }
 
-    public void SendSpawnEnemy(Vector3 position, Vector3 direction)
+    public void SendSpawnEnemy(long enemyID, Vector3 position, Quaternion rotation)
     {
         if (!IsConnected())
         {
             return;
         }
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.SpawnEnemy);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.SpawnEnemy);
 
+        msg.Write(enemyID);
         AppendVector3(msg, position);
-        AppendVector3(msg, direction);
+        AppendQuaternion(msg, rotation);
 
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(
@@ -165,16 +168,37 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageChannel.Avatar);
     }
 
-    public void SendEnemyHit(long HitUserID)
+    public void UpdateEnemyTransform(long enemyId, Vector3 position, Quaternion rotation)
     {
         if (!IsConnected())
         {
             return;
         }
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.EnemyHit);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.EnemyTransform);
 
-        msg.Write(HitUserID);
+        msg.Write(enemyId);
+        AppendVector3(msg, position);
+        AppendQuaternion(msg, rotation);
+
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Immediate,
+            MessageReliability.Reliable,
+            MessageChannel.Avatar);
+    }
+
+    public void SendEnemyHit(long HitEnemyID)
+    {
+        if (!IsConnected())
+        {
+            return;
+        }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.EnemyHit);
+
+        msg.Write(HitEnemyID);
 
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(
@@ -191,7 +215,7 @@ public class CustomMessages : Singleton<CustomMessages>
             return;
         }
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.UserAvatar);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.UserAvatar);
 
         msg.Write(UserAvatarID);
 
@@ -211,7 +235,7 @@ public class CustomMessages : Singleton<CustomMessages>
             return;
         }
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.StageTransform);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.StageTransform);
 
         AppendTransform(msg, position, rotation);
 
@@ -230,7 +254,7 @@ public class CustomMessages : Singleton<CustomMessages>
             return;
         }
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.ResetStage);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.ResetStage);
 
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(
@@ -247,7 +271,7 @@ public class CustomMessages : Singleton<CustomMessages>
             return;
         }
         // Create an outgoing network message to contain all the info we want to send.
-        NetworkOutMessage msg = CreateMessage((byte)TestMessageID.ExplodeTarget);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.ExplodeTarget);
 
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(
@@ -261,7 +285,7 @@ public class CustomMessages : Singleton<CustomMessages>
     {
         if (this.serverConnection != null)
         {
-            for (byte index = (byte)TestMessageID.HeadTransform; index < (byte)TestMessageID.Max; index++)
+            for (byte index = (byte)GameMessageID.HeadTransform; index < (byte)GameMessageID.Max; index++)
             {
                 this.serverConnection.RemoveListener(index, this.connectionAdapter);
             }
@@ -274,7 +298,7 @@ public class CustomMessages : Singleton<CustomMessages>
     void OnMessageReceived(NetworkConnection connection, NetworkInMessage msg)
     {
         byte messageType = msg.ReadByte();
-        MessageCallback messageHandler = MessageHandlers[(TestMessageID)messageType];
+        MessageCallback messageHandler = MessageHandlers[(GameMessageID)messageType];
         if (messageHandler != null)
         {
             messageHandler(msg);

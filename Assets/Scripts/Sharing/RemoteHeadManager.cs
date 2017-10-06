@@ -29,7 +29,7 @@ namespace HoloToolkit.Sharing.Tests
 
         private void Start()
         {
-            CustomMessages.Instance.MessageHandlers[CustomMessages.TestMessageID.HeadTransform] = UpdateHeadTransform;
+            CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.HeadTransform] = UpdateHeadTransform;
 
             // SharingStage should be valid at this point, but we may not be connected.
             if (SharingStage.Instance.IsConnected)

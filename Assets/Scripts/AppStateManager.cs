@@ -21,6 +21,7 @@ public class AppStateManager : Singleton<AppStateManager>
     private bool needUpdate = false;
     private AppState currentAppState;
     public event EventHandler onAppStateChange;
+    public long HeadUserID { get; private set; }
 
     public AppState GetCurrentAppState()
     {
@@ -61,6 +62,12 @@ public class AppStateManager : Singleton<AppStateManager>
 
         UIManger.Instance.LogMessage("Conencting...");
         SharingStage.Instance.ConnectToServer();
+    }
+
+    public void SetHeadUser(long userId)
+    {
+        HeadUserID = userId;
+        // CustomMessages.Instance.
     }
 
     // Update is called once per frame

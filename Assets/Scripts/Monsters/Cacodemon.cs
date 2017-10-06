@@ -8,7 +8,6 @@ namespace Assets.Scripts.Monsters
         public float ShootDelay = 1f;
         public float Range = 20f;
         public int Damage = 5;
-        // private float rotatingSpeed = 0.1f;
         bool canShoot = true;
         float lastShot;
         // RaycastHit shotHit;
@@ -35,14 +34,11 @@ namespace Assets.Scripts.Monsters
                 Die();
                 return;
             }
-            // this._animator.SetTrigger("Hit");
-            // this._animator.SetBool("Attack", true);
         }
 
         public override void FindPlayer(Transform playerTransform)
         {
             base.FindPlayer(playerTransform);
-            // this._animator.SetBool("PlayerFound", true);
         }
 
         protected override void Die()
@@ -121,20 +117,13 @@ namespace Assets.Scripts.Monsters
 
         public override void Shoot()
         {
-            //this._animator.SetBool("Shoot", true);
             DoShootPlayer();
             base.Shoot();
         }
 
         private void DoShootPlayer()
         {
-            //Rotate prefab to player
-            //var rotationAngle = Quaternion.LookRotation(_playerTransform.position - transform.position);
-            //transform.rotation = Quaternion.Lerp(transform.rotation, rotationAngle, Time.deltaTime * rotatingSpeed);
-
-            //if (!CheckIfPlayeReachable()) return;
             ThrowProjectile();
-            //player.TakeDamage(Damage);
         }
 
         private bool CheckIfPlayeReachable()
@@ -159,11 +148,7 @@ namespace Assets.Scripts.Monsters
             if (shootPrefab == null) return;
             GameObject projectile = Instantiate(shootPrefab, this.transform.position, Quaternion.LookRotation(this.transform.position - _playerTransform.position)) as GameObject;
             if (projectile == null) return;
-            //projectile.transform.forward =  projectile.transform.position - _playerTransform.position;
-            //projectile.transform.forward = this.transform.forward;
-            //Rigidbody projectileRigidbody = projectile.GetComponent<Rigidbody>();
-            //if (projectileRigidbody == null) return;
-            //projectileRigidbody.velocity = (_playerTransform.position - transform.position).normalized * projectileSpeed; //transform.TransformDirection(Vector3.forward) * projectileSpeed;
+
             Destroy(projectile, projectileLifeTime);
         }
     }

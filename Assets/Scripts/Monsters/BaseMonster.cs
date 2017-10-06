@@ -60,6 +60,13 @@ namespace Assets.Scripts.Monsters
         public Sprite[] SpawnAnimationSprites;
         public Sprite[] ShootAnimationSprites;
         public Sprite[] DeathAnimationSprites;
+        private long id;
+        public long Id
+        {
+            get { return id;}
+            set { id = value;}
+        }
+        
 
         protected int _health;
         protected int _armor;

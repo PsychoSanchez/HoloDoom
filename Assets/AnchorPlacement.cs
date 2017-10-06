@@ -19,7 +19,7 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
         cursor = this.cursorObj.GetComponent<ObjectCursor>();
 
         // We care about getting updates for the anchor transform.
-        CustomMessages.Instance.MessageHandlers[CustomMessages.TestMessageID.StageTransform] = this.OnStageTransfrom;
+        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.StageTransform] = this.OnStageTransfrom;
 
         // And when a new user join we will send the anchor transform we have.
         SharingSessionTracker.Instance.SessionJoined += Instance_SessionJoined;
@@ -76,8 +76,10 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
         // Note that we have a transform.
         GotTransform = true;
 
+
         // And send it to our friends.
         CustomMessages.Instance.SendStageTransform(transform.localPosition, transform.localRotation);
+        AppStateManager.Instance.SetHeadUser(SharingStage.Instance.Manager.GetLocalUser().GetID());
         AppStateManager.Instance.SetCurrentAppState(AppState.Ready);
     }
 }
