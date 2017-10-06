@@ -157,8 +157,7 @@ public class CustomMessages : Singleton<CustomMessages>
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.SpawnEnemy);
 
         msg.Write(enemyID);
-        AppendVector3(msg, position);
-        AppendQuaternion(msg, rotation);
+        AppendTransform(msg, position, rotation);
 
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(

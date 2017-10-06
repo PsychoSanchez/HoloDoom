@@ -43,6 +43,7 @@ public class EnemyManager : Singleton<EnemyManager>
     private GameObject GetEnemy(NetworkInMessage msg)
     {
         GameObject enemy;
+        long userId = msg.ReadInt64();
         long enemyId = msg.ReadInt64();
         if (!enemiesPool.TryGetValue(enemyId, out enemy))
         {
@@ -62,6 +63,7 @@ public class EnemyManager : Singleton<EnemyManager>
                 var demon = Instantiate(Cacodemon, sp.position, sp.rotation);
                 var monster = demon.GetComponent<BaseMonster>();
                 monster.Id = GenerateId();
+                Debug.Log(monster.Id);
                 enemiesPool.Add(monster.Id, demon);
                 CustomMessages.Instance.SendSpawnEnemy(monster.Id, sp.position, sp.rotation);
                 break;
@@ -92,7 +94,7 @@ public class EnemyManager : Singleton<EnemyManager>
         while (id == -1)
         {
             long newId = LongRandom(-10000, 10000, new System.Random());
-            if (enemiesPool.ContainsKey(newId) || newId == -1)
+            if (enemiesPool.ContainsKey(newId) || newId == -1 || newId < -10000 || newId > 10000)
             {
                 continue;
             }
