@@ -18,6 +18,7 @@ public class CustomMessages : Singleton<CustomMessages>
         EnemyHit,
         ShootProjectile,
         SpawnEnemy,
+        PlayerFound,
         EnemyTransform,
         EnemyDeath,
         StageTransform,
@@ -167,6 +168,23 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageChannel.Avatar);
     }
 
+    public void MonsterFoundPlayer(long enemyId)
+    {
+        if (!IsConnected())
+        {
+            return;
+        }
+
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.PlayerFound);
+        msg.Write(enemyId);
+
+        this.serverConnection.Broadcast(
+                 msg,
+                 MessagePriority.Immediate,
+                 MessageReliability.Reliable,
+                 MessageChannel.Avatar);
+    }
+
     public void UpdateEnemyTransform(long enemyId, Vector3 position, Quaternion rotation)
     {
         if (!IsConnected())
@@ -188,7 +206,7 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageChannel.Avatar);
     }
 
-    public void SendEnemyHit(long HitEnemyID)
+    public void SendEnemyHit(long enemyId, int amt)
     {
         if (!IsConnected())
         {
@@ -197,7 +215,8 @@ public class CustomMessages : Singleton<CustomMessages>
         // Create an outgoing network message to contain all the info we want to send
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.EnemyHit);
 
-        msg.Write(HitEnemyID);
+        msg.Write(enemyId);
+        msg.Write(amt);
 
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(

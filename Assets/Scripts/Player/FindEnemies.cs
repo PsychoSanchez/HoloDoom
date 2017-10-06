@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class FindEnemies : OverridableMonoBehaviour
 {
+    private long userId;
+    public long UserId
+    {
+        get { return userId;}
+        set { userId = value;}
+    }
+    
     public float radius = 3;
     private float time = 0.0f;
     public float deltaTime = 0.3f;
@@ -34,7 +41,7 @@ public class FindEnemies : OverridableMonoBehaviour
             BaseMonster monster = t.gameObject.GetComponent<BaseMonster>();
             if (monster == null) continue;
 
-            monster.FindPlayer(this.gameObject.transform);
+            monster.FindPlayer(CustomMessages.Instance.localUserID);
         }
     }
 }

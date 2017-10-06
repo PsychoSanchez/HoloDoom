@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using HoloToolkit.Sharing.Tests;
 using UnityEngine;
 
 namespace Assets.Scripts.Monsters
@@ -63,10 +64,16 @@ namespace Assets.Scripts.Monsters
         private long id;
         public long Id
         {
-            get { return id;}
-            set { id = value;}
+            get { return id; }
+            set { id = value; }
         }
-        
+
+        private long chasedPlayer;
+        public long ChasedPlayer
+        {
+            get { return chasedPlayer; }
+            private set { chasedPlayer = value; }
+        }
 
         protected int _health;
         protected int _armor;
@@ -99,6 +106,7 @@ namespace Assets.Scripts.Monsters
         public virtual void GetHit(int amount)
         {
             _health -= amount;
+            EnemyManager.Instance.DamageTaken(id, amount);
         }
 
         protected virtual void Die()
@@ -242,10 +250,18 @@ namespace Assets.Scripts.Monsters
             return index;
         }
 
-        public virtual void FindPlayer(Transform playerTransform)
+        public virtual void FindPlayer(long chasedPlayerId)
         {
+            if (_playerFound)
+            {
+                return;
+            }
+
+
             _playerFound = true;
-            _playerTransform = playerTransform;
+            // _playerTransform = chasedPlayerId;
+            chasedPlayer = chasedPlayerId;
+            _playerTransform = RemoteHeadManager.Instance.GetRemoteHeadInfo(chasedPlayer).HeadObject.transform;
         }
     }
 }

@@ -36,11 +36,6 @@ namespace Assets.Scripts.Monsters
             }
         }
 
-        public override void FindPlayer(Transform playerTransform)
-        {
-            base.FindPlayer(playerTransform);
-        }
-
         protected override void Die()
         {
             base.Die();

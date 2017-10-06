@@ -21,6 +21,19 @@ public class EnemyManager : Singleton<EnemyManager>
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.SpawnEnemy] = EnemySpawn;
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.EnemyTransform] = UpdateEnemyTransform;
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.EnemyHit] = EnemyHit;
+        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.PlayerFound] = PlayerFound;
+    }
+
+    private void PlayerFound(NetworkInMessage msg)
+    {
+        var userId = msg.ReadInt64();
+        var enemyId = msg.ReadInt64();
+        GameObject enemy;
+        if (!enemiesPool.TryGetValue(enemyId, out enemy))
+        {
+            return;
+        }
+        enemy.GetComponent<BaseMonster>().FindPlayer(userId);
     }
 
     private void UpdateEnemyTransform(NetworkInMessage msg)
@@ -32,7 +45,19 @@ public class EnemyManager : Singleton<EnemyManager>
 
     private void EnemyHit(NetworkInMessage msg)
     {
-
+        var userId = msg.ReadInt64();
+        if (userId == CustomMessages.Instance.localUserID)
+        {
+            return;
+        }
+        var enemyId = msg.ReadInt64();
+        GameObject enemy;
+        if (!enemiesPool.TryGetValue(enemyId, out enemy))
+        {
+            return;
+        }
+        var amt = msg.ReadInt32();
+        enemy.GetComponent<BaseMonster>().GetHit(amt);
     }
 
     private void EnemySpawn(NetworkInMessage msg)
@@ -63,16 +88,15 @@ public class EnemyManager : Singleton<EnemyManager>
                 var demon = Instantiate(Cacodemon, sp.position, sp.rotation);
                 var monster = demon.GetComponent<BaseMonster>();
                 monster.Id = GenerateId();
-                Debug.Log(monster.Id);
                 enemiesPool.Add(monster.Id, demon);
                 CustomMessages.Instance.SendSpawnEnemy(monster.Id, sp.position, sp.rotation);
                 break;
         }
     }
 
-    public void DamageTaken(long id, long amt)
+    public void DamageTaken(long id, int amt)
     {
-
+        CustomMessages.Instance.SendEnemyHit(id, amt);
     }
 
     public int GetSpawnedEnemiesCount()
