@@ -106,7 +106,6 @@ namespace Assets.Scripts.Monsters
         public virtual void GetHit(int amount)
         {
             _health -= amount;
-            EnemyManager.Instance.DamageTaken(id, amount);
         }
 
         protected virtual void Die()

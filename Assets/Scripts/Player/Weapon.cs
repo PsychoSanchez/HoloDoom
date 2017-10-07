@@ -77,6 +77,7 @@ public class Weapon : OverridableMonoBehaviour
                     return;
                 }
                 monster.GetHit(Damage);
+                EnemyManager.Instance.DamageTaken(monster.Id, Damage);
                 break;
             case "RemotePlayer":
                 RemotePlayerHealth rp = shotHit.collider.GetComponent<RemotePlayerHealth>();
