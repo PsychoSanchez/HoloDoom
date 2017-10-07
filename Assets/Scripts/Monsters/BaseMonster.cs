@@ -119,6 +119,10 @@ namespace Assets.Scripts.Monsters
         {
             PlayShootAnimation();
         }
+        public virtual void Shoot(Vector3 position, Quaternion rotation)
+        {
+        }
+
 
         private void PlayShootAnimation()
         {
@@ -173,6 +177,10 @@ namespace Assets.Scripts.Monsters
 
         private void MoveToPlayer()
         {
+            if (_playerTransform == null)
+            {
+                return;
+            }
             gameObject.transform.forward = _playerTransform.position - gameObject.transform.position;
             RotateSprite();
         }
@@ -272,7 +280,7 @@ namespace Assets.Scripts.Monsters
 
             _playerFound = true;
             chasedPlayer = chasedPlayerId;
-            var remoteHead = RemoteHeadManager.Instance.GetRemoteHeadInfo(chasedPlayer);
+            var remoteHead = RemoteHeadManager.Instance.TryGetRemoteHeadInfo(chasedPlayer);
             if (remoteHead == null)
             {
                 Debug.Log("User head not found. id " + chasedPlayerId);

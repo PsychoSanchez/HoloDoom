@@ -128,7 +128,7 @@ public class CustomMessages : Singleton<CustomMessages>
         return this.serverConnection != null && this.serverConnection.IsConnected();
     }
 
-    public void SendShootProjectile(Vector3 position, Quaternion rotation)
+    public void SendShootProjectile(long enemyId, Vector3 position, Quaternion rotation)
     {
         if (!IsConnected())
         {
@@ -136,7 +136,7 @@ public class CustomMessages : Singleton<CustomMessages>
         }
         // Create an outgoing network message to contain all the info we want to send
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.ShootProjectile);
-
+        msg.Write(enemyId);
         AppendVector3(msg, position);
         AppendQuaternion(msg, rotation);
 

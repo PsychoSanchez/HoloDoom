@@ -120,7 +120,7 @@ namespace Assets.Scripts.Monsters
             ThrowProjectile();
             base.Shoot();
         }
-        public void Shoot(Vector3 position, Quaternion rotation)
+        public override void Shoot(Vector3 position, Quaternion rotation)
         {
             this.transform.position = position;
             this.transform.rotation = rotation;
@@ -158,7 +158,7 @@ namespace Assets.Scripts.Monsters
             var rotation = Quaternion.LookRotation(this.transform.position - _playerTransform.position);
             GameObject projectile = Instantiate(shootPrefab, position, rotation) as GameObject;
             if (projectile == null) return;
-            CustomMessages.Instance.SendShootProjectile(position, rotation);
+            CustomMessages.Instance.SendShootProjectile(this.Id, position, rotation);
 
             Destroy(projectile, projectileLifeTime);
         }

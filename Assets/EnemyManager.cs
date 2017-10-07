@@ -38,7 +38,7 @@ public class EnemyManager : Singleton<EnemyManager>
         var enemyId = msg.ReadInt64();
         var enemy = TryGetEnemy(enemyId);
         if (enemy == null) return;
-        enemy.GetComponent<BaseMonster>().Shoot();
+        enemy.GetComponent<BaseMonster>().Shoot(CustomMessages.Instance.ReadVector3(msg), CustomMessages.Instance.ReadQuaternion(msg));
     }
 
 
