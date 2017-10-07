@@ -250,6 +250,18 @@ namespace Assets.Scripts.Monsters
             return index;
         }
 
+        public virtual void FindPlayer()
+        {
+            if (_playerFound)
+            {
+                return;
+            }
+
+
+            _playerFound = true;
+            _playerTransform = Camera.main.transform;
+            CustomMessages.Instance.MonsterFoundPlayer(this.id);
+        }
         public virtual void FindPlayer(long chasedPlayerId)
         {
             if (_playerFound)
@@ -259,9 +271,14 @@ namespace Assets.Scripts.Monsters
 
 
             _playerFound = true;
-            // _playerTransform = chasedPlayerId;
             chasedPlayer = chasedPlayerId;
-            _playerTransform = RemoteHeadManager.Instance.GetRemoteHeadInfo(chasedPlayer).HeadObject.transform;
+            var remoteHead = RemoteHeadManager.Instance.GetRemoteHeadInfo(chasedPlayer);
+            if (remoteHead == null)
+            {
+                Debug.Log("User head not found. id " + chasedPlayerId);
+                return;
+            }
+            _playerTransform = remoteHead.HeadObject.transform;
         }
     }
 }

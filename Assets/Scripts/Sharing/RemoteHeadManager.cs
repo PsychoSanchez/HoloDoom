@@ -126,6 +126,19 @@ namespace HoloToolkit.Sharing.Tests
             return headInfo;
         }
 
+        public RemoteHeadInfo TryGetRemoteHeadInfo(long userId)
+        {
+            RemoteHeadInfo headInfo;
+
+            // Get the head info if its already in the list, otherwise add it
+            if (!remoteHeads.TryGetValue(userId, out headInfo))
+            {
+                return null;
+            }
+
+            return headInfo;
+        }
+
         /// <summary>
         /// Called when a remote user sends a head transform.
         /// </summary>

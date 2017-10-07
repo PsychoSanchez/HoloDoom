@@ -154,8 +154,11 @@ namespace Assets.Scripts.Monsters
         private void ThrowProjectile()
         {
             if (shootPrefab == null) return;
-            GameObject projectile = Instantiate(shootPrefab, this.transform.position, Quaternion.LookRotation(this.transform.position - _playerTransform.position)) as GameObject;
+            var position = this.transform.position;
+            var rotation = Quaternion.LookRotation(this.transform.position - _playerTransform.position);
+            GameObject projectile = Instantiate(shootPrefab, position, rotation) as GameObject;
             if (projectile == null) return;
+            CustomMessages.Instance.SendShootProjectile(position, rotation);
 
             Destroy(projectile, projectileLifeTime);
         }

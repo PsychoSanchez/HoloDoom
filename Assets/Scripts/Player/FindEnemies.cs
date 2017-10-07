@@ -41,7 +41,7 @@ public class FindEnemies : OverridableMonoBehaviour
             BaseMonster monster = t.gameObject.GetComponent<BaseMonster>();
             if (monster == null) continue;
 
-            monster.FindPlayer(CustomMessages.Instance.localUserID);
+            monster.FindPlayer();
         }
     }
 }

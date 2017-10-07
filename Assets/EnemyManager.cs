@@ -28,6 +28,8 @@ public class EnemyManager : Singleton<EnemyManager>
     private void EnemyShoot(NetworkInMessage msg)
     {
         var userId = msg.ReadInt64();
+        Debug.Log(CustomMessages.Instance.localUserID);
+        Debug.Log(userId);
         if (CustomMessages.Instance.localUserID == userId)
         {
             return;
@@ -39,15 +41,6 @@ public class EnemyManager : Singleton<EnemyManager>
         enemy.GetComponent<BaseMonster>().Shoot();
     }
 
-    private GameObject TryGetEnemy(long enemyId)
-    {
-        GameObject enemy;
-        if (!enemiesPool.TryGetValue(enemyId, out enemy))
-        {
-            return null;
-        }
-        return enemy;
-    }
 
     private void PlayerFound(NetworkInMessage msg)
     {
@@ -123,6 +116,15 @@ public class EnemyManager : Singleton<EnemyManager>
         return enemiesPool.Count;
     }
 
+    private GameObject TryGetEnemy(long enemyId)
+    {
+        GameObject enemy;
+        if (!enemiesPool.TryGetValue(enemyId, out enemy))
+        {
+            return null;
+        }
+        return enemy;
+    }
     long LongRandom(long min, long max, System.Random rand)
     {
         long result = rand.Next((Int32)(min >> 32), (Int32)(max >> 32));
