@@ -128,7 +128,7 @@ public class CustomMessages : Singleton<CustomMessages>
         return this.serverConnection != null && this.serverConnection.IsConnected();
     }
 
-    public void SendShootProjectile(Vector3 position, Vector3 direction)
+    public void SendShootProjectile(Vector3 position, Quaternion rotation)
     {
         if (!IsConnected())
         {
@@ -137,8 +137,8 @@ public class CustomMessages : Singleton<CustomMessages>
         // Create an outgoing network message to contain all the info we want to send
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.ShootProjectile);
 
-        AppendVector3(msg, position + (direction * 0.016f));
-        AppendVector3(msg, direction);
+        AppendVector3(msg, position);
+        AppendQuaternion(msg, rotation);
 
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(

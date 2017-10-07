@@ -22,17 +22,39 @@ public class EnemyManager : Singleton<EnemyManager>
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.EnemyTransform] = UpdateEnemyTransform;
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.EnemyHit] = EnemyHit;
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.PlayerFound] = PlayerFound;
+        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.ShootProjectile] = EnemyShoot;
+    }
+
+    private void EnemyShoot(NetworkInMessage msg)
+    {
+        var userId = msg.ReadInt64();
+        if (CustomMessages.Instance.localUserID == userId)
+        {
+            return;
+        }
+
+        var enemyId = msg.ReadInt64();
+        var enemy = TryGetEnemy(enemyId);
+        if (enemy == null) return;
+        enemy.GetComponent<BaseMonster>().Shoot();
+    }
+
+    private GameObject TryGetEnemy(long enemyId)
+    {
+        GameObject enemy;
+        if (!enemiesPool.TryGetValue(enemyId, out enemy))
+        {
+            return null;
+        }
+        return enemy;
     }
 
     private void PlayerFound(NetworkInMessage msg)
     {
         var userId = msg.ReadInt64();
         var enemyId = msg.ReadInt64();
-        GameObject enemy;
-        if (!enemiesPool.TryGetValue(enemyId, out enemy))
-        {
-            return;
-        }
+        var enemy = TryGetEnemy(enemyId);
+        if (enemy == null) return;
         enemy.GetComponent<BaseMonster>().FindPlayer(userId);
     }
 
@@ -51,11 +73,8 @@ public class EnemyManager : Singleton<EnemyManager>
             return;
         }
         var enemyId = msg.ReadInt64();
-        GameObject enemy;
-        if (!enemiesPool.TryGetValue(enemyId, out enemy))
-        {
-            return;
-        }
+        var enemy = TryGetEnemy(enemyId);
+        if (enemy == null) return;
         var amt = msg.ReadInt32();
         enemy.GetComponent<BaseMonster>().GetHit(amt);
     }

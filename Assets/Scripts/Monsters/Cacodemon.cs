@@ -76,6 +76,11 @@ namespace Assets.Scripts.Monsters
                 return;
             }
 
+            if (AppStateManager.Instance.HeadUserID != CustomMessages.Instance.localUserID)
+            {
+                return;
+            }
+
             lastShot += Time.deltaTime;
             if (lastShot >= ShootDelay)
             {
@@ -112,23 +117,24 @@ namespace Assets.Scripts.Monsters
 
         public override void Shoot()
         {
-            DoShootPlayer();
+            ThrowProjectile();
+            base.Shoot();
+        }
+        public void Shoot(Vector3 position, Quaternion rotation)
+        {
+            this.transform.position = position;
+            this.transform.rotation = rotation;
+            ThrowProjectile(position, rotation);
             base.Shoot();
         }
 
-        private void DoShootPlayer()
-        {
-            ThrowProjectile();
-        }
 
         private bool CheckIfPlayeReachable()
         {
             RaycastHit hit;
             Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
 
-            if (!Physics.Raycast(this.transform.position, forward, out hit, Range) ||
-                hit.collider == null ||
-                hit.collider.tag != "Player")
+            if (IsNotPlayer(out hit, forward))
             {
                 return false;
             }
@@ -138,10 +144,26 @@ namespace Assets.Scripts.Monsters
             return true;
         }
 
+        private bool IsNotPlayer(out RaycastHit hit, Vector3 forward)
+        {
+            return !Physics.Raycast(this.transform.position, forward, out hit, Range) ||
+                            hit.collider == null ||
+                            hit.collider.tag != "Player";
+        }
+
         private void ThrowProjectile()
         {
             if (shootPrefab == null) return;
             GameObject projectile = Instantiate(shootPrefab, this.transform.position, Quaternion.LookRotation(this.transform.position - _playerTransform.position)) as GameObject;
+            if (projectile == null) return;
+
+            Destroy(projectile, projectileLifeTime);
+        }
+
+        private void ThrowProjectile(Vector3 position, Quaternion rotation)
+        {
+            if (shootPrefab == null) return;
+            GameObject projectile = Instantiate(shootPrefab, position, rotation) as GameObject;
             if (projectile == null) return;
 
             Destroy(projectile, projectileLifeTime);
