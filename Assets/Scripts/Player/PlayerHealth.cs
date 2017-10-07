@@ -131,6 +131,7 @@ public class PlayerHealth : OverridableMonoBehaviour
     {
         HealthText.text = currentHealth.ToString();
         ArmorText.text = currentArmor.ToString();
+        CustomMessages.Instance.SendUserHealthUpdate(currentHealth);
     }
 
     public void Die()

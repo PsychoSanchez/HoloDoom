@@ -1224,6 +1224,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HeadObject: {fileID: 1485074790822420, guid: 68f3e6bd30d003847ad5f20607da37c5, type: 2}
+  Heads:
+  - {fileID: 21300000, guid: cf409920443d0c94982856647b6b153f, type: 3}
+  - {fileID: 21300000, guid: 1d84f51ff0eb80c4aa25c84f90965bd6, type: 3}
+  - {fileID: 21300000, guid: d87733b5f85875e4bb4b91b342b3e0ad, type: 3}
+  - {fileID: 21300000, guid: 6efb946a79eb78448a50038ec5f2a5a1, type: 3}
+  - {fileID: 21300000, guid: b7c9758d751580546a30078d1f8f2aa9, type: 3}
+  - {fileID: 21300000, guid: 35f5602cb594e4d4896a27f98754591a, type: 3}
+  - {fileID: 21300000, guid: 747335823270ac44e9f9a389c6a52d12, type: 3}
 --- !u!114 &964733700
 MonoBehaviour:
   m_ObjectHideFlags: 0

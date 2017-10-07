@@ -12,9 +12,9 @@ public class CustomMessages : Singleton<CustomMessages>
     /// </summary>
     public enum GameMessageID : byte
     {
-        HeadTransform = MessageID.UserMessageIDStart,
+        UserHeadTransform = MessageID.UserMessageIDStart,
         UserAvatar,
-        UserHit,
+        UserHealthUpdated,
         EnemyHit,
         ShootProjectile,
         SpawnEnemy,
@@ -80,7 +80,7 @@ public class CustomMessages : Singleton<CustomMessages>
         // Cache the local user ID
         this.localUserID = SharingStage.Instance.Manager.GetLocalUser().GetID();
 
-        for (byte index = (byte)GameMessageID.HeadTransform; index < (byte)GameMessageID.Max; index++)
+        for (byte index = (byte)GameMessageID.UserHeadTransform; index < (byte)GameMessageID.Max; index++)
         {
             if (MessageHandlers.ContainsKey((GameMessageID)index) == false)
             {
@@ -109,7 +109,7 @@ public class CustomMessages : Singleton<CustomMessages>
         }
 
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.HeadTransform);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.UserHeadTransform);
 
         AppendTransform(msg, position, rotation);
 
@@ -122,12 +122,22 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageReliability.UnreliableSequenced,
             MessageChannel.Avatar);
     }
-
-    private bool IsConnected()
+    public void SendUserHealthUpdate(int health)
     {
-        return this.serverConnection != null && this.serverConnection.IsConnected();
+        if (!IsConnected())
+        {
+            return;
+        }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.UserHealthUpdated);
+        msg.Write(health);
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Immediate,
+            MessageReliability.Reliable,
+            MessageChannel.Avatar);
     }
-
     public void SendShootProjectile(long enemyId, Vector3 position, Quaternion rotation)
     {
         if (!IsConnected())
@@ -303,7 +313,7 @@ public class CustomMessages : Singleton<CustomMessages>
     {
         if (this.serverConnection != null)
         {
-            for (byte index = (byte)GameMessageID.HeadTransform; index < (byte)GameMessageID.Max; index++)
+            for (byte index = (byte)GameMessageID.UserHeadTransform; index < (byte)GameMessageID.Max; index++)
             {
                 this.serverConnection.RemoveListener(index, this.connectionAdapter);
             }
@@ -325,6 +335,11 @@ public class CustomMessages : Singleton<CustomMessages>
 
     #region HelperFunctionsForWriting
 
+
+    private bool IsConnected()
+    {
+        return this.serverConnection != null && this.serverConnection.IsConnected();
+    }
     void AppendTransform(NetworkOutMessage msg, Vector3 position, Quaternion rotation)
     {
         AppendVector3(msg, position);

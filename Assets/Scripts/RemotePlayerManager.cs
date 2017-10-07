@@ -40,9 +40,9 @@ public class RemotePlayerManager : Singleton<RemotePlayerManager>
     {
         customMessages = CustomMessages.Instance;
 
-        customMessages.MessageHandlers[CustomMessages.GameMessageID.HeadTransform] = this.UpdateHeadTransform;
+        customMessages.MessageHandlers[CustomMessages.GameMessageID.UserHeadTransform] = this.UpdateHeadTransform;
         customMessages.MessageHandlers[CustomMessages.GameMessageID.UserAvatar] = this.UpdateUserAvatar;
-        customMessages.MessageHandlers[CustomMessages.GameMessageID.UserHit] = this.ProcessUserHit;
+        customMessages.MessageHandlers[CustomMessages.GameMessageID.UserHealthUpdated] = this.ProcessUserHit;
         SharingSessionTracker.Instance.SessionJoined += Instance_SessionJoined;
         SharingSessionTracker.Instance.SessionLeft += Instance_SessionLeft;
     }

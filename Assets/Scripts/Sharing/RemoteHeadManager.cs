@@ -22,6 +22,8 @@ namespace HoloToolkit.Sharing.Tests
             public GameObject HeadObject;
         }
 
+        public Sprite[] Heads;
+
         /// <summary>
         /// Keep a list of the remote heads, indexed by XTools userID
         /// </summary>
@@ -29,7 +31,8 @@ namespace HoloToolkit.Sharing.Tests
 
         private void Start()
         {
-            CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.HeadTransform] = UpdateHeadTransform;
+            CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.UserHeadTransform] = UpdateHeadTransform;
+            CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.UserHealthUpdated] = UpdateUserHealth;
 
             // SharingStage should be valid at this point, but we may not be connected.
             if (SharingStage.Instance.IsConnected)
@@ -41,6 +44,7 @@ namespace HoloToolkit.Sharing.Tests
                 SharingStage.Instance.SharingManagerConnected += Connected;
             }
         }
+
 
         private void Connected(object sender = null, EventArgs e = null)
         {
@@ -137,6 +141,30 @@ namespace HoloToolkit.Sharing.Tests
             }
 
             return headInfo;
+        }
+
+
+        private void UpdateUserHealth(NetworkInMessage msg)
+        {
+            var userId = msg.ReadInt64();
+            var head = TryGetRemoteHeadInfo(userId);
+            if (head == null)
+            {
+                return;
+            }
+
+            var health = msg.ReadInt32();
+            double percent = health / 100;
+            Sprite sprite = Heads[Heads.Length - 1];
+
+            if (health > 0)
+            {
+                var temp = percent * (Heads.Length - 2);
+                var index = (int)Math.Floor(temp);
+                sprite = Heads[index];
+            }
+
+            head.HeadObject.GetComponent<SpriteRenderer>().sprite = sprite;
         }
 
         /// <summary>

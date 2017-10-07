@@ -123,7 +123,6 @@ namespace Assets.Scripts.Monsters
         {
         }
 
-
         private void PlayShootAnimation()
         {
 
