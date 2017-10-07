@@ -7,6 +7,7 @@ TagManager:
   - Enemy
   - Ammo
   - Pickup
+  - RemotePlayer
   layers:
   - Default
   - TransparentFX

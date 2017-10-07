@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System;
+using HoloToolkit.Sharing;
 
 public class PlayerHealth : OverridableMonoBehaviour
 {
@@ -24,7 +25,21 @@ public class PlayerHealth : OverridableMonoBehaviour
     {
         currentHealth = StartHealth;
         currentArmor = StartArmor;
+        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.RemoteUserRecieveDamage] = TakeDamageFromPlayer;
         UpdateUI();
+    }
+
+    private void TakeDamageFromPlayer(NetworkInMessage msg)
+    {
+        var remoteUserId = msg.ReadInt64();
+        var damagedUserId = msg.ReadInt64();
+        if (CustomMessages.Instance.localUserID != damagedUserId)
+        {
+            return;
+        }
+        var dmgAmt = msg.ReadInt32();
+        UIManger.Instance.LogMessage("FRIENDLY FIRE BY USER " + remoteUserId);
+        TakeDamage(dmgAmt);
     }
 
     // Update is called once per frame

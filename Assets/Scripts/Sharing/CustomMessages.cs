@@ -15,6 +15,7 @@ public class CustomMessages : Singleton<CustomMessages>
         UserHeadTransform = MessageID.UserMessageIDStart,
         UserAvatar,
         UserHealthUpdated,
+        RemoteUserRecieveDamage,
         EnemyHit,
         ShootProjectile,
         SpawnEnemy,
@@ -131,6 +132,25 @@ public class CustomMessages : Singleton<CustomMessages>
         // Create an outgoing network message to contain all the info we want to send
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.UserHealthUpdated);
         msg.Write(health);
+        // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
+        this.serverConnection.Broadcast(
+            msg,
+            MessagePriority.Immediate,
+            MessageReliability.Reliable,
+            MessageChannel.Avatar);
+    }
+    public void SendRemoteUserRecieveDamage(long remoteUserId, int damage)
+    {
+        if (!IsConnected())
+        {
+            return;
+        }
+
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.RemoteUserRecieveDamage);
+        msg.Write(remoteUserId);
+        msg.Write(damage);
+        
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(
             msg,
@@ -255,7 +275,6 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageChannel.Avatar);
     }
 
-
     public void SendStageTransform(Vector3 position, Quaternion rotation)
     {
         if (!IsConnected())
@@ -333,13 +352,13 @@ public class CustomMessages : Singleton<CustomMessages>
         }
     }
 
-    #region HelperFunctionsForWriting
-
 
     private bool IsConnected()
     {
         return this.serverConnection != null && this.serverConnection.IsConnected();
     }
+
+    #region HelperFunctionsForWriting
     void AppendTransform(NetworkOutMessage msg, Vector3 position, Quaternion rotation)
     {
         AppendVector3(msg, position);

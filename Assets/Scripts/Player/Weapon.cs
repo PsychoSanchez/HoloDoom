@@ -60,23 +60,29 @@ public class Weapon : OverridableMonoBehaviour
         WeaponSprite.Play("Shoot");
 
         // Debug.DrawRay(headRay.origin, headRay.direction, Color.white,  20.0f, false);
-        if (Physics.Raycast(headRay, out shotHit, Range * 10))
+        if (!Physics.Raycast(headRay, out shotHit, Range * 10))
         {
-            // Shoot enemies
-            if (shotHit.collider.tag != "Enemy")
-            {
-                return;
-            }
+            return;
+        }
 
-            BaseMonster monster = shotHit.collider.GetComponent<BaseMonster>();
-            if (monster == null)
-            {
-                var enemyHealth = shotHit.collider.GetComponent<Durability>();
-                enemyHealth.TakeDamage(Damage);
+        switch (shotHit.collider.tag)
+        {
+            case "Enemy":
+                BaseMonster monster = shotHit.collider.GetComponent<BaseMonster>();
+                if (monster == null)
+                {
+                    var enemyHealth = shotHit.collider.GetComponent<Durability>();
+                    enemyHealth.TakeDamage(Damage);
 
-                return;
-            }
-            monster.GetHit(Damage);
+                    return;
+                }
+                monster.GetHit(Damage);
+                break;
+            case "RemotePlayer":
+                RemotePlayerHealth rp = shotHit.collider.GetComponent<RemotePlayerHealth>();
+                if (rp == null) return;
+                rp.TakeDamage(Damage / 2);
+                break;
         }
     }
 }

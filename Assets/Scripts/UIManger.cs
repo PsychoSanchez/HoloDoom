@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using HoloToolkit.Sharing;
 using HoloToolkit.Unity;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,7 @@ public class UIManger : Singleton<UIManger>
     public GameObject GameHUD;
     public GameObject StatusMessages;
     public GameObject Menu;
+    public GameObject PlayerId;
 
     int messageNumber = 0;
     void Start()
@@ -25,6 +27,12 @@ public class UIManger : Singleton<UIManger>
         {
             Menu.SetActive(false);
         }
+        SetPlayerId(SharingStage.Instance.Manager.GetLocalUser().GetID());
+    }
+
+    public void SetPlayerId(long userId)
+    {
+        PlayerId.GetComponent<Text>().text = userId.ToString();
     }
 
     public void LogMessage(string message)
