@@ -47,7 +47,7 @@ public class AppStateManager : Singleton<AppStateManager>
     // Use this for initialization
     void Start()
     {
-        UIManger.Instance.LogMessage("Waiting for connection...");
+        UIManager.Instance.LogMessage("Waiting for connection...");
         SetCurrentAppState(AppState.WaitingForConection);
         InitSharingManager();
     }
@@ -56,11 +56,11 @@ public class AppStateManager : Singleton<AppStateManager>
     {
         SharingStage.Instance.SharingManagerConnected += (e, i) =>
         {
-            UIManger.Instance.LogMessage("Successfully connected!");
+            UIManager.Instance.LogMessage("Successfully connected!");
             SetCurrentAppState(AppState.WaitingForAnchor);
         };
 
-        UIManger.Instance.LogMessage("Conencting...");
+        UIManager.Instance.LogMessage("Conencting...");
         SharingStage.Instance.ConnectToServer();
     }
 
@@ -81,20 +81,20 @@ public class AppStateManager : Singleton<AppStateManager>
         switch (currentAppState)
         {
             case AppState.WaitingForConection:
-                UIManger.Instance.ToggleMode(UIMode.Menu);
+                UIManager.Instance.ToggleMode(UIMode.Menu);
                 break;
             case AppState.WaitingForAnchor:
-                UIManger.Instance.LogMessage("Waiting for anchor to place");
+                UIManager.Instance.LogMessage("Waiting for anchor to place");
                 if (ImportExportAnchorManager.Instance.AnchorEstablished)
                 {
-                    UIManger.Instance.LogMessage("AnchorEstablished");
-                    UIManger.Instance.ToggleMode(UIMode.None);
+                    UIManager.Instance.LogMessage("AnchorEstablished");
+                    UIManager.Instance.ToggleMode(UIMode.None);
                     EnableMapping();
                 }
                 break;
             case AppState.WaitingForStageTransform:
-                UIManger.Instance.LogMessage("Waiting for stage transform...");
-                UIManger.Instance.ToggleMode(UIMode.None);
+                UIManager.Instance.LogMessage("Waiting for stage transform...");
+                UIManager.Instance.ToggleMode(UIMode.None);
                 EnableMapping();
 
                 // Hide anchor
@@ -104,8 +104,8 @@ public class AppStateManager : Singleton<AppStateManager>
 
                 // Show anchor
                 AnchorPlacement.Instance.gameObject.SetActive(true);
-                UIManger.Instance.LogMessage("Game start");
-                UIManger.Instance.ToggleMode(UIMode.Game);
+                UIManager.Instance.LogMessage("Game start");
+                UIManager.Instance.ToggleMode(UIMode.Game);
                 break;
         }
         needUpdate = false;

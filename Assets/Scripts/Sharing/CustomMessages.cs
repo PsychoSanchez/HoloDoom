@@ -139,7 +139,7 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageReliability.Reliable,
             MessageChannel.Avatar);
     }
-    public void SendRemoteUserRecieveDamage(long remoteUserId, int damage)
+    public void SendRemoteUserReceiveDamage(long remoteUserId, int damage)
     {
         if (!IsConnected())
         {
@@ -150,7 +150,7 @@ public class CustomMessages : Singleton<CustomMessages>
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.RemoteUserRecieveDamage);
         msg.Write(remoteUserId);
         msg.Write(damage);
-        
+
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(
             msg,
@@ -158,7 +158,7 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageReliability.Reliable,
             MessageChannel.Avatar);
     }
-    public void SendShootProjectile(long enemyId, Vector3 position, Quaternion rotation)
+    public void SendShootProjectile(long enemyId, long projId, Vector3 position, Quaternion rotation)
     {
         if (!IsConnected())
         {
@@ -167,6 +167,7 @@ public class CustomMessages : Singleton<CustomMessages>
         // Create an outgoing network message to contain all the info we want to send
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.ShootProjectile);
         msg.Write(enemyId);
+        msg.Write(projId);
         AppendVector3(msg, position);
         AppendQuaternion(msg, rotation);
 

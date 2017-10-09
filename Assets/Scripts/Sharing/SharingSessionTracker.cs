@@ -46,7 +46,7 @@ namespace HoloToolkit.Sharing
         void SendJoinEvent(User user)
         {
             Debug.Log("User joining session: " + user.GetID());
-            UIManger.Instance.LogMessage("User joining session: " + user.GetID());
+            UIManager.Instance.LogMessage("User joining session: " + user.GetID());
 
             EventHandler<SessionJoinedEventArgs> joinEvent = SessionJoined;
             if (joinEvent != null)
@@ -66,7 +66,7 @@ namespace HoloToolkit.Sharing
         void SendLeaveEvent(long userId)
         {
             Debug.Log("User leaving session: " + userId);
-            UIManger.Instance.LogMessage("User leaving session: " + userId);
+            UIManager.Instance.LogMessage("User leaving session: " + userId);
 
             EventHandler<SessionLeftEventArgs> leftEvent = SessionLeft;
             if (leftEvent != null)

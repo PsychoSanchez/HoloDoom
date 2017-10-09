@@ -338,6 +338,7 @@ GameObject:
   - component: {fileID: 127634737}
   - component: {fileID: 127634738}
   - component: {fileID: 127634739}
+  - component: {fileID: 127634740}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -437,6 +438,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Cacodemon: {fileID: 1568043351007864, guid: 5913b4dc95b3db645b3f41574d74e858, type: 2}
+--- !u!114 &127634740
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 127634734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eaa0bbf665038ad4987ea0b20c6680e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &139265704
 Prefab:
   m_ObjectHideFlags: 0
@@ -2513,8 +2525,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 524, y: 328}
-  m_SizeDelta: {x: 190, y: 24}
+  m_AnchoredPosition: {x: 500, y: 328}
+  m_SizeDelta: {x: 220, y: 24}
   m_Pivot: {x: 0, y: 0}
 --- !u!114 &2058896884
 MonoBehaviour:

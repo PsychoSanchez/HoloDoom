@@ -120,16 +120,16 @@ namespace Assets.Scripts.Monsters
             ThrowProjectile();
             base.Shoot();
         }
-        public override void Shoot(Vector3 position, Quaternion rotation)
+        public override void Shoot(long id, Vector3 position, Quaternion rotation)
         {
             this.transform.position = position;
             this.transform.rotation = rotation;
-            ThrowProjectile(position, rotation);
+            ThrowProjectile(id, position, rotation);
             base.Shoot();
         }
 
 
-        private bool CheckIfPlayeReachable()
+        private bool CheckIfPlayerReachable()
         {
             RaycastHit hit;
             Vector3 forward = transform.TransformDirection(Vector3.forward) * 10;
@@ -158,16 +158,21 @@ namespace Assets.Scripts.Monsters
             var rotation = Quaternion.LookRotation(this.transform.position - _playerTransform.position);
             GameObject projectile = Instantiate(shootPrefab, position, rotation) as GameObject;
             if (projectile == null) return;
-            CustomMessages.Instance.SendShootProjectile(this.Id, position, rotation);
+            var projScript = projectile.GetComponent<Projectile>();
+            projScript.SetId(EnemyManager.Instance.GenerateEnemyId());
+            CustomMessages.Instance.SendShootProjectile(this.Id, projScript.Id, position, rotation);
+            EnemyManager.Instance.AddProjectile(projScript.Id, projectile);
 
             Destroy(projectile, projectileLifeTime);
         }
 
-        private void ThrowProjectile(Vector3 position, Quaternion rotation)
+        private void ThrowProjectile(long projId, Vector3 position, Quaternion rotation)
         {
             if (shootPrefab == null) return;
             GameObject projectile = Instantiate(shootPrefab, position, rotation) as GameObject;
             if (projectile == null) return;
+            projectile.GetComponent<Projectile>().SetId(projId);
+            EnemyManager.Instance.AddProjectile(projId, projectile);
 
             Destroy(projectile, projectileLifeTime);
         }

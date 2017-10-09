@@ -82,7 +82,7 @@ public class Weapon : OverridableMonoBehaviour
             case "RemotePlayer":
                 RemotePlayerHealth rp = shotHit.collider.GetComponent<RemotePlayerHealth>();
                 if (rp == null) return;
-                rp.TakeDamage(Damage / 2);
+                rp.TakeDamage(Damage / 5);
                 break;
         }
     }

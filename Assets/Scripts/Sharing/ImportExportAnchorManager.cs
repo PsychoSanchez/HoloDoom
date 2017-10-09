@@ -111,7 +111,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
 
     void Start()
     {
-        UIManger.Instance.LogMessage("Import Export Manager starting");
+        UIManager.Instance.LogMessage("Import Export Manager starting");
         Debug.Log("Import Export Manager starting");
 
         CurrentState = ImportExportState.Ready;
@@ -160,7 +160,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         }
         else
         {
-            UIManger.Instance.LogMessage("Upload failed " + failureReason);
+            UIManager.Instance.LogMessage("Upload failed " + failureReason);
             Debug.Log("Upload failed " + failureReason);
             CurrentState = ImportExportState.Failed;
         }
@@ -175,7 +175,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         if (successful)
         {
             int datasize = request.GetDataSize();
-            UIManger.Instance.LogMessage(datasize + " bytes ");
+            UIManager.Instance.LogMessage(datasize + " bytes ");
             Debug.Log(datasize + " bytes ");
             rawAnchorData = new byte[datasize];
 
@@ -184,7 +184,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         }
         else
         {
-            UIManger.Instance.LogMessage("Anchor DL failed " + failureReason);
+            UIManager.Instance.LogMessage("Anchor DL failed " + failureReason);
             // If we failed, we can ask for the data again.
             Debug.Log("Anchor DL failed " + failureReason);
             MakeAnchorDataRequest();
@@ -234,7 +234,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         {
             if (LocalUserHasLowestUserId() && Time.frameCount > 1500)
             {
-                UIManger.Instance.LogMessage("Creating room ");
+                UIManager.Instance.LogMessage("Creating room ");
                 Debug.Log("Creating room ");
                 // Keep the room open even when all users have left the shared session.
                 // This will allow us to persist an anchor in the same room on the sharing service.
@@ -244,7 +244,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         }
         else
         {
-            UIManger.Instance.LogMessage("Joining room ");
+            UIManager.Instance.LogMessage("Joining room ");
             Debug.Log("Joining room ");
             currentRoom = roomManager.GetRoom(0);
             roomManager.JoinRoom(currentRoom);
@@ -253,7 +253,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
 
         if (currentRoom != null)
         {
-            UIManger.Instance.LogMessage("In room :" + roomManager.GetCurrentRoom().GetName().GetString());
+            UIManager.Instance.LogMessage("In room :" + roomManager.GetCurrentRoom().GetName().GetString());
             Debug.Log("In room :" + roomManager.GetCurrentRoom().GetName().GetString());
         }
     }
@@ -280,7 +280,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         // First, are there any anchors in this room?
         int anchorCount = currentRoom.GetAnchorCount();
 
-        UIManger.Instance.LogMessage(anchorCount + " anchors");
+        UIManager.Instance.LogMessage(anchorCount + " anchors");
         Debug.Log(anchorCount + " anchors");
 
         // If there are anchors, we should attach to the first one.
@@ -293,7 +293,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
             // Attempt to attach to the anchor in our local anchor store.
             if (AttachToCachedAnchor(storedAnchorName) == false)
             {
-                UIManger.Instance.LogMessage("Starting room download");
+                UIManager.Instance.LogMessage("Starting room download");
                 Debug.Log("Starting room download");
                 // If we cannot find the anchor by name, we will need the full data blob.
                 MakeAnchorDataRequest();
@@ -312,7 +312,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         }
         else
         {
-            UIManger.Instance.LogMessage("Couldn't make the download request.");
+            UIManager.Instance.LogMessage("Couldn't make the download request.");
             Debug.Log("Couldn't make the download request.");
             CurrentState = ImportExportState.Failed;
         }
@@ -381,13 +381,13 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
     {
         if (located)
         {
-            UIManger.Instance.LogMessage("Found anchor, ready to export");
+            UIManager.Instance.LogMessage("Found anchor, ready to export");
             Debug.Log("Found anchor, ready to export");
             CurrentState = ImportExportState.ReadyToExportInitialAnchor;
         }
         else
         {
-            UIManger.Instance.LogMessage("Failed to locate local anchor (super bad!)");
+            UIManager.Instance.LogMessage("Failed to locate local anchor (super bad!)");
             Debug.Log("Failed to locate local anchor (super bad!)");
             CurrentState = ImportExportState.Failed;
         }
@@ -401,14 +401,14 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
     /// <returns>True if it attached, false if it could not attach</returns>
     bool AttachToCachedAnchor(string AnchorName)
     {
-        UIManger.Instance.LogMessage("Looking for " + AnchorName);
+        UIManager.Instance.LogMessage("Looking for " + AnchorName);
         Debug.Log("Looking for " + AnchorName);
         string[] ids = anchorStore.GetAllIds();
         for (int index = 0; index < ids.Length; index++)
         {
             if (ids[index] == AnchorName)
             {
-                UIManger.Instance.LogMessage("Using what we have");
+                UIManager.Instance.LogMessage("Using what we have");
                 Debug.Log("Using what we have");
                 WorldAnchor wa = anchorStore.Load(ids[index], gameObject);
                 if (wa.isLocated)
@@ -434,7 +434,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
     /// <param name="located"></param>
     private void ImportExportAnchorManager_OnTrackingChanged_Attaching(WorldAnchor self, bool located)
     {
-        UIManger.Instance.LogMessage("anchor " + located);
+        UIManager.Instance.LogMessage("anchor " + located);
         Debug.Log("anchor " + located);
         if (located)
         {
@@ -442,7 +442,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         }
         else
         {
-            UIManger.Instance.LogMessage("Failed to find local anchor from cache.");
+            UIManager.Instance.LogMessage("Failed to find local anchor from cache.");
             Debug.Log("Failed to find local anchor from cache.");
             MakeAnchorDataRequest();
         }
@@ -459,7 +459,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
     {
         if (status == SerializationCompletionReason.Succeeded && wat.GetAllIds().Length > 0)
         {
-            UIManger.Instance.LogMessage("Import complete");
+            UIManager.Instance.LogMessage("Import complete");
             Debug.Log("Import complete");
 
             string first = wat.GetAllIds()[0];
@@ -471,7 +471,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         }
         else
         {
-            UIManger.Instance.LogMessage("Import fail");
+            UIManager.Instance.LogMessage("Import fail");
             Debug.Log("Import fail");
             CurrentState = ImportExportState.DataReady;
         }
@@ -486,7 +486,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
 
         if (anchor == null)
         {
-            UIManger.Instance.LogMessage("We should have made an anchor by now...");
+            UIManager.Instance.LogMessage("We should have made an anchor by now...");
             Debug.Log("We should have made an anchor by now...");
             return;
         }
@@ -503,7 +503,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         }
         else
         {
-            UIManger.Instance.LogMessage("This anchor didn't work, trying again");
+            UIManager.Instance.LogMessage("This anchor didn't work, trying again");
             Debug.Log("This anchor didn't work, trying again");
             CurrentState = ImportExportState.InitialAnchorRequired;
         }
@@ -526,7 +526,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
     {
         if (status == SerializationCompletionReason.Succeeded && exportingAnchorBytes.Count > minTrustworthySerializedAnchorDataSize)
         {
-            UIManger.Instance.LogMessage("Uploading anchor: " + exportingAnchorName);
+            UIManager.Instance.LogMessage("Uploading anchor: " + exportingAnchorName);
             Debug.Log("Uploading anchor: " + exportingAnchorName);
             roomManager.UploadAnchor(
                 currentRoom,
@@ -536,7 +536,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         }
         else
         {
-            UIManger.Instance.LogMessage("This anchor didn't work, trying again");
+            UIManager.Instance.LogMessage("This anchor didn't work, trying again");
             Debug.Log("This anchor didn't work, trying again");
             CurrentState = ImportExportState.InitialAnchorRequired;
         }

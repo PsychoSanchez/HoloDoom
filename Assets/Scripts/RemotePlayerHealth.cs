@@ -13,6 +13,6 @@ public class RemotePlayerHealth : OverridableMonoBehaviour
 
     public void TakeDamage(int amt)
     {
-        CustomMessages.Instance.SendRemoteUserRecieveDamage(this.Id, amt);
+        CustomMessages.Instance.SendRemoteUserReceiveDamage(this.Id, amt);
     }
 }

@@ -11,7 +11,7 @@ public enum UIMode
     Menu,
     None
 }
-public class UIManger : Singleton<UIManger>
+public class UIManager : Singleton<UIManager>
 {
     public GameObject GameHUD;
     public GameObject StatusMessages;
@@ -32,7 +32,7 @@ public class UIManger : Singleton<UIManger>
 
     public void SetPlayerId(long userId)
     {
-        PlayerId.GetComponent<Text>().text = userId.ToString();
+        PlayerId.GetComponent<Text>().text = "Soldier " + userId.ToString();
     }
 
     public void LogMessage(string message)

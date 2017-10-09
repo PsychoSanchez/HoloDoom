@@ -38,7 +38,7 @@ public class PlayerHealth : OverridableMonoBehaviour
             return;
         }
         var dmgAmt = msg.ReadInt32();
-        UIManger.Instance.LogMessage("FRIENDLY FIRE BY USER " + remoteUserId);
+        UIManager.Instance.LogMessage("FRIENDLY FIRE BY USER " + remoteUserId);
         TakeDamage(dmgAmt);
     }
 

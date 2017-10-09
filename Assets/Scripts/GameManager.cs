@@ -128,11 +128,11 @@ public class GameManager : Singleton<GameManager>
         currentWave++;
         if (currentWave > Waves.Length)
         {
-            UIManger.Instance.LogMessage("Game complete, Gratz");
+            UIManager.Instance.LogMessage("Game complete, Gratz");
             CompleteGame();
             return;
         }
-        UIManger.Instance.LogMessage("Next wave " + (currentWave + 1));
+        UIManager.Instance.LogMessage("Next wave " + (currentWave + 1));
 
         ResetGameParameters();
     }

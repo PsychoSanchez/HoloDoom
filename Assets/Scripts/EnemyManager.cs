@@ -15,6 +15,7 @@ public class EnemyManager : Singleton<EnemyManager>
     }
     public GameObject Cacodemon;
     private Dictionary<long, GameObject> enemiesPool = new Dictionary<long, GameObject>();
+    private Dictionary<long, GameObject> projectiles = new Dictionary<long, GameObject>();
     // Use this for initialization
     void Start()
     {
@@ -23,24 +24,45 @@ public class EnemyManager : Singleton<EnemyManager>
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.EnemyHit] = EnemyHit;
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.PlayerFound] = PlayerFound;
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.ShootProjectile] = EnemyShoot;
+        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.ResetStage] = RemoveEnemies;
     }
 
     private void EnemyShoot(NetworkInMessage msg)
     {
         var userId = msg.ReadInt64();
-        Debug.Log(CustomMessages.Instance.localUserID);
-        Debug.Log(userId);
         if (CustomMessages.Instance.localUserID == userId)
         {
             return;
         }
 
         var enemyId = msg.ReadInt64();
+        var projId = msg.ReadInt64();
         var enemy = TryGetEnemy(enemyId);
         if (enemy == null) return;
-        enemy.GetComponent<BaseMonster>().Shoot(CustomMessages.Instance.ReadVector3(msg), CustomMessages.Instance.ReadQuaternion(msg));
+        enemy.GetComponent<BaseMonster>().Shoot(projId, CustomMessages.Instance.ReadVector3(msg), CustomMessages.Instance.ReadQuaternion(msg));
     }
 
+    public void AddProjectile(long id, GameObject proj)
+    {
+        projectiles.Add(id, proj);
+    }
+
+    public void DestroyProjectile(NetworkInMessage msg)
+    {
+        var userId = msg.ReadInt64();
+        if (userId == CustomMessages.Instance.localUserID)
+        {
+            return;
+        }
+
+        var projId = msg.ReadInt64();
+        if (!projectiles.ContainsKey(projId))
+        {
+            return;
+        }
+        Destroy(projectiles[projId]);
+        projectiles.Remove(projId);
+    }
 
     private void PlayerFound(NetworkInMessage msg)
     {
@@ -92,6 +114,32 @@ public class EnemyManager : Singleton<EnemyManager>
         return enemy;
     }
 
+    private void RemoveEnemies(NetworkInMessage msg)
+    {
+        foreach (var key in enemiesPool.Keys)
+        {
+            GameObject.DestroyImmediate(enemiesPool[key]);
+            // enemiesPool.Remove(key);
+        }
+        enemiesPool.Clear();
+
+        foreach (var key in projectiles.Keys)
+        {
+            var proj = projectiles[key];
+            if (proj != null)
+            {
+                GameObject.DestroyImmediate(projectiles[key]);
+            }
+            // projectiles.Remove(key);
+        }
+        projectiles.Clear();
+    }
+
+    public void ResetStage()
+    {
+        CustomMessages.Instance.SendResetStage();
+    }
+
     public void SpawnEnemy(EnemyTypes type, SpawnPoint sp)
     {
         switch (type)
@@ -99,12 +147,13 @@ public class EnemyManager : Singleton<EnemyManager>
             case EnemyTypes.Cacodemon:
                 var demon = Instantiate(Cacodemon, sp.position, sp.rotation);
                 var monster = demon.GetComponent<BaseMonster>();
-                monster.Id = GenerateId();
+                monster.Id = GenerateEnemyId();
                 enemiesPool.Add(monster.Id, demon);
                 CustomMessages.Instance.SendSpawnEnemy(monster.Id, sp.position, sp.rotation);
                 break;
         }
     }
+
 
     public void DamageTaken(long id, int amt)
     {
@@ -125,6 +174,7 @@ public class EnemyManager : Singleton<EnemyManager>
         }
         return enemy;
     }
+
     long LongRandom(long min, long max, System.Random rand)
     {
         long result = rand.Next((Int32)(min >> 32), (Int32)(max >> 32));
@@ -133,13 +183,13 @@ public class EnemyManager : Singleton<EnemyManager>
         return result;
     }
 
-    private long GenerateId()
+    private long GenerateId(Dictionary<long, GameObject> arr)
     {
         long id = -1;
         while (id == -1)
         {
             long newId = LongRandom(-10000, 10000, new System.Random());
-            if (enemiesPool.ContainsKey(newId) || newId == -1 || newId < -10000 || newId > 10000)
+            if (arr.ContainsKey(newId) || newId == -1 || newId < -10000 || newId > 10000)
             {
                 continue;
             }
@@ -148,5 +198,14 @@ public class EnemyManager : Singleton<EnemyManager>
         }
 
         return id;
+    }
+    public long GenerateEnemyId()
+    {
+        return GenerateId(enemiesPool);
+    }
+
+    public long GenerateProjectileId()
+    {
+        return GenerateId(projectiles);
     }
 }

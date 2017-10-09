@@ -118,7 +118,7 @@ namespace Assets.Scripts.Monsters
         {
             PlayShootAnimation();
         }
-        public virtual void Shoot(Vector3 position, Quaternion rotation)
+        public virtual void Shoot(long id, Vector3 position, Quaternion rotation)
         {
         }
 
