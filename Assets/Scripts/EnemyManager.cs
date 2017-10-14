@@ -44,6 +44,10 @@ public class EnemyManager : Singleton<EnemyManager>
 
     public void AddProjectile(long id, GameObject proj)
     {
+        if (!projectiles.ContainsKey(id))
+        {
+            return;
+        }
         projectiles.Add(id, proj);
     }
 
