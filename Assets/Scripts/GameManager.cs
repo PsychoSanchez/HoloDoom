@@ -63,7 +63,7 @@ public class GameManager : Singleton<GameManager>
     public Armor[] Armor;
     public int StartWave = 0;
     public event EventHandler GameStarted;
-    public event EventHandler GameStoped;
+    public event EventHandler GameStopped;
     public Transform SpawnTransform;
 
     bool bPlaying = false;
@@ -86,7 +86,7 @@ public class GameManager : Singleton<GameManager>
     {
         var wave = Waves[currentWave];
         var enemyTimer = new UpdateTimer(wave.TimeBetweenEnemySpawn);
-        enemyTimer.onTimeout += SpawmEnemy;
+        enemyTimer.onTimeout += SpawnEnemy;
         var ammoTimer = new UpdateTimer(wave.TimeBetweenAmmoSpawn);
         ammoTimer.onTimeout += SpawnAmmo;
         var armorTimer = new UpdateTimer(wave.TimeBetweenArmorSpawn);
@@ -107,8 +107,6 @@ public class GameManager : Singleton<GameManager>
             return;
         }
 
-        // if(AppStateManager.Instance.)
-
         ProcessGame();
     }
 
@@ -116,6 +114,8 @@ public class GameManager : Singleton<GameManager>
     {
         waveEnemysKilled++;
         var wave = Waves[this.currentWave];
+        Debug.Log(wave.EnemyAmount);
+        Debug.Log(waveEnemysKilled);
         if (wave.EnemyAmount != waveEnemysKilled)
         {
             return;
@@ -132,7 +132,7 @@ public class GameManager : Singleton<GameManager>
             CompleteGame();
             return;
         }
-        UIManager.Instance.LogMessage("Next wave " + (currentWave + 1));
+        UIManager.Instance.LogMessage("Wave " + (currentWave + 1) + " starts!");
 
         ResetGameParameters();
     }
@@ -189,7 +189,7 @@ public class GameManager : Singleton<GameManager>
     public void StopGame()
     {
         bPlaying = false;
-        EventHandler connectedEvent = GameStoped;
+        EventHandler connectedEvent = GameStopped;
         if (connectedEvent != null)
         {
             connectedEvent(this, EventArgs.Empty);
@@ -216,7 +216,7 @@ public class GameManager : Singleton<GameManager>
         Instantiate(armor, sp.position, sp.rotation);
     }
 
-    public void SpawmEnemy(object sender, EventArgs e)
+    public void SpawnEnemy(object sender, EventArgs e)
     {
         if (localUserId != AppStateManager.Instance.HeadUserID)
         {

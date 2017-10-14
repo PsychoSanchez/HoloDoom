@@ -363,16 +363,26 @@ MonoBehaviour:
     TimeBetweenAmmoSpawn: 6
     TimeBetweenMedkitSpawn: 5
     TimeBetweenArmorSpawn: 5
-  - EnemyAmount: 0
-    TimeBetweenEnemySpawn: 0
-    TimeBetweenAmmoSpawn: 0
-    TimeBetweenMedkitSpawn: 0
-    TimeBetweenArmorSpawn: 0
-  - EnemyAmount: 0
-    TimeBetweenEnemySpawn: 0
-    TimeBetweenAmmoSpawn: 0
-    TimeBetweenMedkitSpawn: 0
-    TimeBetweenArmorSpawn: 0
+  - EnemyAmount: 10
+    TimeBetweenEnemySpawn: 1
+    TimeBetweenAmmoSpawn: 4
+    TimeBetweenMedkitSpawn: 5
+    TimeBetweenArmorSpawn: 5
+  - EnemyAmount: 15
+    TimeBetweenEnemySpawn: 1
+    TimeBetweenAmmoSpawn: 6
+    TimeBetweenMedkitSpawn: 8
+    TimeBetweenArmorSpawn: 10
+  - EnemyAmount: 25
+    TimeBetweenEnemySpawn: 1
+    TimeBetweenAmmoSpawn: 6
+    TimeBetweenMedkitSpawn: 8
+    TimeBetweenArmorSpawn: 10
+  - EnemyAmount: 100
+    TimeBetweenEnemySpawn: 3
+    TimeBetweenAmmoSpawn: 12
+    TimeBetweenMedkitSpawn: 20
+    TimeBetweenArmorSpawn: 10
   monster: {fileID: 114269138357660130, guid: 5913b4dc95b3db645b3f41574d74e858, type: 2}
   Ammo:
   - {fileID: 114208812739330724, guid: b5c477a97aaf8254498b569c9f7e660a, type: 2}
@@ -426,6 +436,7 @@ MonoBehaviour:
   StatusMessages: {fileID: 2088597190}
   Menu: {fileID: 0}
   PlayerId: {fileID: 2058896882}
+  DeathScreen: {fileID: 807464265}
 --- !u!114 &127634739
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1221,6 +1232,74 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c828c5b9571ec9c4bb75aef2ba6bc8c5, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &807464265
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 807464266}
+  - component: {fileID: 807464268}
+  - component: {fileID: 807464267}
+  m_Layer: 5
+  m_Name: DeathScreen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &807464266
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 807464265}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
+  m_LocalScale: {x: 3, y: 10, z: 2}
+  m_Children: []
+  m_Father: {fileID: 1902338567}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 141, y: 48.99997}
+  m_SizeDelta: {x: 0, y: 98}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &807464267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 807464265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0, b: 0, a: 0.392}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+--- !u!222 &807464268
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 807464265}
 --- !u!1 &964733695 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 163528, guid: 8aaf37823b26ee449bb3b3d7775965c3, type: 2}
@@ -2361,6 +2440,7 @@ RectTransform:
   - {fileID: 6601984}
   - {fileID: 2088597191}
   - {fileID: 2058896883}
+  - {fileID: 807464266}
   m_Father: {fileID: 551154446}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

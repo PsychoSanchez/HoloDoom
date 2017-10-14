@@ -10,6 +10,7 @@ public class PlayerHealth : OverridableMonoBehaviour
     public int MaxHealth = 100;
     public int StartArmor = 0;
     public int MaxArmor = 200;
+    public int RespawnTime = 5;
     public Text HealthText;
     public Text ArmorText;
     public Image DamageImage;
@@ -19,6 +20,7 @@ public class PlayerHealth : OverridableMonoBehaviour
     bool isDead = false;
     int currentHealth;
     int currentArmor;
+    float spawnTime;
 
     // Use this for initialization
     void Start()
@@ -40,12 +42,6 @@ public class PlayerHealth : OverridableMonoBehaviour
         var dmgAmt = msg.ReadInt32();
         UIManager.Instance.LogMessage("FRIENDLY FIRE BY USER " + remoteUserId);
         TakeDamage(dmgAmt);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void TakeDamage(int damage)
@@ -152,11 +148,39 @@ public class PlayerHealth : OverridableMonoBehaviour
     public void Die()
     {
         isDead = true;
+        UIManager.Instance.LogMessage("Respawning in 5 seconds");
+        UIManager.Instance.ToggleMode(UIMode.Death);
         if (DeathScreen == null)
         {
             return;
         }
         DeathScreen.SetActive(true);
-        // Toggle death screeen
+        // Toggle death screen
+    }
+
+    void Update()
+    {
+        if (!isDead)
+        {
+            return;
+        }
+
+        spawnTime += Time.deltaTime;
+        if (spawnTime < RespawnTime)
+        {
+            return;
+        }
+        
+        Respawn();
+    }
+
+    private void Respawn()
+    {
+        spawnTime = 0f;
+        UIManager.Instance.LogMessage("FIGHT!");
+        UIManager.Instance.ToggleMode(UIMode.Game);
+        isDead = false;
+        currentHealth = 100;
+        UpdateUI();
     }
 }

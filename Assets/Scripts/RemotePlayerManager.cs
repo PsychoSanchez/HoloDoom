@@ -78,8 +78,8 @@ public class RemotePlayerManager : Singleton<RemotePlayerManager>
     void ProcessUserHit(NetworkInMessage msg)
     {
         // Parse the message
-        long userID = msg.ReadInt64();
-        long hitUserId = msg.ReadInt64();
+        // long userID = msg.ReadInt64();
+        // long hitUserId = msg.ReadInt64();
 
         // RemoteHeadInfo headInfo = GetRemoteHeadInfo(userID);
         // FriendlyDrone soh = headInfo.HeadObject.GetComponentInChildren<FriendlyDrone>();

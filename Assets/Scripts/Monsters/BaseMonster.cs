@@ -112,6 +112,7 @@ namespace Assets.Scripts.Monsters
         {
             _audioSource.PlayOneShot(DeathSound, 0.7F);
             _dead = true;
+            GameManager.Instance.EnemyKilled();
         }
 
         public virtual void Shoot()

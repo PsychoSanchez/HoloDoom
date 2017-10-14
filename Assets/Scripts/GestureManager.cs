@@ -46,33 +46,6 @@ namespace HoloToolkit.Unity
             }
         }
 
-        void LateUpdate()
-        {
-            GameObject oldFocusedObject = focusedObject;
-            
-            // if (GazeManager.Instance.Hit && 
-            //     OverrideFocusedObject == null &&
-            //     GazeManager.Instance.HitInfo.collider != null)
-            // {
-            //     // If gaze hits a hologram, set the focused object to that game object.
-            //     // Also if the caller has not decided to override the focused object.
-            //     focusedObject = GazeManager.Instance.HitInfo.collider.gameObject;
-            // }
-            // else
-            // {
-            //     // If our gaze doesn't hit a hologram, set the focused object to null or override focused object.
-            //     focusedObject = OverrideFocusedObject;
-            // }
-
-            // if (focusedObject != oldFocusedObject)
-            // {
-            //     // If the currently focused object doesn't match the old focused object, cancel the current gesture.
-            //     // Start looking for new gestures.  This is to prevent applying gestures from one hologram to another.
-            //     gestureRecognizer.CancelGestures();
-            //     gestureRecognizer.StartCapturingGestures();
-            // }
-        }
-
         protected override void OnDestroy()
         {
             gestureRecognizer.StopCapturingGestures();
