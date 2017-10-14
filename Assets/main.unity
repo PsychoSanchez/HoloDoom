@@ -2464,6 +2464,18 @@ Prefab:
       propertyPath: cursorObj
       value: 
       objectReference: {fileID: 1391060744}
+    - target: {fileID: 4187742286255706, guid: 0d734c5b4777f9b4fba27539c8e67e62, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4187742286255706, guid: 0d734c5b4777f9b4fba27539c8e67e62, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4187742286255706, guid: 0d734c5b4777f9b4fba27539c8e67e62, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0d734c5b4777f9b4fba27539c8e67e62, type: 2}
   m_IsPrefabParent: 0
