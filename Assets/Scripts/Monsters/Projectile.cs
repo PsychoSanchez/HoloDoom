@@ -5,11 +5,17 @@ using UnityEngine;
 public class Projectile : OverridableMonoBehaviour
 {
     public long Id { get; private set; }
-    public float projectileSpeed = 1.0f;
+    public float projectileSpeed = 3.0f;
     public int damage = 15;
+    UpdateTimer projUpdate;
     // Use this for initialization
     void Start()
     {
+        projUpdate = new UpdateTimer(.025f);
+        projUpdate.onTimeout += (a, e) =>
+        {
+            this.transform.position += (-1) * this.transform.forward * projectileSpeed * Time.deltaTime;
+        };
     }
 
     public void SetId(long id)
@@ -20,7 +26,7 @@ public class Projectile : OverridableMonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        this.transform.position += (-1) * this.transform.forward * projectileSpeed * Time.deltaTime;
+        projUpdate.Tick(Time.deltaTime);
         //this.transform.Translate(this.transform.forward * projectileSpeed * Time.deltaTime);
     }
 }

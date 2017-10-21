@@ -8,6 +8,7 @@ using UnityEngine;
 
 public class EnemyManager : Singleton<EnemyManager>
 {
+    const float ENEMY_SYNC_TIME_PERIOD = .033f;
     public enum EnemyTypes
     {
         Cacodemon = 0,
@@ -16,6 +17,7 @@ public class EnemyManager : Singleton<EnemyManager>
     public GameObject Cacodemon;
     private Dictionary<long, GameObject> enemiesPool = new Dictionary<long, GameObject>();
     private Dictionary<long, GameObject> projectiles = new Dictionary<long, GameObject>();
+    float lastUpdate = 0f;
     // Use this for initialization
     void Start()
     {
@@ -25,6 +27,29 @@ public class EnemyManager : Singleton<EnemyManager>
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.PlayerFound] = PlayerFound;
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.ShootProjectile] = EnemyShoot;
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.ResetStage] = RemoveEnemies;
+    }
+
+    void Update()
+    {
+        lastUpdate += Time.deltaTime;
+
+        if (lastUpdate > ENEMY_SYNC_TIME_PERIOD)
+        {
+            lastUpdate = 0;
+            SendEnemyTransform();
+        }
+    }
+
+    private void SendEnemyTransform()
+    {
+        Vector3 position;
+        long enemyId;
+        foreach (long key in enemiesPool.Keys)
+        {
+            enemyId = enemiesPool[key].GetComponent<BaseMonster>().Id;
+            position = enemiesPool[key].transform.position;
+            CustomMessages.Instance.SendEnemyTransform(enemyId, position);
+        }
     }
 
     private void EnemyShoot(NetworkInMessage msg)
@@ -81,7 +106,6 @@ public class EnemyManager : Singleton<EnemyManager>
     {
         var enemy = GetEnemy(msg);
         enemy.transform.position = CustomMessages.Instance.ReadVector3(msg);
-        enemy.transform.rotation = CustomMessages.Instance.ReadQuaternion(msg);
     }
 
     private void EnemyHit(NetworkInMessage msg)

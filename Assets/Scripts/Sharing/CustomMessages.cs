@@ -2,6 +2,7 @@
 using HoloToolkit.Unity;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class CustomMessages : Singleton<CustomMessages>
 {
@@ -14,6 +15,7 @@ public class CustomMessages : Singleton<CustomMessages>
     {
         UserHeadTransform = MessageID.UserMessageIDStart,
         UserAvatar,
+        UserReady,
         UserHealthUpdated,
         RemoteUserRecieveDamage,
         EnemyHit,
@@ -23,6 +25,7 @@ public class CustomMessages : Singleton<CustomMessages>
         EnemyTransform,
         EnemyDeath,
         StageTransform,
+        UpdateAppState,
         ResetStage,
         ExplodeTarget,
         Max
@@ -123,6 +126,39 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageReliability.UnreliableSequenced,
             MessageChannel.Avatar);
     }
+
+    public void SendUserReady()
+    {
+        if (!IsConnected())
+        {
+            return;
+        }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.UserReady);
+        this.serverConnection.Broadcast(
+          msg,
+          MessagePriority.Immediate,
+          MessageReliability.Reliable,
+          MessageChannel.Avatar);
+    }
+
+    public void SendNewAppState(AppState state)
+    {
+        if (!IsConnected())
+        {
+            return;
+        }
+        // Create an outgoing network message to contain all the info we want to send
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.UpdateAppState);
+        msg.Write((Int16)state);
+        
+        this.serverConnection.Broadcast(
+          msg,
+          MessagePriority.Immediate,
+          MessageReliability.Reliable,
+          MessageChannel.Avatar);
+    }
+
     public void SendUserHealthUpdate(int health)
     {
         if (!IsConnected())
@@ -216,7 +252,7 @@ public class CustomMessages : Singleton<CustomMessages>
                  MessageChannel.Avatar);
     }
 
-    public void UpdateEnemyTransform(long enemyId, Vector3 position, Quaternion rotation)
+    public void SendEnemyTransform(long enemyId, Vector3 position)
     {
         if (!IsConnected())
         {
@@ -227,7 +263,6 @@ public class CustomMessages : Singleton<CustomMessages>
 
         msg.Write(enemyId);
         AppendVector3(msg, position);
-        AppendQuaternion(msg, rotation);
 
         // Send the message as a broadcast, which will cause the server to forward it to all other users in the session.
         this.serverConnection.Broadcast(

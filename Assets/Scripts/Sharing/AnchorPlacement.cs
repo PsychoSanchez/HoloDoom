@@ -43,10 +43,10 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
 
         if (GotTransform == false)
         {
-            AppStateManager.Instance.SetCurrentAppState(AppState.Ready);
+            AppStateManager.Instance.SetCurrentAppState(AppState.WaitingForStageTransform);
         }
 
-        GotTransform = true;
+        // GotTransform = true;
     }
 
     // Update is called once per frame
@@ -66,7 +66,7 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
     {
         if (!GotTransform && cursor != null)
         {
-            transform.position = cursor.Position;
+            transform.position = cursor.Position - Camera.main.transform.forward * 0.1f;
             transform.rotation = cursor.Rotation;
         }
     }
@@ -80,6 +80,6 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
         // And send it to our friends.
         CustomMessages.Instance.SendStageTransform(transform.localPosition, transform.localRotation);
         AppStateManager.Instance.SetHeadUser(SharingStage.Instance.Manager.GetLocalUser().GetID());
-        AppStateManager.Instance.SetCurrentAppState(AppState.Ready);
+        // AppStateManager.Instance.SetCurrentAppState(AppState.Ready);
     }
 }

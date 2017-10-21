@@ -5,6 +5,7 @@ using HoloToolkit.Sharing;
 using HoloToolkit.Unity;
 using UnityEngine;
 
+
 public struct SpawnPoint
 {
     public Vector3 position;
@@ -46,6 +47,7 @@ public enum UpdateTimerTypes
 
 public class GameManager : Singleton<GameManager>
 {
+    const float RAY_DEBUG_TIME = 100f;
     [Serializable]
     public struct WaveLevel
     {
@@ -65,14 +67,22 @@ public class GameManager : Singleton<GameManager>
     public event EventHandler GameStarted;
     public event EventHandler GameStopped;
     public Transform SpawnTransform;
+    public float MaxSpawnDistance = 5.0f;
+    public float MinSpawnDistance = 1.0f;
+    public int SpawnDirections = 32;
 
     bool bPlaying = false;
+    bool spawnPointsFound = false;
     int currentWave;
     int waveEnemysSpawned;
     int waveEnemysKilled;
     long localUserId;
+    float startAngle = 0;
+    float endAngle = 360;
+    List<float> spawnDirections = new List<float>();
     Dictionary<UpdateTimerTypes, UpdateTimer> timers = new Dictionary<UpdateTimerTypes, UpdateTimer>();
     RaycastHit hit;
+    UpdateTimer startTimer;
 
     // Use this for initialization
     void Start()
@@ -102,20 +112,25 @@ public class GameManager : Singleton<GameManager>
     // Update is called once per frame
     void Update()
     {
-        if (AppStateManager.Instance.GetCurrentAppState() != AppState.Ready)
+        switch (AppStateManager.Instance.GetCurrentAppState())
         {
-            return;
-        }
+            case AppState.WaitingForGameStart:
+                break;
+            case AppState.Ready:
+                if (!spawnPointsFound)
+                {
+                    GetAvailbleSpawnAngles();
+                }
 
-        ProcessGame();
+                ProcessGame();
+                break;
+        }
     }
 
     public void EnemyKilled()
     {
         waveEnemysKilled++;
         var wave = Waves[this.currentWave];
-        Debug.Log(wave.EnemyAmount);
-        Debug.Log(waveEnemysKilled);
         if (wave.EnemyAmount != waveEnemysKilled)
         {
             return;
@@ -229,44 +244,107 @@ public class GameManager : Singleton<GameManager>
             return;
         }
         waveEnemysSpawned++;
-        EnemyManager.Instance.SpawnEnemy(EnemyManager.EnemyTypes.Cacodemon, GetSpawnPosition(5.0f));
+        EnemyManager.Instance.SpawnEnemy(EnemyManager.EnemyTypes.Cacodemon, GetSpawnPosition(MaxSpawnDistance, MinSpawnDistance));
     }
 
-    Vector3 RandomCircle(Vector3 center, float radius)
+    private void GetAvailbleSpawnAngles()
     {
-        float ang = UnityEngine.Random.value * 360;
+        var anchor = SpawnTransform.transform.position;
+        for (int i = 1; i < SpawnDirections + 1; i++)
+        {
+            var angle = (float)i / (float)SpawnDirections * 360;
+            Vector3 pos;
+
+            pos.x = MaxSpawnDistance * Mathf.Sin(angle * Mathf.Deg2Rad);
+            pos.z = MaxSpawnDistance * Mathf.Cos(angle * Mathf.Deg2Rad);
+            pos.y = anchor.y;
+
+
+            if (Physics.Raycast(anchor, pos, out hit, MaxSpawnDistance))
+            {
+                print("Found an object - distance: " + hit.point);
+                if (Vector3.Distance(anchor, hit.point) <= MinSpawnDistance)
+                {
+                    Debug.DrawRay(anchor, pos, Color.red, RAY_DEBUG_TIME);
+                    print("Too close");
+                }
+                else
+                {
+                    Debug.DrawRay(anchor, pos, Color.yellow, RAY_DEBUG_TIME);
+                    spawnDirections.Add(angle);
+                    print("ok");
+                }
+            }
+            else
+            {
+                Debug.DrawRay(anchor, pos, Color.green, RAY_DEBUG_TIME);
+                spawnDirections.Add(angle);
+            }
+        }
+        spawnPointsFound = true;
+    }
+
+    Vector3 GetSpawnDirection(Vector3 center, float radius)
+    {
+        var index = (int)UnityEngine.Random.Range(0, spawnDirections.Count);
+        float ang = spawnDirections[index];
         Vector3 pos;
-        pos.x = center.x + radius * Mathf.Sin(ang * Mathf.Deg2Rad);
-        pos.z = center.z + radius * Mathf.Cos(ang * Mathf.Deg2Rad);
+        pos.x = radius * Mathf.Sin(ang * Mathf.Deg2Rad);
+        pos.z = radius * Mathf.Cos(ang * Mathf.Deg2Rad);
         pos.y = center.y;
         return pos;
     }
 
     /// <summary>
-    ///     Calculates and returns position in local space
+    /// Calculates and returns position in local space
     /// </summary>
     /// <param name="radius">Radius to find point in</param>
     /// <returns></returns>
     SpawnPoint GetSpawnPosition(float radius)
     {
         SpawnPoint temp = new SpawnPoint();
-        Vector3 center = Camera.main.transform.position;
+        Vector3 center = SpawnTransform.position;
         if (SpawnTransform != null)
         {
             center.x = SpawnTransform.position.x;
             center.z = SpawnTransform.position.z;
         }
-        var position = RandomCircle(center, radius);
-        //Debug.DrawRay(center, position, Color.green, 10);
+        var position = GetSpawnDirection(center, radius);
+        Debug.DrawRay(center, position, Color.green, 10);
 
+        temp.position = center + position;
         if (Physics.Raycast(center, position, out hit, radius))
         {
             print("Found an object - distance: " + hit.point);
-            position = hit.point;
+            temp.position = hit.point;
         }
 
-        temp.position = position;
         temp.rotation = Quaternion.FromToRotation(Vector3.forward, center - position);
+        return temp;
+    }
+
+    SpawnPoint GetSpawnPosition(float radius, float minDistance)
+    {
+        Vector3 center = SpawnTransform.position;
+        float dist;
+        SpawnPoint temp = new SpawnPoint();
+        Vector3 position;
+        Int16 failCount = 0;
+        do
+        {
+            position = GetSpawnDirection(center, radius);
+            temp.position = center + position;
+            if (Physics.Raycast(center, position, out hit, radius))
+            {
+                print("Found an object - distance: " + hit.point);
+                temp.position = hit.point;
+            }
+            dist = Vector3.Distance(temp.position, SpawnTransform.position);
+            failCount++;
+        } while (dist < minDistance && failCount < 3);
+
+        Debug.DrawRay(center, position, Color.white, RAY_DEBUG_TIME);
+        temp.rotation = Quaternion.FromToRotation(center, position);
         return temp;
     }
 }

@@ -336,7 +336,6 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
                 // DataReady is set when the anchor download completes.
                 CurrentState = ImportExportState.Importing;
                 WorldAnchorTransferBatch.ImportAsync(rawAnchorData, ImportComplete);
-                AppStateManager.Instance.SetCurrentAppState(AppState.Ready);
                 break;
             case ImportExportState.DataRequested:
                 AppStateManager.Instance.SetCurrentAppState(AppState.WaitingForStageTransform);
@@ -468,6 +467,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
             WorldAnchor anchor = wat.LockObject(first, gameObject);
             anchorStore.Save(first, anchor);
             CurrentState = ImportExportState.Ready;
+            AppStateManager.Instance.SetCurrentAppState(AppState.WaitingForGameStart);            
         }
         else
         {
@@ -533,6 +533,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
                 new XString(exportingAnchorName),
                 exportingAnchorBytes.ToArray(),
                 exportingAnchorBytes.Count);
+            AppStateManager.Instance.SetCurrentAppState(AppState.WaitingForGameStart);
         }
         else
         {

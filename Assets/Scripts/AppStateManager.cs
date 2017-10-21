@@ -9,19 +9,28 @@ using UnityEngine;
 public enum AppState
 {
     Starting = 0,
-    WaitingForConection,
+    WaitingForConnection,
     WaitingForAnchor,
     WaitingForStageTransform,
     PickingAvatar,
-    Ready
+    Ready,
+    WaitingForGameStart
+}
+
+// TODO: Add users states
+public struct UserState
+{
+    long id;
+    AppState state;
 }
 
 public class AppStateManager : Singleton<AppStateManager>
 {
-    private bool needUpdate = false;
-    private AppState currentAppState;
     public event EventHandler onAppStateChange;
     public long HeadUserID { get; private set; }
+    private bool needUpdate = false;
+    private AppState currentAppState;
+    int usersReady = 0;
 
     public AppState GetCurrentAppState()
     {
@@ -48,10 +57,34 @@ public class AppStateManager : Singleton<AppStateManager>
     void Start()
     {
         UIManager.Instance.LogMessage("Waiting for connection...");
-        SetCurrentAppState(AppState.WaitingForConection);
+        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.UpdateAppState] += AppStageUpdate;
+        SetCurrentAppState(AppState.WaitingForConnection);
         InitSharingManager();
+        SharingSessionTracker.Instance.SessionJoined += Instance_SessionJoined;
     }
 
+    private void Instance_SessionJoined(object sender, SharingSessionTracker.SessionJoinedEventArgs e)
+    {
+    }
+
+    void AppStageUpdate(NetworkInMessage msg)
+    {
+        var userId = msg.ReadInt64();
+        if (userId == CustomMessages.Instance.localUserID)
+        {
+            return;
+        }
+        var state = (AppState)msg.ReadInt16();
+
+        if (state == AppState.WaitingForGameStart)
+        {
+            var usersCount = SharingSessionTracker.Instance.UserIds.Count;
+            usersReady++;
+        }
+
+        // TODO:
+
+    }
     private void InitSharingManager()
     {
         SharingStage.Instance.SharingManagerConnected += (e, i) =>
@@ -80,7 +113,7 @@ public class AppStateManager : Singleton<AppStateManager>
 
         switch (currentAppState)
         {
-            case AppState.WaitingForConection:
+            case AppState.WaitingForConnection:
                 UIManager.Instance.ToggleMode(UIMode.Menu);
                 break;
             case AppState.WaitingForAnchor:
@@ -100,8 +133,16 @@ public class AppStateManager : Singleton<AppStateManager>
                 // Hide anchor
                 AnchorPlacement.Instance.gameObject.SetActive(false);
                 break;
+            case AppState.WaitingForGameStart:
+                UIManager.Instance.LogMessage("Waiting for match begin...");
+                if (CustomMessages.Instance.localUserID != HeadUserID)
+                {
+                    CustomMessages.Instance.SendNewAppState(AppState.WaitingForGameStart);
+                    break;
+                }
+                usersReady++;
+                break;
             case AppState.Ready:
-
                 // Show anchor
                 AnchorPlacement.Instance.gameObject.SetActive(true);
                 UIManager.Instance.LogMessage("Game start");
