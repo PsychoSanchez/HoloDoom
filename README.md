@@ -23,6 +23,6 @@ All game logic and other multiplayer stuff located at player that first places w
 * Deploy solution to your device
 * Enjoy
 
-##Demo 
+## Demo
 ![](https://github.com/PsychoSanchez/HoloDoom/raw/master/img/spawn.gif)
 ![](https://github.com/PsychoSanchez/HoloDoom/raw/master/img/coop.gif)
