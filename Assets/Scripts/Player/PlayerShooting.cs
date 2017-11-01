@@ -31,7 +31,7 @@ public class PlayerShooting : OverridableMonoBehaviour
     {
         switch (AppStateManager.Instance.GetCurrentAppState())
         {
-            case AppState.Ready:
+            case AppState.Playing:
                 if (CurrentWeapon == null)
                 {
                     return;

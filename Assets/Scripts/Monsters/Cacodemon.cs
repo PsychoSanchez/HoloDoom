@@ -60,7 +60,7 @@ namespace Assets.Scripts.Monsters
             {
                 return;
             }
-            if (AppStateManager.Instance.GetCurrentAppState() != AppState.Ready)
+            if (AppStateManager.Instance.GetCurrentAppState() != AppState.Playing)
             {
                 return;
             }

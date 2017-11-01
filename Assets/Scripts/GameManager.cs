@@ -114,9 +114,9 @@ public class GameManager : Singleton<GameManager>
     {
         switch (AppStateManager.Instance.GetCurrentAppState())
         {
-            case AppState.WaitingForGameStart:
+            case AppState.Playing:
                 break;
-            case AppState.Ready:
+            case AppState.Playing:
                 if (!spawnPointsFound)
                 {
                     GetAvailbleSpawnAngles();

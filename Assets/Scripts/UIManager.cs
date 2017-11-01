@@ -49,7 +49,7 @@ public class UIManager : Singleton<UIManager>
         StatusMessages.SetActive(visibility);
     }
 
-    public void ToggleMode(UIMode mode)
+    public void SetMode(UIMode mode)
     {
         switch (mode)
         {

@@ -43,7 +43,7 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
 
         if (GotTransform == false)
         {
-            AppStateManager.Instance.SetCurrentAppState(AppState.WaitingForStageTransform);
+            AppStateManager.Instance.SetCurrentAppState(AppState.Scanning);
         }
 
         // GotTransform = true;
@@ -57,7 +57,7 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
             case AppState.WaitingForAnchor:
                 ProposePosition();
                 break;
-            case AppState.Ready:
+            case AppState.Playing:
                 break;
         }
     }
@@ -79,7 +79,7 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
 
         // And send it to our friends.
         CustomMessages.Instance.SendStageTransform(transform.localPosition, transform.localRotation);
-        AppStateManager.Instance.SetHeadUser(SharingStage.Instance.Manager.GetLocalUser().GetID());
+        AppStateManager.Instance.BecomeHeadUser(SharingStage.Instance.Manager.GetLocalUser().GetID());
         // AppStateManager.Instance.SetCurrentAppState(AppState.Ready);
     }
 }

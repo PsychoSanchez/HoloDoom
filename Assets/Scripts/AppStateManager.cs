@@ -8,44 +8,64 @@ using UnityEngine;
 
 public enum AppState
 {
+    // Game started, not connected
     Starting = 0,
+    // Connecting
     WaitingForConnection,
-    WaitingForAnchor,
-    WaitingForStageTransform,
+    // Picking user avatar
     PickingAvatar,
+    // Wainting for user to place anchor
+    WaitingForAnchor,
+    // Scanning 
+    Scanning,
+    // Syncing game state and room transform
+    Syncing,
+    // Lobby
     Ready,
-    WaitingForGameStart
+    // Match
+    Playing
 }
 
 // TODO: Add users states
 public struct UserState
 {
-    long id;
-    AppState state;
+    public long id;
+    public AppState state;
 }
 
 public class AppStateManager : Singleton<AppStateManager>
 {
     public event EventHandler onAppStateChange;
     public long HeadUserID { get; private set; }
-    private bool needUpdate = false;
     private AppState currentAppState;
+    List<UserState> connectedUsers = new List<UserState>();
+    int usersJoined = 0;
     int usersReady = 0;
+
+    // Use this for initialization
+    void Start()
+    {
+        UIManager.Instance.LogMessage("Waiting for connection...");
+        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.UpdateAppState] += PlayerAppStateUpdate;
+        SetCurrentAppState(AppState.WaitingForConnection);
+        InitSharingManager();
+        SharingSessionTracker.Instance.SessionJoined += Instance_SessionJoined;
+        SharingSessionTracker.Instance.SessionLeft += Instance_SessionLeft;
+    }
 
     public AppState GetCurrentAppState()
     {
         return currentAppState;
     }
 
+    // Local user App State update
     public void SetCurrentAppState(AppState value)
     {
         if (value == currentAppState)
         {
             return;
         }
-        currentAppState = value;
-        needUpdate = true;
-
+        UpdateAppState(value);
         var e = onAppStateChange;
         if (e != null)
         {
@@ -53,21 +73,8 @@ public class AppStateManager : Singleton<AppStateManager>
         }
     }
 
-    // Use this for initialization
-    void Start()
-    {
-        UIManager.Instance.LogMessage("Waiting for connection...");
-        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.UpdateAppState] += AppStageUpdate;
-        SetCurrentAppState(AppState.WaitingForConnection);
-        InitSharingManager();
-        SharingSessionTracker.Instance.SessionJoined += Instance_SessionJoined;
-    }
-
-    private void Instance_SessionJoined(object sender, SharingSessionTracker.SessionJoinedEventArgs e)
-    {
-    }
-
-    void AppStageUpdate(NetworkInMessage msg)
+    // Remote user app state updated
+    void PlayerAppStateUpdate(NetworkInMessage msg)
     {
         var userId = msg.ReadInt64();
         if (userId == CustomMessages.Instance.localUserID)
@@ -76,15 +83,130 @@ public class AppStateManager : Singleton<AppStateManager>
         }
         var state = (AppState)msg.ReadInt16();
 
-        if (state == AppState.WaitingForGameStart)
+        if (state == AppState.Ready && CustomMessages.Instance.localUserID == HeadUserID)
         {
-            var usersCount = SharingSessionTracker.Instance.UserIds.Count;
-            usersReady++;
+            UpdateUserCount();
         }
 
         // TODO:
-
     }
+
+    private void UpdateAppState(AppState value)
+    {
+        // Set current app state
+        currentAppState = value;
+
+        // Do action
+        switch (currentAppState)
+        {
+            case AppState.WaitingForConnection:
+                // "Connecting" sign
+                UIManager.Instance.SetMode(UIMode.Menu);
+                break;
+            case AppState.WaitingForAnchor:
+                // Every user has "Anchor" in hands and searching place for place
+                // After anchor placed go to scanning phase
+                UIManager.Instance.LogMessage("Waiting for anchor to place");
+                if (ImportExportAnchorManager.Instance.AnchorEstablished)
+                {
+                    UIManager.Instance.LogMessage("AnchorEstablished");
+                    UIManager.Instance.SetMode(UIMode.None);
+                    EnableMapping();
+                }
+                break;
+            case AppState.Scanning:
+                // Start scanning at all users
+                // After upload start head user should go to ready state
+                // Secondary users will see that server contains room and will go to syncing state
+                UIManager.Instance.LogMessage("Waiting for stage transform...");
+                UIManager.Instance.SetMode(UIMode.None);
+                EnableMapping();
+                UIManager.Instance.LogMessage("Scanning space around you...");
+
+                // Hide anchor
+                AnchorPlacement.Instance.gameObject.SetActive(false);
+                break;
+            case AppState.Syncing:
+                // TODO: Stop All enemies, show "Syncing sign"
+                // Download room, download enemies, download player states, sync space
+                // After all this steps go to ready
+                break;
+            case AppState.Ready:
+                // Anchor uploaded or downloaded, waiting for players to load 
+                // Stop All enemies, wait for all players to get ready
+                // Show "waiting for users to sync" sign
+                // Send information to head user, that we are ready
+                // After all users are ready, head user will start game (AppState.Playing)
+                UIManager.Instance.LogMessage("Waiting for match to begin...");
+                if (CustomMessages.Instance.localUserID == HeadUserID)
+                {
+                    usersReady++;
+                    return;
+                }
+                CustomMessages.Instance.SendNewAppState(value);
+                break;
+            case AppState.Playing:
+                // Start spawn enemies, start movement
+                // Show anchor
+                AnchorPlacement.Instance.gameObject.SetActive(true);
+                UIManager.Instance.LogMessage("Game start");
+                UIManager.Instance.SetMode(UIMode.Game);
+                break;
+        }
+    }
+
+    private void Instance_SessionJoined(object sender, SharingSessionTracker.SessionJoinedEventArgs e)
+    {
+        if (CustomMessages.Instance.localUserID != HeadUserID)
+        {
+            return;
+        }
+
+        connectedUsers.Add(new UserState()
+        {
+            id = e.joiningUser.GetID(),
+            state = AppState.Starting
+        });
+        UpdateUserCount();
+    }
+
+    private void Instance_SessionLeft(object sender, SharingSessionTracker.SessionLeftEventArgs e)
+    {
+        if (CustomMessages.Instance.localUserID != HeadUserID)
+        {
+            // TODO: If headuser left the game - reset to waiting for anchor
+            // Clear all game data, remove all game objects, set game mode to placing anchor
+            return;
+        }
+
+        var userIndex = connectedUsers.FindIndex(u => u.id == e.exitingUserId);
+        if (userIndex > 0)
+        {
+            connectedUsers.RemoveAt(userIndex);
+        }
+        UpdateUserCount();
+    }
+
+    private void UpdateUserCount()
+    {
+        usersJoined = SharingSessionTracker.Instance.UserIds.Count;
+        var usersReady = connectedUsers.TrueForAll(user => user.state == AppState.Ready || user.state == AppState.Playing);
+        if (usersReady)
+        {
+            // If syncing user left start game
+            SetCurrentAppState(AppState.Playing);
+            // TODO: Send start game message
+        }
+        else if (currentAppState == AppState.Playing)
+        {
+            // Else user connected and started syncing
+            SetCurrentAppState(AppState.Ready);
+            // TODO: Send pause game message
+
+        }
+    }
+
+
     private void InitSharingManager()
     {
         SharingStage.Instance.SharingManagerConnected += (e, i) =>
@@ -97,59 +219,33 @@ public class AppStateManager : Singleton<AppStateManager>
         SharingStage.Instance.ConnectToServer();
     }
 
-    public void SetHeadUser(long userId)
+    /// <summary>
+    /// Local user set anchor and becomes head user
+    /// </summary>
+    /// <param name="userId"></param>
+    public void BecomeHeadUser(long userId)
     {
+        // Set HeadUserID
         HeadUserID = userId;
+
+        // Init users
+        foreach (var id in SharingSessionTracker.Instance.UserIds)
+        {
+            // if it's our id return
+            if (id == CustomMessages.Instance.localUserID)
+            {
+                return;
+            }
+
+            // add connected users to list
+            connectedUsers.Add(new UserState()
+            {
+                id = id,
+                state = AppState.WaitingForAnchor
+            });
+        }
+
         // CustomMessages.Instance.
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        if (!needUpdate)
-        {
-            return;
-        }
-
-        switch (currentAppState)
-        {
-            case AppState.WaitingForConnection:
-                UIManager.Instance.ToggleMode(UIMode.Menu);
-                break;
-            case AppState.WaitingForAnchor:
-                UIManager.Instance.LogMessage("Waiting for anchor to place");
-                if (ImportExportAnchorManager.Instance.AnchorEstablished)
-                {
-                    UIManager.Instance.LogMessage("AnchorEstablished");
-                    UIManager.Instance.ToggleMode(UIMode.None);
-                    EnableMapping();
-                }
-                break;
-            case AppState.WaitingForStageTransform:
-                UIManager.Instance.LogMessage("Waiting for stage transform...");
-                UIManager.Instance.ToggleMode(UIMode.None);
-                EnableMapping();
-
-                // Hide anchor
-                AnchorPlacement.Instance.gameObject.SetActive(false);
-                break;
-            case AppState.WaitingForGameStart:
-                UIManager.Instance.LogMessage("Waiting for match begin...");
-                if (CustomMessages.Instance.localUserID != HeadUserID)
-                {
-                    CustomMessages.Instance.SendNewAppState(AppState.WaitingForGameStart);
-                    break;
-                }
-                usersReady++;
-                break;
-            case AppState.Ready:
-                // Show anchor
-                AnchorPlacement.Instance.gameObject.SetActive(true);
-                UIManager.Instance.LogMessage("Game start");
-                UIManager.Instance.ToggleMode(UIMode.Game);
-                break;
-        }
-        needUpdate = false;
     }
 
     private static void EnableMapping()

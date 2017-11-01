@@ -149,7 +149,7 @@ public class PlayerHealth : OverridableMonoBehaviour
     {
         isDead = true;
         UIManager.Instance.LogMessage("Respawning in 5 seconds");
-        UIManager.Instance.ToggleMode(UIMode.Death);
+        UIManager.Instance.SetMode(UIMode.Death);
         if (DeathScreen == null)
         {
             return;
@@ -178,7 +178,7 @@ public class PlayerHealth : OverridableMonoBehaviour
     {
         spawnTime = 0f;
         UIManager.Instance.LogMessage("FIGHT!");
-        UIManager.Instance.ToggleMode(UIMode.Game);
+        UIManager.Instance.SetMode(UIMode.Game);
         isDead = false;
         currentHealth = 100;
         UpdateUI();
