@@ -174,7 +174,7 @@ public class AppStateManager : Singleton<AppStateManager>
                 // After upload start head user should go to ready state
                 // Secondary users will see that server contains room and will go to syncing state
                 UIManager.Instance.LogMessage("Waiting for stage transform...");
-                UIManager.Instance.SetMode(UIMode.None);
+                UIManager.Instance.SetMode(UIMode.Scanning);
                 EnableMapping();
                 UIManager.Instance.LogMessage("Scanning space around you...");
                 UIManager.Instance.LogMessage("Game will start, when anchor will scan enough space for game");
@@ -183,6 +183,7 @@ public class AppStateManager : Singleton<AppStateManager>
                 // AnchorPlacement.Instance.gameObject.SetActive(false);
                 break;
             case AppState.Syncing:
+                UIManager.Instance.SetMode(UIMode.Syncing);
                 // TODO: Stop All enemies, show "Syncing sign"
                 // Download room, download enemies, download player states, sync space
                 // After all this steps go to ready
@@ -194,7 +195,7 @@ public class AppStateManager : Singleton<AppStateManager>
                 // Send information to head user, that we are ready
                 // After all users are ready, head user will start game (AppState.Playing)
                 UIManager.Instance.LogMessage("Waiting for users to be ready...");
-                UIManager.Instance.SetMode(UIMode.None);
+                UIManager.Instance.SetMode(UIMode.WaitingForPlayers);
                 if (CustomMessages.Instance.localUserID == HeadUserID)
                 {
                     return;
@@ -254,26 +255,26 @@ public class AppStateManager : Singleton<AppStateManager>
     {
         nUsersJoined = SharingSessionTracker.Instance.UserIds.Count;
         var bUsersReady = connectedUsers.TrueForAll(user => user.state == AppState.Ready || user.state == AppState.Playing);
+        // If all users ready
         if (bUsersReady)
         {
-            // If we are waiting for 2 or more players
+            // If we are  2 or more players
             if (WaitForPlayers && connectedUsers.Count > 1)
             {
-                // If syncing user left start game
+                // If someone with syncing status left or updated his status to ready
                 StartGame();
-                // TODO: Send start game message
             }
             else if (!WaitForPlayers)
             {
+                // If we are not waiting for players, start game
                 StartGame();
             }
         }
         else if (currentAppState == AppState.Playing)
         {
             // Else user connected and started syncing
+            // Pause game for all
             PauseGame();
-            // SetAppState(AppState.Ready);
-            // TODO: Send pause game message
         }
     }
 

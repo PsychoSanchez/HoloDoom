@@ -10,7 +10,10 @@ public enum UIMode
     Game = 0,
     Menu,
     None,
-    Death
+    Death,
+    WaitingForPlayers,
+    Syncing,
+    Scanning
 }
 public class UIManager : Singleton<UIManager>
 {
@@ -19,10 +22,12 @@ public class UIManager : Singleton<UIManager>
     public GameObject Menu;
     public GameObject PlayerId;
     public GameObject DeathScreen;
+    public GameObject StatusSign;
 
     int messageNumber = 0;
     void Start()
     {
+        StatusSign.SetActive(false);
         GameHUD.SetActive(false);
         DeathScreen.SetActive(false);
         StatusMessages.SetActive(true);
@@ -51,35 +56,50 @@ public class UIManager : Singleton<UIManager>
 
     public void SetMode(UIMode mode)
     {
+        HideAllUI();
         switch (mode)
         {
             case UIMode.Game:
-                if (Menu != null)
-                {
-                    Menu.SetActive(false);
-                }
-                DeathScreen.SetActive(false);
                 GameHUD.SetActive(true);
                 break;
             case UIMode.Death:
                 DeathScreen.SetActive(true);
-                GameHUD.SetActive(false);
+                break;
+            case UIMode.Scanning:
+                ShowSign("Scanning...");
+                break;
+            case UIMode.Syncing:
+                ShowSign("Syncing...");
+                break;
+            case UIMode.WaitingForPlayers:
+                ShowSign("Waiting for players...");
                 break;
             case UIMode.Menu:
                 if (Menu != null)
                 {
                     Menu.SetActive(true);
                 }
-                GameHUD.SetActive(false);
                 break;
             case UIMode.None:
-                if (Menu != null)
-                {
-                    Menu.SetActive(false);
-                }
-                GameHUD.SetActive(false);
+            default:
                 break;
         }
     }
 
+    private void ShowSign(string msg)
+    {
+        StatusSign.GetComponent<Text>().text = msg;
+        StatusSign.SetActive(true);
+    }
+
+    private void HideAllUI()
+    {
+        StatusSign.SetActive(false);
+        GameHUD.SetActive(false);
+        DeathScreen.SetActive(false);
+        if (Menu != null)
+        {
+            Menu.SetActive(false);
+        }
+    }
 }
