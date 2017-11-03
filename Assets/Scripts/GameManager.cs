@@ -72,13 +72,13 @@ public class GameManager : Singleton<GameManager>
     public int SpawnDirections = 32;
 
     bool bPlaying = false;
-    bool spawnPointsFound = false;
-    int currentWave;
-    int waveEnemysSpawned;
-    int waveEnemysKilled;
-    long localUserId;
-    float startAngle = 0;
-    float endAngle = 360;
+    bool bSpawnPointsFound = false;
+    int nCurrentWave;
+    int nWaveEnemysSpawned;
+    int nWaveEnemysKilled;
+    long lLocalUserId;
+    float lStartAngle = 0;
+    float lEndAngle = 360;
     List<float> spawnDirections = new List<float>();
     Dictionary<UpdateTimerTypes, UpdateTimer> timers = new Dictionary<UpdateTimerTypes, UpdateTimer>();
     RaycastHit hit;
@@ -87,14 +87,14 @@ public class GameManager : Singleton<GameManager>
     // Use this for initialization
     void Start()
     {
-        currentWave = StartWave;
-        localUserId = SharingStage.Instance.Manager.GetLocalUser().GetID();
+        nCurrentWave = StartWave;
+        lLocalUserId = SharingStage.Instance.Manager.GetLocalUser().GetID();
         InitWave();
     }
 
     private void InitWave()
     {
-        var wave = Waves[currentWave];
+        var wave = Waves[nCurrentWave];
         var enemyTimer = new UpdateTimer(wave.TimeBetweenEnemySpawn);
         enemyTimer.onTimeout += SpawnEnemy;
         var ammoTimer = new UpdateTimer(wave.TimeBetweenAmmoSpawn);
@@ -112,26 +112,27 @@ public class GameManager : Singleton<GameManager>
     // Update is called once per frame
     void Update()
     {
-        switch (AppStateManager.Instance.GetCurrentAppState())
+        switch (AppStateManager.Instance.GetAppState())
         {
             case AppState.Playing:
-                break;
-            case AppState.Playing:
-                if (!spawnPointsFound)
+                if (!bSpawnPointsFound)
                 {
                     GetAvailbleSpawnAngles();
                 }
 
                 ProcessGame();
                 break;
+            case AppState.Ready:
+            default:
+                break;
         }
     }
 
     public void EnemyKilled()
     {
-        waveEnemysKilled++;
-        var wave = Waves[this.currentWave];
-        if (wave.EnemyAmount != waveEnemysKilled)
+        nWaveEnemysKilled++;
+        var wave = Waves[this.nCurrentWave];
+        if (wave.EnemyAmount != nWaveEnemysKilled)
         {
             return;
         }
@@ -140,14 +141,14 @@ public class GameManager : Singleton<GameManager>
 
     private void StartNextWave()
     {
-        currentWave++;
-        if (currentWave > Waves.Length)
+        nCurrentWave++;
+        if (nCurrentWave > Waves.Length)
         {
             UIManager.Instance.LogMessage("Game complete, Gratz");
             CompleteGame();
             return;
         }
-        UIManager.Instance.LogMessage("Wave " + (currentWave + 1) + " starts!");
+        UIManager.Instance.LogMessage("Wave " + (nCurrentWave + 1) + " starts!");
 
         ResetGameParameters();
     }
@@ -159,7 +160,7 @@ public class GameManager : Singleton<GameManager>
 
     private void ResetGameParameters()
     {
-        var wave = Waves[currentWave];
+        var wave = Waves[nCurrentWave];
         var et = timers[UpdateTimerTypes.Enemy];
         et.TimePassed = 0;
         et.Delay = wave.TimeBetweenEnemySpawn;
@@ -176,8 +177,8 @@ public class GameManager : Singleton<GameManager>
         mt.TimePassed = 0;
         mt.Delay = wave.TimeBetweenMedkitSpawn;
 
-        waveEnemysKilled = 0;
-        waveEnemysSpawned = 0;
+        nWaveEnemysKilled = 0;
+        nWaveEnemysSpawned = 0;
     }
 
     private void ProcessGame()
@@ -233,17 +234,17 @@ public class GameManager : Singleton<GameManager>
 
     public void SpawnEnemy(object sender, EventArgs e)
     {
-        if (localUserId != AppStateManager.Instance.HeadUserID)
+        if (lLocalUserId != AppStateManager.Instance.HeadUserID)
         {
             return;
         }
 
-        var wave = Waves[this.currentWave];
-        if (this.waveEnemysSpawned >= wave.EnemyAmount)
+        var wave = Waves[this.nCurrentWave];
+        if (this.nWaveEnemysSpawned >= wave.EnemyAmount)
         {
             return;
         }
-        waveEnemysSpawned++;
+        nWaveEnemysSpawned++;
         EnemyManager.Instance.SpawnEnemy(EnemyManager.EnemyTypes.Cacodemon, GetSpawnPosition(MaxSpawnDistance, MinSpawnDistance));
     }
 
@@ -281,7 +282,7 @@ public class GameManager : Singleton<GameManager>
                 spawnDirections.Add(angle);
             }
         }
-        spawnPointsFound = true;
+        bSpawnPointsFound = true;
     }
 
     Vector3 GetSpawnDirection(Vector3 center, float radius)

@@ -78,11 +78,11 @@ namespace Assets.Scripts.Monsters
         protected int _health;
         protected int _armor;
         protected Weapon _weapon;
-        protected bool _dead = false;
+        protected bool bDead = false;
         protected Animator _animator;
-        protected bool _playerFound;
+        protected bool bPlayerFound;
         protected Transform _playerTransform;
-        protected bool _spawning = true;
+        protected bool bSpawning = true;
         protected CustomAnimation _spawnAnim;
         protected CustomAnimation _shootAnim;
         protected CustomAnimation _dieAnim;
@@ -95,12 +95,12 @@ namespace Assets.Scripts.Monsters
 
         public virtual void Spawn()
         {
-            _spawning = true;
+            bSpawning = true;
         }
 
         public virtual bool IsAlive()
         {
-            return !_dead;
+            return !bDead;
         }
 
         public virtual void GetHit(int amount)
@@ -111,7 +111,7 @@ namespace Assets.Scripts.Monsters
         protected virtual void Die()
         {
             _audioSource.PlayOneShot(DeathSound, 0.7F);
-            _dead = true;
+            bDead = true;
             GameManager.Instance.EnemyKilled();
         }
 
@@ -152,19 +152,19 @@ namespace Assets.Scripts.Monsters
                 return;
             }
 
-            if (_spawning)
+            if (bSpawning)
             {
                 PlaySpawnAnimation();
                 return;
             }
 
-            if (_dead)
+            if (bDead)
             {
                 PlayDeathAnimation();
                 return;
             }
 
-            if (_playerFound)
+            if (bPlayerFound)
             {
                 MoveToPlayer();
                 return;
@@ -206,7 +206,7 @@ namespace Assets.Scripts.Monsters
             }
             else
             {
-                _spawning = false;
+                bSpawning = false;
             }
         }
 
@@ -259,25 +259,24 @@ namespace Assets.Scripts.Monsters
 
         public virtual void FindPlayer()
         {
-            if (_playerFound)
+            if (bPlayerFound)
             {
                 return;
             }
 
 
-            _playerFound = true;
+            bPlayerFound = true;
             _playerTransform = Camera.main.transform;
             CustomMessages.Instance.MonsterFoundPlayer(this.id);
         }
         public virtual void FindPlayer(long chasedPlayerId)
         {
-            if (_playerFound)
+            if (bPlayerFound)
             {
                 return;
             }
 
-
-            _playerFound = true;
+            bPlayerFound = true;
             chasedPlayer = chasedPlayerId;
             var remoteHead = RemoteHeadManager.Instance.TryGetRemoteHeadInfo(chasedPlayer);
             if (remoteHead == null)

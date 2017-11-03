@@ -11,13 +11,13 @@ public class CustomMessages : Singleton<CustomMessages>
     /// The first message type has to start with UserMessageIDStart
     /// so as not to conflict with HoloToolkit internal messages.
     /// </summary>
-    public enum GameMessageID : byte
+    public enum GameMessageID
     {
         UserHeadTransform = MessageID.UserMessageIDStart,
         UserAvatar,
         UserReady,
         UserHealthUpdated,
-        RemoteUserRecieveDamage,
+        RemoteUserReceiveDamage,
         EnemyHit,
         ShootProjectile,
         SpawnEnemy,
@@ -183,7 +183,7 @@ public class CustomMessages : Singleton<CustomMessages>
         }
 
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.RemoteUserRecieveDamage);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.RemoteUserReceiveDamage);
         msg.Write(remoteUserId);
         msg.Write(damage);
 

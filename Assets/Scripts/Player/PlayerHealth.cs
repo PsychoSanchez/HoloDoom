@@ -27,7 +27,7 @@ public class PlayerHealth : OverridableMonoBehaviour
     {
         currentHealth = StartHealth;
         currentArmor = StartArmor;
-        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.RemoteUserRecieveDamage] = TakeDamageFromPlayer;
+        CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.RemoteUserReceiveDamage] = TakeDamageFromPlayer;
         UpdateUI();
     }
 

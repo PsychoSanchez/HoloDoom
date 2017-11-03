@@ -326,6 +326,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
             case ImportExportState.AnchorStore_Initialized:
                 if (sharingServiceReady)
                 {
+                    UIManager.Instance.LogMessage("Initializing room api");
                     InitRoomApi();
                 }
                 break;
@@ -338,7 +339,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
                 WorldAnchorTransferBatch.ImportAsync(rawAnchorData, ImportComplete);
                 break;
             case ImportExportState.DataRequested:
-                AppStateManager.Instance.SetCurrentAppState(AppState.Scanning);
+                AppStateManager.Instance.SetAppState(AppState.Syncing);
                 break;
             case ImportExportState.InitialAnchorRequired:
                 CurrentState = ImportExportState.CreatingInitialAnchor;
@@ -467,7 +468,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
             WorldAnchor anchor = wat.LockObject(first, gameObject);
             anchorStore.Save(first, anchor);
             CurrentState = ImportExportState.Ready;
-            AppStateManager.Instance.SetCurrentAppState(AppState.Playing);            
+            AppStateManager.Instance.SetAppState(AppState.Ready);
         }
         else
         {
@@ -533,7 +534,7 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
                 new XString(exportingAnchorName),
                 exportingAnchorBytes.ToArray(),
                 exportingAnchorBytes.Count);
-            AppStateManager.Instance.SetCurrentAppState(AppState.Playing);
+            AppStateManager.Instance.SetAppState(AppState.Ready);
         }
         else
         {

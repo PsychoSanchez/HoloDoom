@@ -60,12 +60,12 @@ namespace Assets.Scripts.Monsters
             {
                 return;
             }
-            if (AppStateManager.Instance.GetCurrentAppState() != AppState.Playing)
+            if (AppStateManager.Instance.GetAppState() != AppState.Playing)
             {
                 return;
             }
 
-            if (_dead)
+            if (bDead)
             {
                 if (_rigidBody != null && _dieAnim.Frame == 2)
                 {
@@ -87,7 +87,7 @@ namespace Assets.Scripts.Monsters
                 lastShot = 0;
                 canShoot = true;
             }
-            if (_playerFound && canShoot)
+            if (bPlayerFound && canShoot)
             {
                 Shoot();
             }

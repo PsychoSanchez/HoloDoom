@@ -43,7 +43,7 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
 
         if (GotTransform == false)
         {
-            AppStateManager.Instance.SetCurrentAppState(AppState.Scanning);
+            AppStateManager.Instance.SetAppState(AppState.Scanning);
         }
 
         // GotTransform = true;
@@ -52,7 +52,7 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
     // Update is called once per frame
     void Update()
     {
-        switch (AppStateManager.Instance.GetCurrentAppState())
+        switch (AppStateManager.Instance.GetAppState())
         {
             case AppState.WaitingForAnchor:
                 ProposePosition();
@@ -76,10 +76,9 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
         // Note that we have a transform.
         GotTransform = true;
 
-
         // And send it to our friends.
         CustomMessages.Instance.SendStageTransform(transform.localPosition, transform.localRotation);
         AppStateManager.Instance.BecomeHeadUser(SharingStage.Instance.Manager.GetLocalUser().GetID());
-        // AppStateManager.Instance.SetCurrentAppState(AppState.Ready);
+        AppStateManager.Instance.SetAppState(AppState.Scanning);
     }
 }

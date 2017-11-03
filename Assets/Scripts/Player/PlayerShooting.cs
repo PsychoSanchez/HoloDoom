@@ -29,7 +29,7 @@ public class PlayerShooting : OverridableMonoBehaviour
 
     private void OnClick(Ray headRay)
     {
-        switch (AppStateManager.Instance.GetCurrentAppState())
+        switch (AppStateManager.Instance.GetAppState())
         {
             case AppState.Playing:
                 if (CurrentWeapon == null)
