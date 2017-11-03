@@ -15,7 +15,7 @@ public class CustomMessages : Singleton<CustomMessages>
     {
         UserHeadTransform = MessageID.UserMessageIDStart,
         UserAvatar,
-        UserReady,
+        MatchPlaying,
         UserHealthUpdated,
         RemoteUserReceiveDamage,
         EnemyHit,
@@ -127,14 +127,16 @@ public class CustomMessages : Singleton<CustomMessages>
             MessageChannel.Avatar);
     }
 
-    public void SendUserReady()
+    public void SetMatchPlaying(bool bPlaying)
     {
         if (!IsConnected())
         {
             return;
         }
         // Create an outgoing network message to contain all the info we want to send
-        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.UserReady);
+        NetworkOutMessage msg = CreateMessage((byte)GameMessageID.MatchPlaying);
+        msg.Write((bPlaying) ? 1 : 0);
+
         this.serverConnection.Broadcast(
           msg,
           MessagePriority.Immediate,
@@ -142,7 +144,7 @@ public class CustomMessages : Singleton<CustomMessages>
           MessageChannel.Avatar);
     }
 
-    public void SendNewAppState(AppState state)
+    public void SendAppState(AppState state)
     {
         if (!IsConnected())
         {
@@ -151,7 +153,7 @@ public class CustomMessages : Singleton<CustomMessages>
         // Create an outgoing network message to contain all the info we want to send
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.UpdateAppState);
         msg.Write((Int16)state);
-        
+
         this.serverConnection.Broadcast(
           msg,
           MessagePriority.Immediate,

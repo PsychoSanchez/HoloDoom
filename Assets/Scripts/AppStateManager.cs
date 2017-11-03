@@ -97,13 +97,52 @@ public class AppStateManager : Singleton<AppStateManager>
         var connectedUser = connectedUsers.Find(user => user.id == userId);
         connectedUser.state = state;
 
-        if (state == AppState.Ready && CustomMessages.Instance.localUserID == HeadUserID)
+        if (CustomMessages.Instance.localUserID == HeadUserID)
         {
-            UpdateUserCount();
+            CheckIfUsersReady();
         }
 
         // TODO:
     }
+
+    private void StartGame()
+    {
+        SetAppState(AppState.Playing);
+        CustomMessages.Instance.SetMatchPlaying(true);
+    }
+
+    private void PauseGame()
+    {
+        SetAppState(AppState.Ready);
+        CustomMessages.Instance.SetMatchPlaying(false);
+    }
+
+
+    private void TrySetMatchState(NetworkInMessage msg)
+    {
+        var userId = msg.ReadInt64();
+        if (userId == CustomMessages.Instance.localUserID)
+        {
+            return;
+        }
+
+        bool bPlay = (msg.ReadByte() == 1) ? true : false;
+        var sourceAppState = (bPlay) ? AppState.Ready : AppState.Playing;
+        var targetAppState = (bPlay) ? AppState.Playing : AppState.Ready;
+        UpdateMatchState(targetAppState, sourceAppState);
+    }
+
+    private void UpdateMatchState(AppState target, AppState source)
+    {
+        if (currentAppState == source || currentAppState == target)
+        {
+            SetAppState(target);
+            return;
+        }
+
+        CustomMessages.Instance.SendAppState(currentAppState);
+    }
+
 
     private void UpdateAppState(AppState value)
     {
@@ -119,6 +158,7 @@ public class AppStateManager : Singleton<AppStateManager>
                 break;
             case AppState.WaitingForAnchor:
                 CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.UpdateAppState] += PlayerAppStateUpdate;
+                CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.MatchPlaying] += TrySetMatchState;
                 // Every user has "Anchor" in hands and searching place for place
                 // After anchor placed go to scanning phase
                 UIManager.Instance.LogMessage("Waiting for anchor to place");
@@ -159,7 +199,6 @@ public class AppStateManager : Singleton<AppStateManager>
                 {
                     return;
                 }
-                CustomMessages.Instance.SendNewAppState(value);
                 DisableMapping();
                 break;
             case AppState.Playing:
@@ -171,6 +210,11 @@ public class AppStateManager : Singleton<AppStateManager>
                 break;
             default:
                 break;
+        }
+
+        if (currentAppState > AppState.WaitingForConnection)
+        {
+            CustomMessages.Instance.SendAppState(value);
         }
     }
 
@@ -186,7 +230,7 @@ public class AppStateManager : Singleton<AppStateManager>
             id = e.joiningUser.GetID(),
             state = AppState.Starting
         });
-        UpdateUserCount();
+        CheckIfUsersReady();
     }
 
     private void Instance_SessionLeft(object sender, SharingSessionTracker.SessionLeftEventArgs e)
@@ -203,10 +247,10 @@ public class AppStateManager : Singleton<AppStateManager>
         {
             connectedUsers.RemoveAt(userIndex);
         }
-        UpdateUserCount();
+        CheckIfUsersReady();
     }
 
-    private void UpdateUserCount()
+    private void CheckIfUsersReady()
     {
         nUsersJoined = SharingSessionTracker.Instance.UserIds.Count;
         var bUsersReady = connectedUsers.TrueForAll(user => user.state == AppState.Ready || user.state == AppState.Playing);
@@ -216,18 +260,19 @@ public class AppStateManager : Singleton<AppStateManager>
             if (WaitForPlayers && connectedUsers.Count > 1)
             {
                 // If syncing user left start game
-                SetAppState(AppState.Playing);
+                StartGame();
                 // TODO: Send start game message
             }
             else if (!WaitForPlayers)
             {
-                SetAppState(AppState.Playing);
+                StartGame();
             }
         }
         else if (currentAppState == AppState.Playing)
         {
             // Else user connected and started syncing
-            SetAppState(AppState.Ready);
+            PauseGame();
+            // SetAppState(AppState.Ready);
             // TODO: Send pause game message
         }
     }
