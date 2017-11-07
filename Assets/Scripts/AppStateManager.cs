@@ -97,7 +97,6 @@ public class AppStateManager : Singleton<AppStateManager>
     void PlayerAppStateUpdate(NetworkInMessage msg)
     {
         var userId = msg.ReadInt64();
-        Debug.Log(userId);
         if (userId == CustomMessages.Instance.localUserID)
         {
             return;
@@ -128,14 +127,18 @@ public class AppStateManager : Singleton<AppStateManager>
     private void TrySetMatchState(NetworkInMessage msg)
     {
         var userId = msg.ReadInt64();
+        Debug.Log("Match state updated");
         if (userId == CustomMessages.Instance.localUserID)
         {
             return;
         }
 
         bool bPlay = (msg.ReadByte() == 1) ? true : false;
+        Debug.Log(bPlay);
         var sourceAppState = (bPlay) ? AppState.Ready : AppState.Playing;
         var targetAppState = (bPlay) ? AppState.Playing : AppState.Ready;
+        Debug.Log(sourceAppState);
+        Debug.Log(targetAppState);
         UpdateMatchState(targetAppState, sourceAppState);
     }
 
@@ -268,11 +271,9 @@ public class AppStateManager : Singleton<AppStateManager>
                 break;
             }
         }
-        Debug.Log("Checking " + bUsersReady);
         // If all users ready
         if (bUsersReady)
         {
-            Debug.Log("connected: " + connectedUsers.Count);
             // If we are  2 or more players
             if (WaitForPlayers && connectedUsers.Count > 1)
             {

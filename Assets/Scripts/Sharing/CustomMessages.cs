@@ -135,7 +135,7 @@ public class CustomMessages : Singleton<CustomMessages>
         }
         // Create an outgoing network message to contain all the info we want to send
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.MatchPlaying);
-        msg.Write((bPlaying) ? 1 : 0);
+        msg.Write((bPlaying) ? (byte)1 : (byte)0);
 
         this.serverConnection.Broadcast(
           msg,
