@@ -152,7 +152,7 @@ public class CustomMessages : Singleton<CustomMessages>
         }
         // Create an outgoing network message to contain all the info we want to send
         NetworkOutMessage msg = CreateMessage((byte)GameMessageID.UpdateAppState);
-        msg.Write((Int16)state);
+        msg.Write((short)state);
 
         this.serverConnection.Broadcast(
           msg,

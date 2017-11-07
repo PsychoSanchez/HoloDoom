@@ -49,6 +49,11 @@ public class AppStateManager : Singleton<AppStateManager>
         UIManager.Instance.LogMessage("Waiting for connection...");
         SetAppState(AppState.WaitingForConnection);
         InitSharingManager();
+        connectedUsers.Add(new UserState()
+        {
+            id = CustomMessages.Instance.localUserID,
+            state = AppState.Starting
+        });
         SharingSessionTracker.Instance.SessionJoined += Instance_SessionJoined;
         SharingSessionTracker.Instance.SessionLeft += Instance_SessionLeft;
     }
@@ -78,6 +83,8 @@ public class AppStateManager : Singleton<AppStateManager>
             return;
         }
         UpdateAppState(value);
+        var connectedUser = connectedUsers.Find(user => user.id == CustomMessages.Instance.localUserID);
+        connectedUser.state = value;
         var e = onAppStateChange;
         if (e != null)
         {
@@ -105,13 +112,13 @@ public class AppStateManager : Singleton<AppStateManager>
         // TODO:
     }
 
-    private void StartGame()
+    public void StartGame()
     {
         SetAppState(AppState.Playing);
         CustomMessages.Instance.SetMatchPlaying(true);
     }
 
-    private void PauseGame()
+    public void PauseGame()
     {
         SetAppState(AppState.Ready);
         CustomMessages.Instance.SetMatchPlaying(false);
@@ -213,7 +220,7 @@ public class AppStateManager : Singleton<AppStateManager>
                 break;
         }
 
-        if (currentAppState > AppState.WaitingForConnection)
+        if (currentAppState != AppState.WaitingForConnection)
         {
             CustomMessages.Instance.SendAppState(value);
         }
@@ -221,7 +228,7 @@ public class AppStateManager : Singleton<AppStateManager>
 
     private void Instance_SessionJoined(object sender, SharingSessionTracker.SessionJoinedEventArgs e)
     {
-        if (CustomMessages.Instance.localUserID != HeadUserID)
+        if (CustomMessages.Instance.localUserID == e.joiningUser.GetID())
         {
             return;
         }
@@ -236,7 +243,7 @@ public class AppStateManager : Singleton<AppStateManager>
 
     private void Instance_SessionLeft(object sender, SharingSessionTracker.SessionLeftEventArgs e)
     {
-        if (CustomMessages.Instance.localUserID != HeadUserID)
+        if (CustomMessages.Instance.localUserID == e.exitingUserId)
         {
             // TODO: If headuser left the game - reset to waiting for anchor
             // Clear all game data, remove all game objects, set game mode to placing anchor
@@ -254,10 +261,14 @@ public class AppStateManager : Singleton<AppStateManager>
     private void CheckIfUsersReady()
     {
         nUsersJoined = SharingSessionTracker.Instance.UserIds.Count;
-        var bUsersReady = connectedUsers.TrueForAll(user => user.state == AppState.Ready || user.state == AppState.Playing);
+        var bUsersReady = connectedUsers.TrueForAll(user =>
+        {
+            return user.state == AppState.Ready || user.state == AppState.Playing;
+        });
         // If all users ready
         if (bUsersReady)
         {
+            Debug.Log("connected: " + connectedUsers.Count);
             // If we are  2 or more players
             if (WaitForPlayers && connectedUsers.Count > 1)
             {

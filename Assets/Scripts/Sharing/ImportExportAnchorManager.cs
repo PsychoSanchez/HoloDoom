@@ -280,8 +280,8 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
         // First, are there any anchors in this room?
         int anchorCount = currentRoom.GetAnchorCount();
 
-        UIManager.Instance.LogMessage(anchorCount + " anchors");
-        Debug.Log(anchorCount + " anchors");
+        // UIManager.Instance.LogMessage(anchorCount + " anchors");
+        // Debug.Log(anchorCount + " anchors");
 
         // If there are anchors, we should attach to the first one.
         if (anchorCount > 0)
@@ -326,7 +326,6 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
             case ImportExportState.AnchorStore_Initialized:
                 if (sharingServiceReady)
                 {
-                    UIManager.Instance.LogMessage("Initializing room api");
                     InitRoomApi();
                 }
                 break;
