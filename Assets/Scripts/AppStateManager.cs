@@ -27,11 +27,6 @@ public enum AppState
 }
 
 // TODO: Add users states
-public struct UserState
-{
-    public long id;
-    public AppState state;
-}
 
 public class AppStateManager : Singleton<AppStateManager>
 {
@@ -39,7 +34,7 @@ public class AppStateManager : Singleton<AppStateManager>
     public bool WaitForPlayers = true;
     public long HeadUserID { get; private set; }
     private AppState currentAppState = AppState.Starting;
-    List<UserState> connectedUsers = new List<UserState>();
+    Dictionary<long, AppState> connectedUsers = new Dictionary<long, AppState>();
     int nUsersJoined = 0;
     int usersReady = 0;
 
@@ -49,11 +44,6 @@ public class AppStateManager : Singleton<AppStateManager>
         UIManager.Instance.LogMessage("Waiting for connection...");
         SetAppState(AppState.WaitingForConnection);
         InitSharingManager();
-        connectedUsers.Add(new UserState()
-        {
-            id = CustomMessages.Instance.localUserID,
-            state = AppState.Starting
-        });
         SharingSessionTracker.Instance.SessionJoined += Instance_SessionJoined;
         SharingSessionTracker.Instance.SessionLeft += Instance_SessionLeft;
     }
@@ -75,6 +65,15 @@ public class AppStateManager : Singleton<AppStateManager>
         return currentAppState;
     }
 
+    private void SetUserState(long userId, AppState state)
+    {
+        if (!connectedUsers.ContainsKey(userId))
+        {
+            connectedUsers.Add(userId, AppState.Starting);
+        }
+        connectedUsers[userId] = state;
+    }
+
     // Local user App State update
     public void SetAppState(AppState value)
     {
@@ -82,9 +81,11 @@ public class AppStateManager : Singleton<AppStateManager>
         {
             return;
         }
+        if (CustomMessages.Instance.localUserID != 0)
+        {
+            SetUserState(CustomMessages.Instance.localUserID, value);
+        }
         UpdateAppState(value);
-        var connectedUser = connectedUsers.Find(user => user.id == CustomMessages.Instance.localUserID);
-        connectedUser.state = value;
         var e = onAppStateChange;
         if (e != null)
         {
@@ -96,13 +97,13 @@ public class AppStateManager : Singleton<AppStateManager>
     void PlayerAppStateUpdate(NetworkInMessage msg)
     {
         var userId = msg.ReadInt64();
+        Debug.Log(userId);
         if (userId == CustomMessages.Instance.localUserID)
         {
             return;
         }
         var state = (AppState)msg.ReadInt16();
-        var connectedUser = connectedUsers.Find(user => user.id == userId);
-        connectedUser.state = state;
+        SetUserState(userId, state);
 
         if (CustomMessages.Instance.localUserID == HeadUserID)
         {
@@ -123,7 +124,6 @@ public class AppStateManager : Singleton<AppStateManager>
         SetAppState(AppState.Ready);
         CustomMessages.Instance.SetMatchPlaying(false);
     }
-
 
     private void TrySetMatchState(NetworkInMessage msg)
     {
@@ -205,6 +205,7 @@ public class AppStateManager : Singleton<AppStateManager>
                 UIManager.Instance.SetMode(UIMode.WaitingForPlayers);
                 if (CustomMessages.Instance.localUserID == HeadUserID)
                 {
+                    CheckIfUsersReady();
                     return;
                 }
                 DisableMapping();
@@ -233,11 +234,7 @@ public class AppStateManager : Singleton<AppStateManager>
             return;
         }
 
-        connectedUsers.Add(new UserState()
-        {
-            id = e.joiningUser.GetID(),
-            state = AppState.Starting
-        });
+        connectedUsers.Add(e.joiningUser.GetID(), AppState.Starting);
         CheckIfUsersReady();
     }
 
@@ -250,10 +247,10 @@ public class AppStateManager : Singleton<AppStateManager>
             return;
         }
 
-        var userIndex = connectedUsers.FindIndex(u => u.id == e.exitingUserId);
-        if (userIndex > -1)
+        var userIndex = connectedUsers.ContainsKey(e.exitingUserId);
+        if (userIndex)
         {
-            connectedUsers.RemoveAt(userIndex);
+            connectedUsers.Remove(e.exitingUserId);
         }
         CheckIfUsersReady();
     }
@@ -261,10 +258,17 @@ public class AppStateManager : Singleton<AppStateManager>
     private void CheckIfUsersReady()
     {
         nUsersJoined = SharingSessionTracker.Instance.UserIds.Count;
-        var bUsersReady = connectedUsers.TrueForAll(user =>
+        bool bUsersReady = true;
+        foreach (var id in connectedUsers.Keys)
         {
-            return user.state == AppState.Ready || user.state == AppState.Playing;
-        });
+            print("user " + id + " " + connectedUsers[id]);
+            if (connectedUsers[id] != AppState.Ready && connectedUsers[id] != AppState.Playing)
+            {
+                bUsersReady = false;
+                break;
+            }
+        }
+        Debug.Log("Checking " + bUsersReady);
         // If all users ready
         if (bUsersReady)
         {
@@ -320,12 +324,12 @@ public class AppStateManager : Singleton<AppStateManager>
                 return;
             }
 
-            // add connected users to list
-            connectedUsers.Add(new UserState()
+            if (connectedUsers.ContainsKey(id))
             {
-                id = id,
-                state = AppState.WaitingForAnchor
-            });
+                continue;
+            }
+            // add connected users to list
+            connectedUsers.Add(id, AppState.WaitingForAnchor);
         }
 
         // CustomMessages.Instance.
