@@ -467,6 +467,8 @@ public class ImportExportAnchorManager : Singleton<ImportExportAnchorManager>
             WorldAnchor anchor = wat.LockObject(first, gameObject);
             anchorStore.Save(first, anchor);
             CurrentState = ImportExportState.Ready;
+            // When anchor is ready we need to set head user
+            AppStateManager.Instance.BecomeHeadUser(CustomMessages.Instance.localUserID);
             AppStateManager.Instance.SetAppState(AppState.Ready);
         }
         else
