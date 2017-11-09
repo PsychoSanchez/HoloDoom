@@ -26,8 +26,6 @@ public enum AppState
     Playing
 }
 
-// TODO: Add users states
-
 public class AppStateManager : Singleton<AppStateManager>
 {
     public event EventHandler onAppStateChange;
@@ -108,8 +106,6 @@ public class AppStateManager : Singleton<AppStateManager>
         {
             CheckIfUsersReady();
         }
-
-        // TODO:
     }
 
     public void StartGame()
