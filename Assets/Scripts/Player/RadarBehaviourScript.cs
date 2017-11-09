@@ -13,7 +13,7 @@ public class RadarBehaviourScript : MonoBehaviour
     private GameObject[] enemies;
     private Dictionary<long, GameObject> enemiesMarkers = new Dictionary<long, GameObject>();
     private bool bEnemyListUpdated = false;
-    const float searchAngle = 4f;
+    const float searchAngle = 6f;
     // Use this for initialization
     void Start()
     {
@@ -56,7 +56,7 @@ public class RadarBehaviourScript : MonoBehaviour
             angle += searchAngle;
             percent = angle / (searchAngle * 2);
         }
-        float x = Size.x / 2 - (percent * Size.x) - Size.y / 2;
+        float x = Size.x / 2 - (percent * Size.x);
         marker.transform.localPosition = new Vector3(x, 0, 0);
 
         // GUI.DrawTexture(new Rect(, 0, Size.y, Size.y), targetText);
