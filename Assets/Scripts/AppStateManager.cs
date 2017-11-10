@@ -123,18 +123,14 @@ public class AppStateManager : Singleton<AppStateManager>
     private void TrySetMatchState(NetworkInMessage msg)
     {
         var userId = msg.ReadInt64();
-        Debug.Log("Match state updated");
         if (userId == CustomMessages.Instance.localUserID)
         {
             return;
         }
 
         bool bPlay = (msg.ReadByte() == 1) ? true : false;
-        Debug.Log(bPlay);
         var sourceAppState = (bPlay) ? AppState.Ready : AppState.Playing;
         var targetAppState = (bPlay) ? AppState.Playing : AppState.Ready;
-        Debug.Log(sourceAppState);
-        Debug.Log(targetAppState);
         UpdateMatchState(targetAppState, sourceAppState);
     }
 
@@ -148,7 +144,6 @@ public class AppStateManager : Singleton<AppStateManager>
 
         CustomMessages.Instance.SendAppState(currentAppState);
     }
-
 
     private void UpdateAppState(AppState value)
     {
@@ -202,12 +197,12 @@ public class AppStateManager : Singleton<AppStateManager>
                 // After all users are ready, head user will start game (AppState.Playing)
                 UIManager.Instance.LogMessage("Waiting for users to be ready...");
                 UIManager.Instance.SetMode(UIMode.WaitingForPlayers);
+                // DisableMapping();
                 if (CustomMessages.Instance.localUserID == HeadUserID)
                 {
                     CheckIfUsersReady();
                     return;
                 }
-                DisableMapping();
                 break;
             case AppState.Playing:
                 // Start spawn enemies, start movement
@@ -260,7 +255,6 @@ public class AppStateManager : Singleton<AppStateManager>
         bool bUsersReady = true;
         foreach (var id in connectedUsers.Keys)
         {
-            print("user " + id + " " + connectedUsers[id]);
             if (connectedUsers[id] != AppState.Ready && connectedUsers[id] != AppState.Playing)
             {
                 bUsersReady = false;
