@@ -191,7 +191,7 @@ MonoBehaviour:
   ShootDelay: 0.95
   Range: 100
   Damage: 50
-  Ammo: 10
+  Ammo: 9
 --- !u!212 &212031745075961620
 SpriteRenderer:
   m_ObjectHideFlags: 1
