@@ -17,11 +17,18 @@ public class PlayerShooting : OverridableMonoBehaviour
     {
         recognizer = new GestureRecognizer();
         recognizer.SetRecognizableGestures(GestureSettings.Tap);
+        recognizer.SetRecognizableGestures(GestureSettings.Hold);
         recognizer.TappedEvent += Recognizer_TappedEvent;
+        recognizer.HoldCompletedEvent += HoldCompletedEvent;
         recognizer.StartCapturingGestures();
         HideWeapons();
         Weapons[CurrentWeapon].gameObject.SetActive(true);
         UpdateUI();
+    }
+
+    private void HoldCompletedEvent(InteractionSourceKind source, Ray headRay)
+    {
+        Debug.Log("Hold");
     }
 
     private void Recognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)

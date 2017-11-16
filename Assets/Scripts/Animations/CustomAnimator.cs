@@ -10,6 +10,7 @@ public class CustomAnimator
 
     private float _lastFrameUpdate = 0f;
     private Sprite[] _timeline = null;
+    private Sprite[] _repeatTimeline = null;
     private SpriteRenderer _renderer = null;
     private float _delay = 0f;
     private Dictionary<string, Sprite[]> _animationSeq = new Dictionary<string, Sprite[]>();
@@ -40,6 +41,12 @@ public class CustomAnimator
     {
         if (_timeline == null)
         {
+            var tl = _repeatTimeline;
+            if (tl != null)
+            {
+                _renderer.sprite = tl[Frame];
+            }
+
             return;
         }
         _renderer.sprite = _timeline[Frame];
@@ -69,6 +76,21 @@ public class CustomAnimator
         _timeline = _animationSeq[animationName];
         _renderer.sprite = _timeline[0];
         Frame = 1;
+    }
+
+    public void Play(string animationName)
+    {
+        if (!_animationSeq.ContainsKey(animationName))
+        {
+            Debug.LogError(animationName + " not found");
+            return;
+        }
+        _repeatTimeline = _animationSeq[animationName];
+    }
+
+    public void Stop()
+    {
+        _repeatTimeline = null;
     }
     public void Reset()
     {
