@@ -1,32 +1,37 @@
 ﻿using System;
+using System.Collections.Generic;
 using Assets.Scripts.Monsters;
 using UnityEngine;
 
 public class Weapon : OverridableMonoBehaviour
 {
-    public Animator WeaponSprite;
+    public Sprite[] WeaponSprites;
     public AudioSource GunAudio;
     public float ShootDelay = 0.15f;
     public float Range = 100f;
     public int Damage = 20;
     public int Ammo = 10;
 
+    protected CustomAnimator _animator;
     //mb protected???
     // MAYBE
     // int shootableMask;
-    bool canShoot = true;
-    float lastShot;
-    RaycastHit shotHit;
+    protected bool canShoot = true;
+    protected float lastShot;
+    protected RaycastHit shotHit;
 
     // Use this for initialization
     protected void Start()
     {
-        // shootableMask = LayerMask.GetMask("Shootable");
+        _animator = new CustomAnimator(12, transform.GetChild(0).GetComponent<SpriteRenderer>());
+        _animator.AddAnimationSequence("Shoot", WeaponSprites);
+
     }
 
     // Update is called once per frame
     protected void Update()
     {
+        _animator.Update(Time.deltaTime);
         lastShot += Time.deltaTime;
         if (lastShot >= ShootDelay)
         {
@@ -57,7 +62,7 @@ public class Weapon : OverridableMonoBehaviour
         this.Ammo -= 1;
 
         GunAudio.Play();
-        WeaponSprite.Play("Shoot");
+        _animator.PlayOnce("Shoot");
 
         // Debug.DrawRay(headRay.origin, headRay.direction, Color.white,  20.0f, false);
         if (!Physics.Raycast(headRay, out shotHit, Range * 10))

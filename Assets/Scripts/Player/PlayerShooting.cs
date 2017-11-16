@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine.VR.WSA.Input;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class PlayerShooting : OverridableMonoBehaviour
 {
-
     GestureRecognizer recognizer;
-    public Weapon CurrentWeapon;
-    public Dictionary<WeaponType, Weapon> Weapons;
+    public Weapon[] Weapons;
+    public int CurrentWeapon;
     public Text AmmoUI;
 
     // Use this for initialization
@@ -17,9 +17,18 @@ public class PlayerShooting : OverridableMonoBehaviour
     {
         recognizer = new GestureRecognizer();
         recognizer.SetRecognizableGestures(GestureSettings.Tap);
+        recognizer.SetRecognizableGestures(GestureSettings.Hold);
         recognizer.TappedEvent += Recognizer_TappedEvent;
+        recognizer.HoldCompletedEvent += HoldCompletedEvent;
         recognizer.StartCapturingGestures();
+        HideWeapons();
+        Weapons[CurrentWeapon].gameObject.SetActive(true);
         UpdateUI();
+    }
+
+    private void HoldCompletedEvent(InteractionSourceKind source, Ray headRay)
+    {
+        Debug.Log("Hold");
     }
 
     private void Recognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
@@ -32,11 +41,11 @@ public class PlayerShooting : OverridableMonoBehaviour
         switch (AppStateManager.Instance.GetAppState())
         {
             case AppState.Playing:
-                if (CurrentWeapon == null)
+                if (CurrentWeapon > Weapons.Length || Weapons[CurrentWeapon] == null)
                 {
                     return;
                 }
-                CurrentWeapon.Shoot(headRay);
+                Weapons[CurrentWeapon].Shoot(headRay);
                 UpdateUI();
                 break;
             case AppState.WaitingForAnchor:
@@ -52,15 +61,43 @@ public class PlayerShooting : OverridableMonoBehaviour
         {
             OnClick(new Ray(Camera.main.transform.position, Camera.main.transform.forward));
         }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            NextWeapon();
+        }
     }
-    public void AddAmmo(int amt)
+
+    private void NextWeapon()
     {
-        this.CurrentWeapon.AddAmmo(amt);
+        HideWeapons();
+        CurrentWeapon++;
+        if (CurrentWeapon >= Weapons.Length)
+        {
+            CurrentWeapon = 0;
+        }
+        Weapons[CurrentWeapon].gameObject.SetActive(true);
         UpdateUI();
     }
 
+    private void HideWeapons()
+    {
+        foreach (var weapon in Weapons)
+        {
+            if (weapon == null)
+            {
+                continue;
+            }
+            weapon.gameObject.SetActive(false);
+        }
+    }
+
+    public void AddAmmo(int amt)
+    {
+        Weapons[CurrentWeapon].AddAmmo(amt);
+        UpdateUI();
+    }
     private void UpdateUI()
     {
-        AmmoUI.text = CurrentWeapon.Ammo.ToString();
+        AmmoUI.text = Weapons[CurrentWeapon].Ammo.ToString();
     }
 }

@@ -70,7 +70,6 @@ namespace Assets.Scripts.Monsters
                 if (_rigidBody != null && _dieAnim.Frame == 2)
                 {
                     _rigidBody.useGravity = true;
-                    Debug.Log("rigid body enabled");
                 }
                 Fall();
                 return;

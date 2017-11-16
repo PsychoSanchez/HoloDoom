@@ -15,6 +15,7 @@ public class EnemyManager : Singleton<EnemyManager>
         Default
     }
     public GameObject Cacodemon;
+    public event EventHandler EnemyAdded;
     private Dictionary<long, GameObject> enemiesPool = new Dictionary<long, GameObject>();
     private Dictionary<long, GameObject> projectiles = new Dictionary<long, GameObject>();
     float lastUpdate = 0f;
@@ -179,6 +180,14 @@ public class EnemyManager : Singleton<EnemyManager>
                 enemiesPool.Add(monster.Id, demon);
                 CustomMessages.Instance.SendSpawnEnemy(monster.Id, sp.position, sp.rotation);
                 break;
+            default:
+                break;
+        }
+
+        var connectedEvent = EnemyAdded;
+        if (connectedEvent != null)
+        {
+            connectedEvent(this, null);
         }
     }
 
@@ -191,6 +200,13 @@ public class EnemyManager : Singleton<EnemyManager>
     public int GetSpawnedEnemiesCount()
     {
         return enemiesPool.Count;
+    }
+
+    public GameObject[] GetEnemiesList()
+    {
+        GameObject[] enemies = new GameObject[enemiesPool.Count];
+        enemiesPool.Values.CopyTo(enemies, 0);
+        return enemies;
     }
 
     private GameObject TryGetEnemy(long enemyId)
