@@ -33,8 +33,6 @@ public class AppStateManager : Singleton<AppStateManager>
     public long HeadUserID { get; private set; }
     private AppState currentAppState = AppState.Starting;
     Dictionary<long, AppState> connectedUsers = new Dictionary<long, AppState>();
-    int nUsersJoined = 0;
-    int usersReady = 0;
 
     // Use this for initialization
     void Start()
@@ -44,18 +42,6 @@ public class AppStateManager : Singleton<AppStateManager>
         InitSharingManager();
         SharingSessionTracker.Instance.SessionJoined += Instance_SessionJoined;
         SharingSessionTracker.Instance.SessionLeft += Instance_SessionLeft;
-    }
-
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.P))
-        {
-            SetAppState(AppState.Playing);
-        }
-        else if (Input.GetKeyDown(KeyCode.R))
-        {
-            SetAppState(AppState.Ready);
-        }
     }
 
     public AppState GetAppState()
@@ -251,7 +237,6 @@ public class AppStateManager : Singleton<AppStateManager>
 
     private void CheckIfUsersReady()
     {
-        nUsersJoined = SharingSessionTracker.Instance.UserIds.Count;
         bool bUsersReady = true;
         foreach (var id in connectedUsers.Keys)
         {
@@ -283,7 +268,6 @@ public class AppStateManager : Singleton<AppStateManager>
             PauseGame();
         }
     }
-
 
     private void InitSharingManager()
     {

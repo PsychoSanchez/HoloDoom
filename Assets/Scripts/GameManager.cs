@@ -71,14 +71,11 @@ public class GameManager : Singleton<GameManager>
     public float MinSpawnDistance = 1.0f;
     public int SpawnDirections = 32;
 
-    bool bPlaying = false;
     bool bSpawnPointsFound = false;
     int nCurrentWave;
     int nWaveEnemysSpawned;
     int nWaveEnemysKilled;
     long lLocalUserId;
-    float lStartAngle = 0;
-    float lEndAngle = 360;
     List<float> spawnDirections = new List<float>();
     Dictionary<UpdateTimerTypes, UpdateTimer> timers = new Dictionary<UpdateTimerTypes, UpdateTimer>();
     RaycastHit hit;
@@ -204,7 +201,6 @@ public class GameManager : Singleton<GameManager>
 
     public void StopGame()
     {
-        bPlaying = false;
         EventHandler connectedEvent = GameStopped;
         if (connectedEvent != null)
         {

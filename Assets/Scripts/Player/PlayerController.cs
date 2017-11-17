@@ -5,12 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-public class PlayerShooting : OverridableMonoBehaviour
+public class PlayerController : OverridableMonoBehaviour
 {
     GestureRecognizer recognizer;
     public Weapon[] Weapons;
     public int CurrentWeapon;
-    public Text AmmoUI;
 
     // Use this for initialization
     void Start()
@@ -61,9 +60,17 @@ public class PlayerShooting : OverridableMonoBehaviour
         {
             OnClick(new Ray(Camera.main.transform.position, Camera.main.transform.forward));
         }
-        else if (Input.GetMouseButtonDown(1))
+        else if (Input.GetKeyDown(KeyCode.N))
         {
             NextWeapon();
+        }
+        else if (Input.GetKeyDown(KeyCode.M))
+        {
+            AppStateManager.Instance.SetAppState(AppState.Playing);
+        }
+        else if (Input.GetKeyDown(KeyCode.R))
+        {
+            AppStateManager.Instance.SetAppState(AppState.Ready);
         }
     }
 
@@ -98,6 +105,6 @@ public class PlayerShooting : OverridableMonoBehaviour
     }
     private void UpdateUI()
     {
-        AmmoUI.text = Weapons[CurrentWeapon].Ammo.ToString();
+        UIManager.Instance.UpdateAmmoCounter(Weapons[CurrentWeapon].Ammo);
     }
 }

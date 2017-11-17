@@ -131,7 +131,7 @@ public class EnemyManager : Singleton<EnemyManager>
     private GameObject GetEnemy(NetworkInMessage msg)
     {
         GameObject enemy;
-        long userId = msg.ReadInt64();
+        msg.ReadInt64();
         long enemyId = msg.ReadInt64();
         if (!enemiesPool.TryGetValue(enemyId, out enemy))
         {

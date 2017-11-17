@@ -5,14 +5,11 @@ using HoloToolkit.Sharing;
 
 public class PlayerHealth : OverridableMonoBehaviour
 {
-
     public int StartHealth = 100;
     public int MaxHealth = 100;
     public int StartArmor = 0;
     public int MaxArmor = 200;
     public int RespawnTime = 5;
-    public Text HealthText;
-    public Text ArmorText;
     public Image DamageImage;
     public AudioSource DamageAudio;
     public GameObject DeathScreen;
@@ -28,7 +25,7 @@ public class PlayerHealth : OverridableMonoBehaviour
         currentHealth = StartHealth;
         currentArmor = StartArmor;
         CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.RemoteUserReceiveDamage] = TakeDamageFromPlayer;
-        UpdateUI();
+        UpdateStatus();
     }
 
     private void TakeDamageFromPlayer(NetworkInMessage msg)
@@ -68,7 +65,7 @@ public class PlayerHealth : OverridableMonoBehaviour
             // Trigger Death screen
             Die();
         }
-        UpdateUI();
+        UpdateStatus();
         // DamageAudio.Play(); // play damage sound
     }
 
@@ -88,7 +85,7 @@ public class PlayerHealth : OverridableMonoBehaviour
             {
                 currentHealth = MaxHealth;
             }
-            UpdateUI();
+            UpdateStatus();
         }
 
         UpdateEmotions();
@@ -111,7 +108,7 @@ public class PlayerHealth : OverridableMonoBehaviour
             {
                 currentArmor = MaxArmor;
             }
-            UpdateUI();
+            UpdateStatus();
         }
 
         return !bMaxArmor;
@@ -138,10 +135,9 @@ public class PlayerHealth : OverridableMonoBehaviour
         //}
     }
 
-    private void UpdateUI()
+    private void UpdateStatus()
     {
-        HealthText.text = currentHealth.ToString();
-        ArmorText.text = currentArmor.ToString();
+        UIManager.Instance.UpdateHealthAndAmmoCounters(currentHealth, currentArmor);
         CustomMessages.Instance.SendUserHealthUpdate(currentHealth);
     }
 
@@ -170,7 +166,7 @@ public class PlayerHealth : OverridableMonoBehaviour
         {
             return;
         }
-        
+
         Respawn();
     }
 
@@ -181,6 +177,6 @@ public class PlayerHealth : OverridableMonoBehaviour
         UIManager.Instance.SetMode(UIMode.Game);
         isDead = false;
         currentHealth = 100;
-        UpdateUI();
+        UpdateStatus();
     }
 }

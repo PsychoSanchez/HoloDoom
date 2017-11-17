@@ -24,9 +24,16 @@ public class UIManager : Singleton<UIManager>
     public GameObject DeathScreen;
     public GameObject StatusSign;
 
+    private Text ammoText;
+    private Text armorText;
+    private Text healthText;
     int messageNumber = 0;
     void Start()
     {
+        ammoText = GetHUDTextElement("AmmoText");
+        armorText = GetHUDTextElement("ArmorText");
+        healthText = GetHUDTextElement("HealthText");
+
         StatusSign.SetActive(false);
         GameHUD.SetActive(false);
         DeathScreen.SetActive(false);
@@ -36,6 +43,18 @@ public class UIManager : Singleton<UIManager>
             Menu.SetActive(false);
         }
         SetPlayerId(SharingStage.Instance.Manager.GetLocalUser().GetID());
+    }
+
+    private Text GetHUDTextElement(string text)
+    {
+        var ammoGO = GameHUD.transform.Find(text);
+        if (ammoGO == null)
+        {
+            Debug.LogWarning(text + " not found");
+            return null;
+        }
+
+        return ammoGO.gameObject.GetComponent<Text>();
     }
 
     public void SetPlayerId(long userId)
@@ -52,6 +71,27 @@ public class UIManager : Singleton<UIManager>
     public void SetStatusMessageVisibility(bool visibility)
     {
         StatusMessages.SetActive(visibility);
+    }
+
+    public void UpdateAmmoCounter(int ammo)
+    {
+        if (ammoText == null)
+        {
+            return;
+        }
+        ammoText.GetComponent<Text>().text = ammo.ToString();
+    }
+
+    public void UpdateHealthAndAmmoCounters(int hp, int ap)
+    {
+        if (healthText != null)
+        {
+            healthText.text = hp.ToString();
+        }
+        if (armorText != null)
+        {
+            armorText.text = ap.ToString();
+        }
     }
 
     public void SetMode(UIMode mode)

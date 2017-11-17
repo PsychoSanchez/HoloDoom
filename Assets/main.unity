@@ -545,7 +545,7 @@ MonoBehaviour:
   RecognizerStart: 0
   Keywords:
   - Keyword: Start
-    KeyCode: 115
+    KeyCode: 282
 --- !u!1001 &139265704
 Prefab:
   m_ObjectHideFlags: 0
@@ -999,10 +999,9 @@ GameObject:
   - component: {fileID: 551154442}
   - component: {fileID: 551154448}
   - component: {fileID: 551154447}
-  - component: {fileID: 551154441}
   - component: {fileID: 551154452}
+  - component: {fileID: 551154441}
   - component: {fileID: 551154453}
-  - component: {fileID: 551154450}
   - component: {fileID: 551154449}
   - component: {fileID: 551154454}
   - component: {fileID: 551154451}
@@ -1130,11 +1129,9 @@ MonoBehaviour:
   StartArmor: 0
   MaxArmor: 200
   RespawnTime: 5
-  HealthText: {fileID: 1155837177}
-  ArmorText: {fileID: 430746621}
   DamageImage: {fileID: 0}
   DamageAudio: {fileID: 0}
-  DeathScreen: {fileID: 0}
+  DeathScreen: {fileID: 807464265}
 --- !u!114 &551154448
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1143,14 +1140,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 551154440}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 23acf8fd1ff7a1c4ea0003b7221bf169, type: 3}
+  m_Script: {fileID: 11500000, guid: cb8a323394195bc4ca4725b82a57bf1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   Weapons:
-  - {fileID: 570329804}
   - {fileID: 1035181436}
+  - {fileID: 570329804}
   CurrentWeapon: 0
-  AmmoUI: {fileID: 1691509605}
 --- !u!135 &551154449
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1163,17 +1159,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 15
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &551154450
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 551154440}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6a3425f879ea59647a05e426d97e990c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &551154451
 MonoBehaviour:
   m_ObjectHideFlags: 0

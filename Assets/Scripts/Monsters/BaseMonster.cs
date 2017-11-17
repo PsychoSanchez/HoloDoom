@@ -89,7 +89,6 @@ namespace Assets.Scripts.Monsters
 
         private SpriteRenderer _sprite;
         private float _renderUpdate;
-        private Vector3 _direction;
 
         AudioSource _audioSource;
 
@@ -133,7 +132,6 @@ namespace Assets.Scripts.Monsters
         {
             _audioSource = GetComponent<AudioSource>();
             _sprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
-            _direction = transform.forward;
             _spawnAnim = new CustomAnimation(SpawnAnimationSprites, 12);
             _shootAnim = new CustomAnimation(ShootAnimationSprites, 12);
             _dieAnim = new CustomAnimation(DeathAnimationSprites, 6);
