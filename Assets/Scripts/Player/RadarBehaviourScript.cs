@@ -65,7 +65,7 @@ public class RadarBehaviourScript : MonoBehaviour
     private static float CalculateDegree(GameObject target)
     {
         var playerPos = Camera.main.transform.forward;
-        var enemyPos = target.transform.position;
+        var enemyPos = target.transform.position - Camera.main.transform.position;
         var v1 = new Vector2(playerPos.x, playerPos.z);
         var v2 = new Vector2(enemyPos.x, enemyPos.z);
         int sign = Vector3.Cross(v1, v2).z < 0 ? -1 : 1;
