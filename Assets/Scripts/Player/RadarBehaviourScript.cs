@@ -26,22 +26,6 @@ public class RadarBehaviourScript : MonoBehaviour
         bEnemyListUpdated = true;
     }
 
-    // void OnGUI()
-    // {
-    //     GUI.DrawTexture(new Rect(Screen.width / 2 - Size.x / 2, 0, Size.x, Size.y), Background);
-    //     if (bEnemyListUpdated)
-    //     {
-    //         bEnemyListUpdated = false;
-    //         enemies = EnemyManager.Instance.GetEnemiesList();
-    // 		foreach (var enemy in enemies)
-    // 		{
-    // 			var obj = Instantiate();
-    // 			obj.transform.parent = gameObject.transform;
-    // 		}
-    //     }
-    //     UpdateMarkers();
-    // }
-
     private void DrawMarker(GameObject target, GameObject marker)
     {
         float angle = CalculateDegree(target);
@@ -58,8 +42,6 @@ public class RadarBehaviourScript : MonoBehaviour
         }
         float x = Size.x / 2 - (percent * Size.x);
         marker.transform.localPosition = new Vector3(x, 0, 0);
-
-        // GUI.DrawTexture(new Rect(, 0, Size.y, Size.y), targetText);
     }
 
     private static float CalculateDegree(GameObject target)
