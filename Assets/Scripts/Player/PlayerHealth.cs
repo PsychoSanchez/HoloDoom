@@ -88,8 +88,6 @@ public class PlayerHealth : OverridableMonoBehaviour
             UpdateStatus();
         }
 
-        UpdateEmotions();
-
         return !bMaxHP;
     }
 
@@ -112,27 +110,6 @@ public class PlayerHealth : OverridableMonoBehaviour
         }
 
         return !bMaxArmor;
-    }
-
-    private void UpdateEmotions()
-    {
-        // ChangeFaces Animations
-        //if (currentHealth > 80)
-        //{
-
-        //}
-        //else if(currentHealth > 60)
-        //{
-
-        //}
-        //else if (currentHealth > 40)
-        //{
-
-        //}
-        //else if (currentHealth > 20)
-        //{
-
-        //}
     }
 
     private void UpdateStatus()

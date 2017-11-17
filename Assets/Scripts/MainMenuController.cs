@@ -9,6 +9,10 @@ public class MainMenuController : InteractionReceiver
 
     protected override void OnTapped(GameObject obj, InteractionManager.InteractionEventArgs eventArgs)
     {
+        if (obj == null)
+        {
+            return;
+        }
         switch (obj.name)
         {
             case "StartSinglePlayerButton":

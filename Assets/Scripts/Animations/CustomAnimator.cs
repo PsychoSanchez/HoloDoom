@@ -18,7 +18,7 @@ public class CustomAnimator
     public CustomAnimator(float frameRate, SpriteRenderer renderer)
     {
         _renderer = renderer;
-        _delay = frameRate / 100;
+        _delay = 1 / frameRate;
         Frame = 0;
     }
 
@@ -45,6 +45,11 @@ public class CustomAnimator
             if (tl != null)
             {
                 _renderer.sprite = tl[Frame];
+                Frame++;
+                if (Frame >= tl.Length)
+                {
+                    Frame = 0;
+                }
             }
 
             return;

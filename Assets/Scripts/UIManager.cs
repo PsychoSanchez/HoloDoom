@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using HoloToolkit.Sharing;
 using HoloToolkit.Unity;
@@ -28,12 +29,14 @@ public class UIManager : Singleton<UIManager>
     private Text ammoText;
     private Text armorText;
     private Text healthText;
+    private PlayerHeadAnimationComponent playerHead;
     int messageNumber = 0;
     void Start()
     {
         ammoText = GetHUDTextElement("AmmoText");
         armorText = GetHUDTextElement("ArmorText");
         healthText = GetHUDTextElement("HealthText");
+        playerHead = GameHUD.transform.Find("HeadAnimation").GetComponent<PlayerHeadAnimationComponent>();
 
         StatusSign.SetActive(false);
         GameHUD.SetActive(false);
@@ -84,6 +87,7 @@ public class UIManager : Singleton<UIManager>
         if (healthText != null)
         {
             healthText.text = hp.ToString();
+            playerHead.UpdateAnimation(hp);
         }
         if (armorText != null)
         {

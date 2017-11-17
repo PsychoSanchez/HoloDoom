@@ -191,7 +191,6 @@ public class EnemyManager : Singleton<EnemyManager>
         }
     }
 
-
     public void DamageTaken(long id, int amt)
     {
         CustomMessages.Instance.SendEnemyHit(id, amt);
@@ -259,7 +258,7 @@ public class EnemyManager : Singleton<EnemyManager>
         {
             DestroyImmediate(enemiesPool[key]);
         }
-        
+
         foreach (var key in projectiles.Keys)
         {
             DestroyImmediate(projectiles[key]);

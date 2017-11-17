@@ -23,7 +23,7 @@ public class Weapon : OverridableMonoBehaviour
     // Use this for initialization
     protected void Start()
     {
-        _animator = new CustomAnimator(12, transform.GetChild(0).GetComponent<SpriteRenderer>());
+        _animator = new CustomAnimator(8, transform.GetChild(0).GetComponent<SpriteRenderer>());
         _animator.AddAnimationSequence("Shoot", WeaponSprites);
 
     }
