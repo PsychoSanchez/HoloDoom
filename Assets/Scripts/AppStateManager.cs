@@ -165,7 +165,10 @@ public class AppStateManager : Singleton<AppStateManager>
                 EnableMapping();
                 UIManager.Instance.LogMessage("Scanning space around you...");
                 UIManager.Instance.LogMessage("Game will start, when anchor will scan enough space for game");
-
+                if (GameManager.Instance.IsSinglePlayer)
+                {
+                    SetAppState(AppState.Playing);
+                }
                 // FIXME: Hide anchor (Questionable)
                 // AnchorPlacement.Instance.gameObject.SetActive(false);
                 break;

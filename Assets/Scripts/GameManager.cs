@@ -80,6 +80,18 @@ public class GameManager : Singleton<GameManager>
     Dictionary<UpdateTimerTypes, UpdateTimer> timers = new Dictionary<UpdateTimerTypes, UpdateTimer>();
     RaycastHit hit;
     UpdateTimer startTimer;
+    private bool bSinglePlayer = false;
+    public bool IsSinglePlayer
+    {
+        get
+        {
+            return bSinglePlayer;
+        }
+        private set
+        {
+            bSinglePlayer = value;
+        }
+    }
 
     // Use this for initialization
     void Start()
@@ -190,23 +202,21 @@ public class GameManager : Singleton<GameManager>
         }
     }
 
-    public void StartGame()
+    public void StartSinglePlayerGame()
     {
-        EventHandler connectedEvent = GameStarted;
-        if (connectedEvent != null)
-        {
-            connectedEvent(this, EventArgs.Empty);
-        }
+        bSinglePlayer = true;
+        UIManager.Instance.SetMode(UIMode.PlacingAnchor);
+        AppStateManager.Instance.SetAppState(AppState.WaitingForAnchor);
     }
 
-    public void StopGame()
+    public void StopSinglePlayerGame()
     {
-        EventHandler connectedEvent = GameStopped;
-        if (connectedEvent != null)
-        {
-            connectedEvent(this, EventArgs.Empty);
-        }
+        bSinglePlayer = false;
+        AppStateManager.Instance.SetAppState(AppState.WaitingForConnection);
+        UIManager.Instance.SetMode(UIMode.Menu);
+        EnemyManager.Instance.ClearStage();
     }
+
     public void SpawnAmmo(object sender, EventArgs e)
     {
         var sp = GetSpawnPosition(2.0f);

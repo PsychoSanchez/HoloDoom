@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public enum UIMode
 {
     Game = 0,
+    PlacingAnchor,
     Menu,
     None,
     Death,
@@ -38,10 +39,6 @@ public class UIManager : Singleton<UIManager>
         GameHUD.SetActive(false);
         DeathScreen.SetActive(false);
         StatusMessages.SetActive(true);
-        if (Menu != null)
-        {
-            Menu.SetActive(false);
-        }
         SetPlayerId(SharingStage.Instance.Manager.GetLocalUser().GetID());
     }
 
@@ -119,6 +116,9 @@ public class UIManager : Singleton<UIManager>
                 {
                     Menu.SetActive(true);
                 }
+                break;
+            case UIMode.PlacingAnchor:
+                StatusMessages.SetActive(true);
                 break;
             case UIMode.None:
             default:

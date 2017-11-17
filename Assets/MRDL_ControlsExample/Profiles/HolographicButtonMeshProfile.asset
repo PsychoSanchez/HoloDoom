@@ -20,28 +20,28 @@ MonoBehaviour:
   ButtonStates:
   - Name: Pressed
     ActiveState: 0
-    StateColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+    StateColor: {r: 0.32352942, g: 0, b: 0, a: 1}
     StateValue: 0
     Offset: {x: 0, y: 0, z: 0}
     Scale: {x: 1, y: 1, z: 0.5}
   - Name: Targeted
     ActiveState: 1
-    StateColor: {r: 1, g: 1, b: 1, a: 1}
+    StateColor: {r: 0.72794116, g: 0.19804282, b: 0.19804282, a: 1}
     StateValue: 0
     Offset: {x: 0, y: 0, z: 0}
-    Scale: {x: 1, y: 1, z: 0.5}
+    Scale: {x: 1.1, y: 1.1, z: 0.5}
   - Name: Interactive
     ActiveState: 2
     StateColor: {r: 1, g: 1, b: 1, a: 0}
     StateValue: 0
     Offset: {x: 0, y: 0, z: 0}
-    Scale: {x: 1, y: 1, z: 0.5}
+    Scale: {x: 1.1, y: 1.1, z: 0.5}
   - Name: ObservationTargeted
     ActiveState: 3
-    StateColor: {r: 1, g: 1, b: 1, a: 1}
+    StateColor: {r: 0.83823526, g: 0, b: 0, a: 1}
     StateValue: 0
     Offset: {x: 0, y: 0, z: 0}
-    Scale: {x: 1, y: 1, z: 0.5}
+    Scale: {x: 1.1, y: 1.1, z: 0.5}
   - Name: Observation
     ActiveState: 4
     StateColor: {r: 0.25735295, g: 0.25735295, b: 0.25735295, a: 0}

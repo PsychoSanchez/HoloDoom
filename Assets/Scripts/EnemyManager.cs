@@ -252,4 +252,20 @@ public class EnemyManager : Singleton<EnemyManager>
     {
         return GenerateId(projectiles);
     }
+
+    public void ClearStage()
+    {
+        foreach (var key in enemiesPool.Keys)
+        {
+            DestroyImmediate(enemiesPool[key]);
+        }
+        
+        foreach (var key in projectiles.Keys)
+        {
+            DestroyImmediate(projectiles[key]);
+        }
+
+        enemiesPool.Clear();
+        projectiles.Clear();
+    }
 }
