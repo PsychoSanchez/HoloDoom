@@ -76,6 +76,7 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
         // Note that we have a transform.
         GotTransform = true;
 
+        this.GetComponent<BoxCollider>().enabled = true;
         // And send it to our friends.
         CustomMessages.Instance.SendStageTransform(transform.localPosition, transform.localRotation);
         AppStateManager.Instance.BecomeHeadUser(SharingStage.Instance.Manager.GetLocalUser().GetID());

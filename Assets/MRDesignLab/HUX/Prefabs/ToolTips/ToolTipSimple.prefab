@@ -100,7 +100,7 @@ Transform:
   m_GameObject: {fileID: 1920635169888654}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.01, y: 2.01, z: 2.01}
   m_Children:
   - {fileID: 4417752396127644}
   m_Father: {fileID: 4920376519455866}
@@ -302,7 +302,6 @@ MonoBehaviour:
   tipState: 1
   groupTipState: 0
   masterTipState: 0
-  anchorAttachMode: 0
   anchor: {fileID: 1488725791356452}
   pivot: {fileID: 1090878757068770}
   label: {fileID: 1987575228885480}
@@ -310,7 +309,7 @@ MonoBehaviour:
   toolTipText: "I am a Simple Tool Tip\t"
   backgroundPadding: {x: 0, y: 0}
   backgroundOffset: {x: 0, y: 0, z: 0}
-  contentScale: 1
+  contentScale: 2.01
   fontSize: 30
   attachPointType: 9
   toolTipLine: {fileID: 114595651912833436}

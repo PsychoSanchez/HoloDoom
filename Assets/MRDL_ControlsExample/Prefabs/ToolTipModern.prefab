@@ -567,7 +567,7 @@ MonoBehaviour:
   contentScale: 1
   fontSize: 30
   attachPointType: 0
-  toolTipLine: {fileID: 114001663517499338}
+  toolTipLine: {fileID: 0}
 --- !u!114 &114204447246436884
 MonoBehaviour:
   m_ObjectHideFlags: 1

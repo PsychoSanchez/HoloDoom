@@ -10,10 +10,7 @@ namespace Assets.Scripts.Monsters
         public int Damage = 5;
         bool canShoot = true;
         float lastShot;
-        // RaycastHit shotHit;
         public GameObject shootPrefab;
-        ///TODD: Remove it from here and create new object
-        // int projectileSpeed = 2;
         float projectileLifeTime = 5.0f;
         Rigidbody _rigidBody = null;
         float fallTime;
@@ -38,6 +35,7 @@ namespace Assets.Scripts.Monsters
 
         protected override void Die()
         {
+            this.transform.Find("Sprite").GetComponent<Billboard>().enabled = true;
             base.Die();
         }
 

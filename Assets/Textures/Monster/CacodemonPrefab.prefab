@@ -54,7 +54,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4411856405699120}
   - component: {fileID: 212917382790007176}
-  - component: {fileID: 95738959639140822}
+  - component: {fileID: 114392125517736838}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -210,23 +210,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!95 &95738959639140822
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1891556348344682}
-  m_Enabled: 0
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b9e24e09ab3978740af3f5385bc59a64, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
 --- !u!114 &114269138357660130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -276,6 +259,18 @@ MonoBehaviour:
   Damage: 5
   shootPrefab: {fileID: 1321679504308178, guid: c7010f3d3fd946f4089012862c883970,
     type: 2}
+--- !u!114 &114392125517736838
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1891556348344682}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a625a30cabd921a428fc2d89b02ab740, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UpdateRate: 30
 --- !u!212 &212917382790007176
 SpriteRenderer:
   m_ObjectHideFlags: 1

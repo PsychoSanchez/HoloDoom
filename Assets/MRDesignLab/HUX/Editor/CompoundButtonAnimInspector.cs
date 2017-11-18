@@ -55,7 +55,7 @@ namespace HUX
             if (!Application.isPlaying)
             {
                 // Get the available animation parameters
-                animParams = animator.parameters;
+                // animParams = animator.parameters;
 
                 for (int i = 0; i < buttonStates.Length; i++)
                 {
@@ -68,16 +68,16 @@ namespace HUX
                     if (!string.IsNullOrEmpty(acb.AnimActions[i].ParamName))
                     {
                         bool invalidParam = true;
-                        foreach (AnimatorControllerParameter animParam in animParams)
-                        {
-                            if (acb.AnimActions[i].ParamName == animParam.name)
-                            {
-                                // Update the type while we're here
-                                invalidParam = false;
-                                acb.AnimActions[i].ParamType = animParam.type;
-                                break;
-                            }
-                        }
+                        // foreach (AnimatorControllerParameter animParam in animParams)
+                        // {
+                        //     if (acb.AnimActions[i].ParamName == animParam.name)
+                        //     {
+                        //         // Update the type while we're here
+                        //         invalidParam = false;
+                        //         acb.AnimActions[i].ParamType = animParam.type;
+                        //         break;
+                        //     }
+                        // }
 
                         // If we didn't find it, mark it as invalid
                         acb.AnimActions[i].InvalidParam = invalidParam;

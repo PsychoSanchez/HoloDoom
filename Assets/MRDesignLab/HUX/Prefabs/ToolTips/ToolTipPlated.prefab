@@ -149,7 +149,7 @@ Transform:
   m_GameObject: {fileID: 1669469392401874}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children:
   - {fileID: 4265888144028786}
   - {fileID: 4877995955028244}
@@ -523,7 +523,7 @@ MonoBehaviour:
   toolTipText: I am a plated Tool Tip
   backgroundPadding: {x: 0.02, y: 0.01}
   backgroundOffset: {x: 0, y: 0, z: 0}
-  contentScale: 1
+  contentScale: 2
   fontSize: 30
   attachPointType: 9
   toolTipLine: {fileID: 114292912534039424}
