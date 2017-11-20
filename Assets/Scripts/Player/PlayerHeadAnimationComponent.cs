@@ -51,11 +51,14 @@ public class PlayerHeadAnimationComponent : MonoBehaviour
         {
             animToPlay = "hp0";
         }
-        animator.Play(animToPlay);
+        if (animator != null)
+        {
+            animator.Play(animToPlay);
+        }
     }
 
-	void Update()
-	{
-		animator.Update(Time.deltaTime);
-	}
+    void Update()
+    {
+        animator.Update(Time.deltaTime);
+    }
 }

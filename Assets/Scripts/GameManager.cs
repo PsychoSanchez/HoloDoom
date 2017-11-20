@@ -64,8 +64,6 @@ public class GameManager : Singleton<GameManager>
     public Medkit[] Medkits;
     public Armor[] Armor;
     public int StartWave = 0;
-    public event EventHandler GameStarted;
-    public event EventHandler GameStopped;
     public Transform SpawnTransform;
     public float MaxSpawnDistance = 5.0f;
     public float MinSpawnDistance = 1.0f;
@@ -209,12 +207,15 @@ public class GameManager : Singleton<GameManager>
         AppStateManager.Instance.SetAppState(AppState.WaitingForAnchor);
     }
 
-    public void StopSinglePlayerGame()
+    public void StopGame()
     {
         bSinglePlayer = false;
         AppStateManager.Instance.SetAppState(AppState.WaitingForConnection);
         UIManager.Instance.SetMode(UIMode.Menu);
         EnemyManager.Instance.ClearStage();
+        AnchorPlacement.Instance.Hide();
+        nCurrentWave = 0;
+        ResetGameParameters();
     }
 
     public void SpawnAmmo(object sender, EventArgs e)

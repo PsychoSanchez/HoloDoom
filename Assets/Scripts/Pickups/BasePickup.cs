@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class BasePickup : OverridableMonoBehaviour
 {
-
     public float LifeTime = 10.0f;
     public AudioClip PickupSound;
     public AudioClip SpawnSound;

@@ -40,6 +40,7 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
 
         transform.localPosition = CustomMessages.Instance.ReadVector3(msg);
         transform.localRotation = CustomMessages.Instance.ReadQuaternion(msg);
+        this.GetComponent<BoxCollider>().enabled = true;
 
         if (GotTransform == false)
         {
@@ -69,6 +70,17 @@ public class AnchorPlacement : Singleton<AnchorPlacement>
             transform.position = cursor.Position - Camera.main.transform.forward * 0.1f;
             transform.rotation = cursor.Rotation;
         }
+    }
+
+    public void Hide()
+    {
+        this.transform.GetChild(0).gameObject.SetActive(false);
+        this.GetComponent<BoxCollider>().enabled = false;
+    }
+
+    public void Show()
+    {
+        this.transform.GetChild(0).gameObject.SetActive(true);
     }
 
     public void OnSelect()

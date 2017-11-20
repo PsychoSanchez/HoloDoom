@@ -29,6 +29,7 @@ namespace HoloToolkit.Sharing.Tests
         /// </summary>
         private Dictionary<long, RemoteHeadInfo> remoteHeads = new Dictionary<long, RemoteHeadInfo>();
 
+
         private void Start()
         {
             CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.UserHeadTransform] = UpdateHeadTransform;
@@ -56,6 +57,10 @@ namespace HoloToolkit.Sharing.Tests
 
         private void Update()
         {
+            if (!SharingStage.Instance.IsConnected)
+            {
+                return;
+            }
             // Grab the current head transform and broadcast it to all the other users in the session
             // Transform headTransform = CameraCache.Main.transform;
             Transform headTransform = Camera.main.transform;

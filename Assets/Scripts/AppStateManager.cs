@@ -23,7 +23,8 @@ public enum AppState
     // Lobby
     Ready,
     // Match
-    Playing
+    Playing,
+    Idle
 }
 
 public class AppStateManager : Singleton<AppStateManager>
@@ -37,8 +38,7 @@ public class AppStateManager : Singleton<AppStateManager>
     // Use this for initialization
     void Start()
     {
-        UIManager.Instance.LogMessage("Waiting for connection...");
-        SetAppState(AppState.WaitingForConnection);
+        SetAppState(AppState.Idle);
         InitSharingManager();
         SharingSessionTracker.Instance.SessionJoined += Instance_SessionJoined;
         SharingSessionTracker.Instance.SessionLeft += Instance_SessionLeft;
@@ -139,13 +139,18 @@ public class AppStateManager : Singleton<AppStateManager>
         // Do action
         switch (currentAppState)
         {
+            case AppState.Idle:
+                UIManager.Instance.SetMode(UIMode.Menu);
+                break;
             case AppState.WaitingForConnection:
                 // "Connecting" sign
+                UIManager.Instance.LogMessage("Waiting for connection...");
                 UIManager.Instance.SetMode(UIMode.Menu);
                 break;
             case AppState.WaitingForAnchor:
                 CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.UpdateAppState] += PlayerAppStateUpdate;
                 CustomMessages.Instance.MessageHandlers[CustomMessages.GameMessageID.MatchPlaying] += TrySetMatchState;
+                AnchorPlacement.Instance.Show();
                 // Every user has "Anchor" in hands and searching place for place
                 // After anchor placed go to scanning phase
                 UIManager.Instance.LogMessage("Waiting for anchor to place");
@@ -280,8 +285,8 @@ public class AppStateManager : Singleton<AppStateManager>
             SetAppState(AppState.WaitingForAnchor);
         };
 
-        UIManager.Instance.LogMessage("Conencting...");
-        SharingStage.Instance.ConnectToServer();
+        UIManager.Instance.LogMessage("Sharing manager initialized...");
+        // SharingStage.Instance.ConnectToServer();
     }
 
     /// <summary>

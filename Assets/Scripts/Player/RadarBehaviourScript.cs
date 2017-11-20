@@ -54,11 +54,27 @@ public class RadarBehaviourScript : MonoBehaviour
         var angle = sign * Vector2.Angle(v1, v2);
         return angle;
     }
+    
+    void OnEnable()
+    {
+        foreach (var enemy in enemiesMarkers.Keys)
+        {
+            DestroyImmediate(enemiesMarkers[enemy]);
+        }
+        enemiesMarkers.Clear();
+        enemies = EnemyManager.Instance.GetEnemiesList();
+        bEnemyListUpdated = true;
+    }
 
     private void UpdateMarkers()
     {
         foreach (var enemy in enemies)
         {
+            if (enemy == null)
+            {
+                continue;
+            }
+
             var bm = enemy.GetComponent<BaseMonster>();
             var alive = bm.IsAlive();
             if (!alive)
