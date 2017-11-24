@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Scripts.Monsters;
+using HoloDoom.Animation;
 using UnityEngine;
 
 public class Weapon : OverridableMonoBehaviour

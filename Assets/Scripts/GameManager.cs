@@ -265,7 +265,7 @@ public class GameManager : Singleton<GameManager>
 
             pos.x = MaxSpawnDistance * Mathf.Sin(angle * Mathf.Deg2Rad);
             pos.z = MaxSpawnDistance * Mathf.Cos(angle * Mathf.Deg2Rad);
-            pos.y = anchor.y;
+            pos.y = 0;
 
 
             if (Physics.Raycast(anchor, pos, out hit, MaxSpawnDistance))
@@ -299,7 +299,7 @@ public class GameManager : Singleton<GameManager>
         Vector3 pos;
         pos.x = radius * Mathf.Sin(ang * Mathf.Deg2Rad);
         pos.z = radius * Mathf.Cos(ang * Mathf.Deg2Rad);
-        pos.y = center.y;
+        pos.y = 0;
         return pos;
     }
 

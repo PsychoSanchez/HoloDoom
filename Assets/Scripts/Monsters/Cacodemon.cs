@@ -18,7 +18,6 @@ namespace Assets.Scripts.Monsters
 
         protected override void Start()
         {
-            _animator = this.GetComponent<Animator>();
             _rigidBody = this.GetComponent<Rigidbody>();
             base.Start();
         }

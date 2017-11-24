@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using HoloDoom.Animation;
 using UnityEngine;
 
 public class PlayerHeadAnimationComponent : MonoBehaviour
