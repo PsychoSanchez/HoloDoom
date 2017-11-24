@@ -37,10 +37,6 @@ namespace Assets.Scripts.Monsters
         protected bool bDead = false;
         protected bool bPlayerFound;
         protected Transform _playerTransform;
-        protected bool bSpawning = true;
-        protected CustomAnimation _spawnAnim;
-        protected CustomAnimation _shootAnim;
-        protected CustomAnimation _dieAnim;
         protected CustomAnimator _animator;
 
         private float _renderUpdate;
@@ -48,10 +44,22 @@ namespace Assets.Scripts.Monsters
         AudioSource _audioSource;
         private SpriteRenderer _renderer;
 
-        public virtual void Spawn()
+        // Use this for initialization
+        protected virtual void Start()
         {
+            // GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
+            _audioSource = GetComponent<AudioSource>();
+            _health = 100;
+            _armor = 0;
+        }
+        protected override void Awake()
+        {
+            _renderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+            _animator = new CustomAnimator(12, _renderer);
+            _animator.AddAnimationSequence("spawn", SpawnAnimationSprites);
+            _animator.AddAnimationSequence("shoot", ShootAnimationSprites, 6);
+            _animator.AddAnimationSequence("die", DeathAnimationSprites, 6);
             _animator.PlayOnce("spawn");
-            bSpawning = true;
         }
 
         public virtual bool IsAlive()
@@ -78,19 +86,7 @@ namespace Assets.Scripts.Monsters
         }
         public virtual void Shoot(long id, Vector3 position, Quaternion rotation)
         {
-        }
-        // Use this for initialization
-        protected virtual void Start()
-        {
-            // GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezeAll;
-            _audioSource = GetComponent<AudioSource>();
-            _renderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
-            _animator = new CustomAnimator(12, _renderer);
-            _animator.AddAnimationSequence("spawn", SpawnAnimationSprites);
-            _animator.AddAnimationSequence("shoot", ShootAnimationSprites);
-            _animator.AddAnimationSequence("die", DeathAnimationSprites, 6);
-            _health = 100;
-            _armor = 0;
+            _animator.PlayOnce("shoot");
         }
 
         // Update is called once per frame
@@ -115,8 +111,12 @@ namespace Assets.Scripts.Monsters
                 MoveToPlayer();
                 return;
             }
-            RotateMonster(15);
-            RotateSprite();
+
+            if (!_animator.IsPlaying())
+            {
+                RotateMonster(15);
+                RotateSprite();
+            }
             _renderUpdate = 0f;
         }
 
@@ -127,7 +127,10 @@ namespace Assets.Scripts.Monsters
                 return;
             }
             gameObject.transform.forward = _playerTransform.position - gameObject.transform.position;
-            RotateSprite();
+            if (!_animator.IsPlaying())
+            {
+                RotateSprite();
+            }
         }
 
         private void RotateMonster(float rotation)
@@ -144,34 +147,24 @@ namespace Assets.Scripts.Monsters
             var vec1 = target.position - gameObject.transform.position;
             var vec2 = gameObject.transform.forward;
             var angle = Vector3.Angle(vec1, vec2);
-            int index = GetSpriteIndexFromAngle(angle);
+            int index = GetSpriteIndexFromAngle(angle, EnemySprites.Length / 2);
             _renderer.flipX = IsRightSide(gameObject.transform.right, vec1);
             _renderer.sprite = EnemySprites[index];
             _renderer.transform.forward = vec1;
         }
 
-        private static int GetSpriteIndexFromAngle(float angle)
+        private static int GetSpriteIndexFromAngle(float angle, int spritesCount)
         {
-            var index = 0;
-            if (angle < 20)
+            var index = spritesCount;
+            var pieceAngle = 180 / spritesCount;
+            for (int i = 0; i < spritesCount - 1; i++)
             {
-                index = 0;
-            }
-            else if (angle < 60)
-            {
-                index = 1;
-            }
-            else if (angle < 100)
-            {
-                index = 2;
-            }
-            else if (angle < 140)
-            {
-                index = 3;
-            }
-            else
-            {
-                index = 4;
+                var a = (i + 1) * pieceAngle;
+                if (angle < a)
+                {
+                    index = i;
+                    break;
+                }
             }
 
             return index;

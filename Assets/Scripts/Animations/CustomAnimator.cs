@@ -55,7 +55,10 @@ namespace HoloDoom.Animation
             _delay = 1 / DeafaultFrameRate;
             Frame = 0;
         }
-
+        public bool IsPlaying()
+        {
+            return _shotAnimation.HasValue || _repeatAnimation.HasValue;
+        }
         /// <summary>
         /// Custom update method
         /// </summary>

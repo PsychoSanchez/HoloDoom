@@ -35,6 +35,7 @@ namespace Assets.Scripts.Monsters
         protected override void Die()
         {
             this.transform.Find("Sprite").GetComponent<Billboard>().enabled = true;
+             _rigidBody.useGravity = true;
             base.Die();
         }
 
@@ -64,10 +65,6 @@ namespace Assets.Scripts.Monsters
 
             if (bDead)
             {
-                if (_rigidBody != null && _dieAnim.Frame == 2)
-                {
-                    _rigidBody.useGravity = true;
-                }
                 Fall();
                 return;
             }
@@ -77,6 +74,11 @@ namespace Assets.Scripts.Monsters
                 return;
             }
 
+            ProcessLogic();
+        }
+
+        private void ProcessLogic()
+        {
             lastShot += Time.deltaTime;
             if (lastShot >= ShootDelay)
             {
@@ -99,7 +101,7 @@ namespace Assets.Scripts.Monsters
             {
                 ClearResources();
             }
-            else if (fallTime > 1.0f)
+            else if (fallTime > 2.0f)
             {
                 var speed = _rigidBody.velocity.magnitude;
                 if (speed != 0)
