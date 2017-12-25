@@ -6,57 +6,17 @@ using UnityEngine;
 
 namespace Assets.Scripts.Monsters
 {
-    public class CustomAnimation
+
+    public abstract class BaseMonster : OverridableMonoBehaviour
     {
-        Sprite[] _timeline;
-        public int Frame { get; private set; }
-        public bool Finished { get; private set; }
+        public AudioClip soundSpawn;
+        public AudioClip soundTakeDamage;
+        public AudioClip soundAttack;
+        public AudioClip soundDeath;
+        public AudioClip soundIdle;
 
-        private DateTime _lastFrame = DateTime.Now;
-        private float _delay = 0f;
-        public CustomAnimation(Sprite[] timeline, float frameRate)
-        {
-            _timeline = timeline;
-            _delay = 1000 / frameRate;
-            Frame = 0;
-        }
+        private float takeDamageLastTime = 0;
 
-        public Sprite GetNextFrame()
-        {
-            if (_timeline == null)
-            {
-                return null;
-            }
-
-            float timePassed = (DateTime.Now - _lastFrame).Milliseconds;
-            if (timePassed > _delay)
-            {
-                Frame++;
-                _lastFrame = DateTime.Now;
-            }
-
-            if (Frame >= _timeline.Length)
-            {
-                Frame = 0;
-                Finished = true;
-                return null;
-            }
-
-            return _timeline[Frame];
-        }
-
-        public void Reset()
-        {
-            Frame = 0;
-            Finished = false;
-        }
-    }
-    public class BaseMonster : OverridableMonoBehaviour
-    {
-        public AudioClip SpawnSound;
-        public AudioClip TakeDamageSound;
-        public AudioClip AttackSound;
-        public AudioClip DeathSound;
         public Sprite[] EnemySprites;
         public Sprite[] SpawnAnimationSprites;
         public Sprite[] ShootAnimationSprites;
@@ -79,7 +39,7 @@ namespace Assets.Scripts.Monsters
         protected int _armor;
         protected Weapon _weapon;
         protected bool bDead = false;
-        protected Animator _animator;
+
         protected bool bPlayerFound;
         protected Transform _playerTransform;
         protected bool bSpawning = true;
@@ -92,9 +52,55 @@ namespace Assets.Scripts.Monsters
 
         AudioSource _audioSource;
 
-        public virtual void Spawn()
+        protected CustomAnimator animator;
+
+        protected MonsterAIState aiState = MonsterAIState.Spawning;
+        public enum MonsterAIState
         {
-            bSpawning = true;
+            Spawning, // когда появляется 
+            BeforeMoving, // перед перемещением
+            Moving,
+            Charging,
+            Fire,
+            Chilling,
+            WaitingForTeleport,
+            Teleporting,
+            Teleported,
+            ChillingAfterTeleport,
+            Death,
+            Deceased
+        }
+
+        float aiWaitTimer = 0;
+        protected void waitForMsec(float msec)
+        {
+            this.aiWaitTimer = msec * 1000;
+        }
+
+        protected virtual void updateAIState()
+        {
+            // to be overridden by children
+        }
+
+        private void updateAIStateBase()
+        {
+            switch (aiState)
+            {
+                case MonsterAIState.Spawning:
+                    _audioSource.PlayOneShot(this.soundSpawn, 0.7F);
+                    animator.Play(_spawnAnim);
+                    aiState = MonsterAIState.Spawning;
+                    // ждать пару секунд после спавна
+                    waitForMsec(2);
+                    aiState = MonsterAIState.BeforeMoving;
+                    break;
+                case MonsterAIState.Death:
+                    animator.Play(_dieAnim);
+                    _audioSource.PlayOneShot(soundDeath, 0.7F);
+                    waitForMsec(animator.animation.duration);
+                    aiState = MonsterAIState.Deceased;
+                    break;
+            }
         }
 
         public virtual bool IsAlive()
@@ -104,27 +110,31 @@ namespace Assets.Scripts.Monsters
 
         public virtual void GetHit(int amount)
         {
+            if (Time.time - takeDamageLastTime > 1.0f)
+            {
+                takeDamageLastTime = Time.time;
+                _audioSource.PlayOneShot(this.soundTakeDamage, 0.7F);
+            }
             _health -= amount;
         }
 
         protected virtual void Die()
         {
-            _audioSource.PlayOneShot(DeathSound, 0.7F);
             bDead = true;
             GameManager.Instance.EnemyKilled();
         }
 
         public virtual void Shoot()
         {
-            PlayShootAnimation();
-        }
-        public virtual void Shoot(long id, Vector3 position, Quaternion rotation)
-        {
+            _audioSource.PlayOneShot(this.soundAttack, 0.7F);
         }
 
-        private void PlayShootAnimation()
-        {
+        public abstract void Shoot(long id, Vector3 position, Quaternion rotation); // to be overridden
 
+        protected IEnumerator playIdleSound()
+        {
+            yield return new WaitForSeconds(UnityEngine.Random.Range(1, 3));
+            _audioSource.PlayOneShot(soundDeath, 0.7F);
         }
 
         // Use this for initialization
@@ -132,11 +142,17 @@ namespace Assets.Scripts.Monsters
         {
             _audioSource = GetComponent<AudioSource>();
             _sprite = transform.GetChild(0).GetComponent<SpriteRenderer>();
-            _spawnAnim = new CustomAnimation(SpawnAnimationSprites, 12);
-            _shootAnim = new CustomAnimation(ShootAnimationSprites, 12);
-            _dieAnim = new CustomAnimation(DeathAnimationSprites, 6);
+
+            _spawnAnim = new CustomAnimation(SpawnAnimationSprites, 12, false);
+            _shootAnim = new CustomAnimation(ShootAnimationSprites, 12, false);
+            _dieAnim = new CustomAnimation(DeathAnimationSprites, 6, false);
+
             _health = 100;
             _armor = 0;
+
+            animator = new CustomAnimator(_sprite);
+
+            this.aiState = MonsterAIState.Spawning;
         }
 
         // Update is called once per frame
@@ -150,73 +166,40 @@ namespace Assets.Scripts.Monsters
                 return;
             }
 
-            if (bSpawning)
+            animator.Update(_renderUpdate);
+
+            aiWaitTimer -= Time.deltaTime;
+            if (aiWaitTimer <= 0)
             {
-                PlaySpawnAnimation();
-                return;
+                this.updateAIStateBase();
+                this.updateAIState();
             }
 
-            if (bDead)
-            {
-                PlayDeathAnimation();
-                return;
-            }
 
-            if (bPlayerFound)
-            {
-                MoveToPlayer();
-                return;
-            }
-            RotateMonster(15);
-            RotateSprite();
             _renderUpdate = 0f;
         }
 
-        private void MoveToPlayer()
+
+        private void MoveToPlayer() // TODO: прихуярить куда-нибудь
         {
             if (_playerTransform == null)
             {
                 return;
             }
             gameObject.transform.forward = _playerTransform.position - gameObject.transform.position;
-            RotateSprite();
+            // RotateSprite();
         }
 
-        private void PlayDeathAnimation()
-        {
-            if (_dieAnim.Finished)
-            {
-                return;
-            }
-            var sprite = _dieAnim.GetNextFrame();
-            if (sprite != null)
-            {
-                _sprite.sprite = sprite;
-            }
-        }
 
-        private void PlaySpawnAnimation()
-        {
-            var sprite = _spawnAnim.GetNextFrame();
-            if (sprite != null)
-            {
-                _sprite.sprite = sprite;
-            }
-            else
-            {
-                bSpawning = false;
-            }
-        }
-
-        private void RotateMonster(float rotation)
-        {
-            transform.Rotate(0, -rotation, 0);
-        }
+        // private void RotateMonster(float rotation)
+        // {
+        //     transform.Rotate(0, -rotation, 0);
+        // }
         public static bool IsRightSide(Vector3 right, Vector3 to)
         {
             return Vector3.Angle(right, to) > 90f;
         }
-        private void RotateSprite()
+        protected void LookAtMainCamera()
         {
             var target = Camera.main.transform;
             var vec1 = target.position - gameObject.transform.position;
@@ -284,5 +267,8 @@ namespace Assets.Scripts.Monsters
             }
             _playerTransform = remoteHead.HeadObject.transform;
         }
+
+
+
     }
 }

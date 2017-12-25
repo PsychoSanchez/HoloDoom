@@ -3,8 +3,106 @@ using UnityEngine;
 
 namespace Assets.Scripts.Monsters
 {
+
     public class Cacodemon : BaseMonster
     {
+
+        // Fly state
+        float flyDistance = 2;
+        float flyTimer = 0;
+
+        Vector3 startPosition;
+        Vector3 endPosition;
+
+        // Change state
+        float chargeTimer = 0;
+
+        Rigidbody rigidbodyComponent;
+
+        protected override void updateAIState()
+        {
+            switch (this.aiState)
+            {
+                case MonsterAIState.BeforeMoving:
+                    // play audio
+
+                    this.playIdleSound();
+
+                    this.startPosition = GameManager.Instance.GetSpawnPosition(5, 2).position;
+
+                    this.flyTimer = 0;
+                    this.flyDistance = Vector3.Distance(startPosition, endPosition);
+                    this.flyDistance = flyDistance != 0 ? flyDistance : 2;
+                    this.aiState = MonsterAIState.Moving;
+                    break;
+                case MonsterAIState.Moving:
+                    flyTimer += Time.deltaTime;
+
+                    // Debug
+                    flyDistance = 1;
+
+                    Vector3 position = Vector3.Slerp(startPosition, endPosition, flyTimer / flyDistance);
+                    transform.rotation = Quaternion.LookRotation(startPosition - endPosition);
+
+                    this._rigidBody.velocity = Vector3.Normalize(transform.position - position);
+
+
+                    if (flyTimer / flyDistance > 1)
+                    {
+                        chargeTimer = 0;
+
+                        // transform.rotation = Quaternion.LookRotation(transform.position - _playerTransform.position);
+                        this.LookAtMainCamera();
+                        aiState = MonsterAIState.Charging;
+
+                        waitForMsec(1000);
+                    }
+                    break;
+                case MonsterAIState.Charging:
+                    this.playIdleSound();
+                    break;
+
+                case MonsterAIState.Fire:
+                    // create fireball towards the player
+
+                    if (bPlayerFound)
+                    {
+                        Shoot();
+                    }
+
+                    aiState = MonsterAIState.Chilling;
+                    break;
+                case MonsterAIState.Chilling:
+                    waitForMsec(1000);
+                    // keep last firing animation frame for a second
+                    aiState = MonsterAIState.BeforeMoving;
+                    break;
+
+                case MonsterAIState.WaitingForTeleport:
+                    break;
+                case MonsterAIState.Teleported:
+                    break;
+                case MonsterAIState.ChillingAfterTeleport:
+                    break;
+                /* 
+                    1) шипит
+                    2) начинает перемещаться в сторону игрока по диагонали туда-сюда
+                    3) время от времени создаёт фаербол и кидает в игрока
+                    4) после фаербола ждёт секунду ничего не делая и не уворачиваясь
+                    5) если не видит игрока больше 10 секунд, телепортируется к игроку (позиция вычисляется рейкастом от игрока)
+                    6) если игрок наводит ружьё на какодемона, тот детает резкий скачок в сторону (редко)
+                */
+                case MonsterAIState.Teleporting:
+                    /*
+                        1) тупит 2 секунды
+                        2) пердит 2 секунды (плазмой)
+                        3) перемещается
+                        4) тупит ещё 3 секунды
+                    */
+                    break;
+            }
+        }
+
         public float ShootDelay = 1f;
         public float Range = 20f;
         public int Damage = 5;
@@ -18,8 +116,8 @@ namespace Assets.Scripts.Monsters
 
         protected override void Start()
         {
-            _animator = this.GetComponent<Animator>();
             _rigidBody = this.GetComponent<Rigidbody>();
+            startPosition = transform.position;
             base.Start();
         }
 
@@ -54,6 +152,7 @@ namespace Assets.Scripts.Monsters
         protected override void Update()
         {
             base.Update();
+            updateAIState();
             if (resourcesCleared)
             {
                 return;
@@ -78,18 +177,6 @@ namespace Assets.Scripts.Monsters
                 return;
             }
 
-            lastShot += Time.deltaTime;
-            if (lastShot >= ShootDelay)
-            {
-                lastShot = 0;
-                canShoot = true;
-            }
-            if (bPlayerFound && canShoot)
-            {
-                Shoot();
-            }
-
-            canShoot = false;
         }
 
         private void Fall()

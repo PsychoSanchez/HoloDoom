@@ -5,57 +5,53 @@ using UnityEngine;
 public class PlayerHeadAnimationComponent : MonoBehaviour
 {
     CustomAnimator animator;
-    public Sprite[] hp100Animation;
-    public Sprite[] hp80Animation;
-    public Sprite[] hp60Animation;
-    public Sprite[] hp40Animation;
-    public Sprite[] hp20Animation;
-    public Sprite[] hp0Animation;
+    public CustomAnimation hp100Animation;
+    public CustomAnimation hp80Animation;
+    public CustomAnimation hp60Animation;
+    public CustomAnimation hp40Animation;
+    public CustomAnimation hp20Animation;
+    public CustomAnimation hp0Animation;
     // Use this for initialization
     void Start()
     {
-        animator = new CustomAnimator(2, GetComponent<SpriteRenderer>());
-        animator.AddAnimationSequence("hp100", hp100Animation);
-        animator.AddAnimationSequence("hp80", hp80Animation);
-        animator.AddAnimationSequence("hp60", hp60Animation);
-        animator.AddAnimationSequence("hp40", hp40Animation);
-        animator.AddAnimationSequence("hp20", hp20Animation);
-        animator.AddAnimationSequence("hp0", hp0Animation);
-        animator.Play("hp100");
+        animator = new CustomAnimator(GetComponent<SpriteRenderer>());
+
+        animator.Play(hp100Animation);
     }
 
     public void UpdateAnimation(int health)
     {
-        var animToPlay = "hp0";
+        CustomAnimation animToPlay = null;
+
         if (health > 80)
         {
-            animToPlay = "hp100";
+            animToPlay = hp100Animation;
         }
         else if (health > 60)
         {
-            animToPlay = "hp80";
+            animToPlay = hp80Animation;
         }
         else if (health > 40)
         {
-            animToPlay = "hp60";
+            animToPlay = hp60Animation;
         }
         else if (health > 20)
         {
-            animToPlay = "hp40";
+            animToPlay = hp40Animation;
         }
         else if (health > 0)
         {
-            animToPlay = "hp20";
+            animToPlay = hp20Animation;
         }
         else
         {
-            animToPlay = "hp0";
+            animToPlay = hp0Animation;
         }
         animator.Play(animToPlay);
     }
 
-	void Update()
-	{
-		animator.Update(Time.deltaTime);
-	}
+    void Update()
+    {
+        animator.Update(Time.deltaTime);
+    }
 }
