@@ -76,6 +76,7 @@ public class GameManager : Singleton<GameManager>
     int nWaveEnemysSpawned;
     int nWaveEnemysKilled;
     long lLocalUserId;
+
     List<float> spawnDirections = new List<float>();
     Dictionary<UpdateTimerTypes, UpdateTimer> timers = new Dictionary<UpdateTimerTypes, UpdateTimer>();
     RaycastHit hit;
@@ -291,7 +292,7 @@ public class GameManager : Singleton<GameManager>
         bSpawnPointsFound = true;
     }
 
-    Vector3 GetSpawnDirection(Vector3 center, float radius)
+    public Vector3 GetSpawnDirection(Vector3 center, float radius)
     {
         var index = (int)UnityEngine.Random.Range(0, spawnDirections.Count);
         float ang = spawnDirections[index];
@@ -330,7 +331,7 @@ public class GameManager : Singleton<GameManager>
         return temp;
     }
 
-    SpawnPoint GetSpawnPosition(float radius, float minDistance)
+    public SpawnPoint GetSpawnPosition(float radius, float minDistance)
     {
         Vector3 center = SpawnTransform.position;
         float dist;

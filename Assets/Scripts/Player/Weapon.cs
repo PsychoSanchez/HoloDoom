@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class Weapon : OverridableMonoBehaviour
 {
-    public Sprite[] WeaponSprites;
+    public CustomAnimation animationShoot;
     public AudioSource GunAudio;
     public float ShootDelay = 0.15f;
     public float Range = 100f;
@@ -23,9 +23,8 @@ public class Weapon : OverridableMonoBehaviour
     // Use this for initialization
     protected void Start()
     {
-        _animator = new CustomAnimator(8, transform.GetChild(0).GetComponent<SpriteRenderer>());
-        _animator.AddAnimationSequence("Shoot", WeaponSprites);
-
+        // 8
+        _animator = new CustomAnimator(transform.GetChild(0).GetComponent<SpriteRenderer>());
     }
 
     // Update is called once per frame
@@ -62,7 +61,7 @@ public class Weapon : OverridableMonoBehaviour
         this.Ammo -= 1;
 
         GunAudio.Play();
-        _animator.PlayOnce("Shoot");
+        _animator.Play(animationShoot);
 
         // Debug.DrawRay(headRay.origin, headRay.direction, Color.white,  20.0f, false);
         if (!Physics.Raycast(headRay, out shotHit, Range * 10))
