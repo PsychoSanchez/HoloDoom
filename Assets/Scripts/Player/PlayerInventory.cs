@@ -255,6 +255,7 @@ public class PlayerInventory : MonoBehaviour
 
         currentWeapon = weapon;
         weapon.Ref.gameObject.SetActive(true);
+        UpdateUI();
     }
 
     public void UpdateUI()

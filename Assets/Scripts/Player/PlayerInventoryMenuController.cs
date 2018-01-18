@@ -1,16 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using HUX.Interaction;
+using HUX.Receivers;
 using UnityEngine;
 
-public class PlayerInventoryMenuController : MonoBehaviour {
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+public class PlayerInventoryMenuController : InteractionReceiver
+{
+    protected override void OnTapped(GameObject obj, InteractionManager.InteractionEventArgs eventArgs)
+    {
+        if (obj == null)
+        {
+            return;
+        }
+    }
 }
