@@ -1,68 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Scripts.Monsters;
+using ItemsModel;
 using UnityEngine;
 
 public class Weapon : OverridableMonoBehaviour
 {
+    public AmmoType AmmoType = AmmoType.PistolBullet;
+    public int DefaultAmmoPerShot = 1;
     public Sprite[] WeaponSprites;
     public AudioSource GunAudio;
     public float ShootDelay = 0.15f;
     public float Range = 100f;
-    public int Damage = 20;
-    public int Ammo = 10;
+    public int BaseDamage = 20;
+    public bool IsReloading
+    {
+        get
+        {
+            return !bCanShoot;
+        }
+    }
 
-    protected CustomAnimator _animator;
-    //mb protected???
-    // MAYBE
-    // int shootableMask;
-    protected bool canShoot = true;
+    protected CustomAnimator animator;
+    protected bool bCanShoot = true;
     protected float lastShot;
     protected RaycastHit shotHit;
 
     // Use this for initialization
     protected void Start()
     {
-        _animator = new CustomAnimator(8, transform.GetChild(0).GetComponent<SpriteRenderer>());
-        _animator.AddAnimationSequence("Shoot", WeaponSprites);
-
+        animator = new CustomAnimator(8, transform.GetChild(0).GetComponent<SpriteRenderer>());
+        animator.AddAnimationSequence("Shoot", WeaponSprites);
     }
 
     // Update is called once per frame
     protected void Update()
     {
-        _animator.Update(Time.deltaTime);
+        animator.Update(Time.deltaTime);
         lastShot += Time.deltaTime;
         if (lastShot >= ShootDelay)
         {
-            canShoot = true;
+            bCanShoot = true;
         }
-    }
-
-    public void AddAmmo(int amount)
-    {
-        this.Ammo += amount;
     }
 
     public virtual void Shoot(Ray headRay)
     {
-        if (!canShoot)
+        var damage = DefaultAmmoPerShot * BaseDamage;
+        _Shoot(headRay, damage);
+    }
+
+    public virtual void Shoot(Ray headRay, int ammoPerShot)
+    {
+        if (ammoPerShot > DefaultAmmoPerShot || ammoPerShot == 0)
         {
+            // Play clatz sound
             return;
         }
+        var damage = ammoPerShot * BaseDamage;
+        _Shoot(headRay, damage);
+    }
 
-        if (Ammo <= 0)
+    protected void _Shoot(Ray headRay, int damage)
+    {
+        if (!bCanShoot)
         {
-            // Play no ammo sound
             return;
         }
 
         lastShot = 0f;
-        canShoot = false;
-        this.Ammo -= 1;
+        bCanShoot = false;
 
         GunAudio.Play();
-        _animator.PlayOnce("Shoot");
+        animator.PlayOnce("Shoot");
 
         // Debug.DrawRay(headRay.origin, headRay.direction, Color.white,  20.0f, false);
         if (!Physics.Raycast(headRay, out shotHit, Range * 10))
@@ -74,20 +84,28 @@ public class Weapon : OverridableMonoBehaviour
         {
             case "Enemy":
                 BaseMonster monster = shotHit.collider.GetComponent<BaseMonster>();
+
+                // If its not monster 
                 if (monster == null)
                 {
                     var enemyHealth = shotHit.collider.GetComponent<Durability>();
-                    enemyHealth.TakeDamage(Damage);
+                    enemyHealth.TakeDamage(damage);
 
                     return;
                 }
-                monster.GetHit(Damage);
-                EnemyManager.Instance.DamageTaken(monster.Id, Damage);
+
+                monster.GetHit(damage);
+                EnemyManager.Instance.DamageTaken(monster.Id, damage);
                 break;
             case "RemotePlayer":
                 RemotePlayerHealth rp = shotHit.collider.GetComponent<RemotePlayerHealth>();
-                if (rp == null) return;
-                rp.TakeDamage(Damage / 5);
+
+                if (rp == null)
+                {
+                    return;
+                }
+
+                rp.TakeDamage(damage / 5);
                 break;
         }
     }

@@ -7,27 +7,23 @@ using System;
 
 public class PlayerController : OverridableMonoBehaviour
 {
-    GestureRecognizer recognizer;
-    public Weapon[] Weapons;
-    public int CurrentWeapon;
+
+    private GestureRecognizer recognizer;
+    private PlayerInventory inventory;
 
     // Use this for initialization
     void Start()
     {
-        recognizer = new GestureRecognizer();
-        recognizer.SetRecognizableGestures(GestureSettings.Tap);
-        recognizer.SetRecognizableGestures(GestureSettings.Hold);
-        recognizer.TappedEvent += Recognizer_TappedEvent;
-        recognizer.HoldCompletedEvent += HoldCompletedEvent;
-        recognizer.StartCapturingGestures();
-        HideWeapons();
-        Weapons[CurrentWeapon].gameObject.SetActive(true);
-        UpdateUI();
+        InitRecognizer();
+        inventory = GetComponent<PlayerInventory>();
     }
 
-    private void HoldCompletedEvent(InteractionSourceKind source, Ray headRay)
+    private void InitRecognizer()
     {
-        Debug.Log("Hold");
+        recognizer = new GestureRecognizer();
+        recognizer.SetRecognizableGestures(GestureSettings.Tap);
+        recognizer.TappedEvent += Recognizer_TappedEvent;
+        recognizer.StartCapturingGestures();
     }
 
     private void Recognizer_TappedEvent(InteractionSourceKind source, int tapCount, Ray headRay)
@@ -40,12 +36,19 @@ public class PlayerController : OverridableMonoBehaviour
         switch (AppStateManager.Instance.GetAppState())
         {
             case AppState.Playing:
-                if (CurrentWeapon > Weapons.Length || Weapons[CurrentWeapon] == null)
+                // Get weapon
+                var weapon = inventory.CurrentWeapon;
+                if (weapon == null)
                 {
                     return;
                 }
-                Weapons[CurrentWeapon].Shoot(headRay);
-                UpdateUI();
+                if (!weapon.IsReloading)
+                {
+                    // Get ammo                    
+                    var ammo = inventory.GetAmmo(weapon.AmmoType, weapon.DefaultAmmoPerShot);
+                    // Shoot
+                    weapon.Shoot(headRay, ammo);
+                }
                 break;
             case AppState.WaitingForAnchor:
                 AnchorPlacement.Instance.SendMessage("OnSelect");
@@ -62,7 +65,7 @@ public class PlayerController : OverridableMonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.N))
         {
-            NextWeapon();
+            // NextWeapon();
         }
         else if (Input.GetKeyDown(KeyCode.M))
         {
@@ -72,39 +75,5 @@ public class PlayerController : OverridableMonoBehaviour
         {
             AppStateManager.Instance.SetAppState(AppState.Ready);
         }
-    }
-
-    private void NextWeapon()
-    {
-        HideWeapons();
-        CurrentWeapon++;
-        if (CurrentWeapon >= Weapons.Length)
-        {
-            CurrentWeapon = 0;
-        }
-        Weapons[CurrentWeapon].gameObject.SetActive(true);
-        UpdateUI();
-    }
-
-    private void HideWeapons()
-    {
-        foreach (var weapon in Weapons)
-        {
-            if (weapon == null)
-            {
-                continue;
-            }
-            weapon.gameObject.SetActive(false);
-        }
-    }
-
-    public void AddAmmo(int amt)
-    {
-        Weapons[CurrentWeapon].AddAmmo(amt);
-        UpdateUI();
-    }
-    private void UpdateUI()
-    {
-        UIManager.Instance.UpdateAmmoCounter(Weapons[CurrentWeapon].Ammo);
     }
 }

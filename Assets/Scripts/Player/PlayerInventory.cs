@@ -13,7 +13,9 @@ namespace ItemsModel
         Shotgun = 0,
         DBShotgun,
         Pistol,
-        Grenade
+        Grenade,
+        Hands,
+        None
     }
 
     [Serializable]
@@ -68,7 +70,11 @@ public class PlayerInventory : MonoBehaviour
     public WeaponItem[] Weapons;
     public Consumable[] Consumables;
     public int SelectedWeaponIndex = 0;
-
+    public Weapon CurrentWeapon
+    {
+        get;
+        private set;
+    }
     private WeaponItem currentWeapon;
     Dictionary<AmmoType, AmmoItem> _ammo = new Dictionary<AmmoType, AmmoItem>();
 
@@ -77,6 +83,12 @@ public class PlayerInventory : MonoBehaviour
     {
         InitAmmoDictionary();
         currentWeapon = Weapons[SelectedWeaponIndex];
+        CurrentWeapon = currentWeapon.Ref;
+        if (CurrentWeapon != null)
+        {
+            CurrentWeapon.gameObject.SetActive(true);
+        }
+        UpdateUI();
     }
 
     private void InitAmmoDictionary()
@@ -110,9 +122,36 @@ public class PlayerInventory : MonoBehaviour
         return weapon;
     }
 
+    private void DisableWeapons()
+    {
+        foreach (var weapon in Weapons)
+        {
+            if (weapon == null)
+            {
+                continue;
+            }
+            weapon.Ref.gameObject.SetActive(false);
+        }
+    }
+
+    public Weapon GetCurrentWeapon()
+    {
+        if (currentWeapon == null)
+        {
+            return null;
+        }
+
+        return currentWeapon.Ref;
+    }
+
     public int GetAmmoCount(AmmoType type)
     {
-        return this._ammo[type].Count;
+        var ammo = 0;
+        if (_ammo.ContainsKey(type))
+        {
+            ammo = _ammo[type].Count;
+        }
+        return ammo;
     }
 
     /** Method to ask ammo from inventory
@@ -120,20 +159,47 @@ public class PlayerInventory : MonoBehaviour
         but we have only 1 and so inventory we'll return only 1 shell.
         Same if we have no ammo, method will return 0
      */
-    public int GetAmmo(AmmoType type, int count)
+    public int GetAmmo(AmmoType type, int ammoToShoot)
     {
         if (!_ammo.ContainsKey(type))
         {
             return 0;
         }
-        var a = _ammo[type];
-        if (a.Count - count > -1)
+        var ammoBox = _ammo[type];
+        var availibleAmmo = ammoToShoot;
+        if (ammoBox.Count - ammoToShoot > -1)
         {
-            a.Count -= count;
-            return count;
+            ammoBox.Count -= ammoToShoot;
+        }
+        else
+        {
+            ammoToShoot = ammoBox.Count;
+            ammoBox.Count = 0;
         }
 
-        return a.Count;
+        // Update ammo count on ui
+        UpdateUI();
+        return availibleAmmo;
+    }
+
+    public void AddAmmo(AmmoType type, int count)
+    {
+        if (!_ammo.ContainsKey(type))
+        {
+            _ammo.Add(type, new AmmoItem()
+            {
+                Count = count,
+                Type = type,
+                Name = "Unknown ammo"
+            });
+            return;
+        }
+
+        var a = _ammo[type];
+        a.Count += count;
+
+        // Update ammo count on ui
+        UpdateUI();
     }
 
     /* 
@@ -175,11 +241,12 @@ public class PlayerInventory : MonoBehaviour
 
         // Unlock weapon and add 10 ammo
         weapon.Unlocked = true;
-        weapon.Ref.AddAmmo(10);
+        AddAmmo(weapon.Ref.AmmoType, 10);
     }
 
     public void ChangeWeapon(WeaponType type)
     {
+        DisableWeapons();
         WeaponItem weapon = GetWeapon(type);
         if (weapon == null)
         {
@@ -187,5 +254,13 @@ public class PlayerInventory : MonoBehaviour
         }
 
         currentWeapon = weapon;
+        weapon.Ref.gameObject.SetActive(true);
+    }
+
+    public void UpdateUI()
+    {
+        var ammoCount = GetAmmoCount(currentWeapon.Ref.AmmoType);
+
+        UIManager.Instance.UpdateAmmoCounter(ammoCount);
     }
 }
