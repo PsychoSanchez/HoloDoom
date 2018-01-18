@@ -7,9 +7,9 @@ using System;
 
 public class PlayerController : OverridableMonoBehaviour
 {
-
     private GestureRecognizer recognizer;
     private PlayerInventory inventory;
+    private GameObject lastCollision;
 
     // Use this for initialization
     void Start()
@@ -75,5 +75,80 @@ public class PlayerController : OverridableMonoBehaviour
         {
             AppStateManager.Instance.SetAppState(AppState.Ready);
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        // Removes collision with same object several times
+        if (other.tag != "Pickup" || other.gameObject == lastCollision)
+        {
+            return;
+        }
+        lastCollision = other.gameObject;
+        PickupObject(other);
+    }
+
+    private void PickupObject(Collider other)
+    {
+        var type = other.GetComponent<BasePickup>().GetPickUpType();
+
+        switch (type)
+        {
+            case PickupType.Ammo:
+                PickupAmmo(other);
+                break;
+            case PickupType.Medkit:
+                PickupMedkit(other);
+                break;
+            case PickupType.Armor:
+                PickupArmor(other);
+                break;
+            default:
+                break;
+        }
+
+        if (other.gameObject == null)
+        {
+            return;
+        }
+
+        Destroy(other.gameObject);
+    }
+
+    private void PickupAmmo(Collider other)
+    {
+        var ammo = other.GetComponent<AmmoPickup>();
+
+        if (ammo == null)
+        {
+            return;
+        }
+
+        inventory.AddAmmo(ammo.Type ,ammo.GetAmmo());
+    }
+
+    private void PickupArmor(Collider other)
+    {
+        var armor = other.GetComponent<ArmorPickup>();
+
+        if (armor == null)
+        {
+            return;
+        }
+
+        this.GetComponent<PlayerHealth>().AddArmor(armor.GetArmor());
+
+    }
+
+    private void PickupMedkit(Collider other)
+    {
+        var health = other.GetComponent<MedkitPickup>();
+
+        if (health == null)
+        {
+            return;
+        }
+
+        this.GetComponent<PlayerHealth>().AddHealth(health.GetHealth());
     }
 }

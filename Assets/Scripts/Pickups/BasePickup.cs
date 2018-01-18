@@ -6,7 +6,9 @@ public enum PickupType
 {
     Medkit = 0,
     Armor,
-    Ammo
+    Ammo,
+    Weapon,
+    Bandages
 }
 
 public enum MedkitType
