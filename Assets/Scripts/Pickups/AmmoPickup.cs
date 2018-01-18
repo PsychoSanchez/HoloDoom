@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using ItemsModel;
+using UnityEngine;
 
-public class Ammo : BasePickup
+public class AmmoPickup : BasePickup
 {
     public int AmmoAmount = 10;
-    public WeaponType WeaponType = 0;
+    public AmmoType Type = AmmoType.ShotgunShells; 
 
 
 	// Use this for initialization
@@ -17,9 +18,9 @@ public class Ammo : BasePickup
         base.Update();
     }
 
-    public WeaponType GetWeaponType()
+    public AmmoType GetAmmoType()
     {
-        return WeaponType;
+        return Type;
     }
 
     public int GetAmmo()
@@ -28,10 +29,4 @@ public class Ammo : BasePickup
         return AmmoAmount;
     }
     
-}
-
-public enum WeaponType
-{
-    Shotgun = 0,
-    Pistol
 }

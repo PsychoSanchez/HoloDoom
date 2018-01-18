@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Armor : BasePickup {
+public class ArmorPickup : BasePickup {
     public int ArmorAmount = 25;
 
     // Use this for initialization

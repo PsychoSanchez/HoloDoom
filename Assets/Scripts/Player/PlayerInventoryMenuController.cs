@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerAmmo : MonoBehaviour {
+public class PlayerInventoryMenuController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

@@ -2,9 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PickupType
+{
+    Medkit = 0,
+    Armor,
+    Ammo
+}
+
+public enum MedkitType
+{
+    Small,
+    Medium,
+    Big
+}
+
+
 public class BasePickup : OverridableMonoBehaviour
 {
-
     public float LifeTime = 10.0f;
     public AudioClip PickupSound;
     public AudioClip SpawnSound;
@@ -50,12 +64,4 @@ public class BasePickup : OverridableMonoBehaviour
         }
 		AudioSource.PlayClipAtPoint(PickupSound, this.transform.position, 0.7F);
     }
-}
-
-
-public enum PickupType
-{
-    Medkit = 0,
-    Armor,
-    Ammo
 }

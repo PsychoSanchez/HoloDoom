@@ -60,9 +60,9 @@ public class GameManager : Singleton<GameManager>
     public WaveLevel[] Waves;
     AudioSource audioSource;
     public Cacodemon monster;
-    public Ammo[] Ammo;
-    public Medkit[] Medkits;
-    public Armor[] Armor;
+    public AmmoPickup[] Ammo;
+    public MedkitPickup[] Medkits;
+    public ArmorPickup[] Armor;
     public int StartWave = 0;
     public event EventHandler GameStarted;
     public event EventHandler GameStopped;

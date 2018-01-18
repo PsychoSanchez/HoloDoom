@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Medkit : BasePickup
+public class MedkitPickup : BasePickup
 {
     public int HealthAmount = 25;
     public MedkitType Type;
@@ -19,11 +19,4 @@ public class Medkit : BasePickup
         PlayPickUpSound();
         return HealthAmount;
     }
-}
-
-public enum MedkitType
-{
-    Small,
-    Medium,
-    Big
 }
